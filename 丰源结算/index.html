@@ -295,51 +295,201 @@
                 </div>
 
                 <!-- Table Section -->
-                <div style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
-                    <table class="statement-table" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                        <thead>
-                            <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-                                <th style="width: 40px; text-align: center; padding: 10px;"><input type="checkbox">
-                                </th>
-                                <th style="width: 40px; padding: 10px;"></th>
-                                <th style="padding: 10px; text-align: left;">账单号</th>
-                                <th style="padding: 10px; text-align: left;">账单日期</th>
-                                <th style="padding: 10px; text-align: left;">工作单号</th>
-                                <th style="padding: 10px; text-align: left;">费用</th>
-                                <th style="padding: 10px; text-align: left;">原币</th>
-                                <th style="padding: 10px; text-align: left;">原币待销金额</th>
-                                <th style="padding: 10px; text-align: left;">折算符</th>
-                                <th style="padding: 10px; text-align: left;">兑换率</th>
-                                <th style="padding: 10px; text-align: left;">收款币制</th>
-                                <th style="padding: 10px; text-align: left;">收款金额</th>
-                                <th style="padding: 10px; text-align: left;">原币销账金额</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="text-align: center; padding: 10px;"><input type="checkbox"></td>
-                                <td style="padding: 10px;"></td>
-                                <td style="padding: 10px;">BILL20231201</td>
-                                <td style="padding: 10px;">2023-12-10</td>
-                                <td style="padding: 10px;">OTH202312009</td>
-                                <td style="padding: 10px;">运费</td>
-                                <td style="padding: 10px;">USD</td>
-                                <td style="padding: 10px;">500.00</td>
-                                <td style="padding: 10px;">*</td>
-                                <td style="padding: 10px;">7.12</td>
-                                <td style="padding: 10px;">CNY</td>
-                                <td style="padding: 10px;">3560.00</td>
-                                <td style="padding: 10px;">500.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 20px;">
+                    <div style="overflow-x: auto;">
+                        <table class="statement-table"
+                            style="width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                                    <th style="width: 40px; text-align: center; padding: 10px;"><input type="checkbox">
+                                    </th>
+                                    <th style="width: 40px; padding: 10px;"></th>
+                                    <th style="padding: 10px; text-align: left;">账单号</th>
+                                    <th style="padding: 10px; text-align: left;">账单日期</th>
+                                    <th style="padding: 10px; text-align: left;">工作单号</th>
+                                    <th style="padding: 10px; text-align: left;">费用</th>
+                                    <th style="padding: 10px; text-align: left;">原币</th>
+                                    <th style="padding: 10px; text-align: left;">原币待销金额</th>
+                                    <th style="padding: 10px; text-align: left;">折算符</th>
+                                    <th style="padding: 10px; text-align: left;">兑换率</th>
+                                    <th style="padding: 10px; text-align: left;">收款币制</th>
+                                    <th style="padding: 10px; text-align: left;">收款金额</th>
+                                    <th style="padding: 10px; text-align: left;">原币销账金额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td style="text-align: center; padding: 10px;"><input type="checkbox"></td>
+                                    <td style="padding: 10px;"></td>
+                                    <td style="padding: 10px;">BILL20231201</td>
+                                    <td style="padding: 10px;">2023-12-10</td>
+                                    <td style="padding: 10px;">OTH202312009</td>
+                                    <td style="padding: 10px;">运费</td>
+                                    <td style="padding: 10px;">USD</td>
+                                    <td style="padding: 10px;">500.00</td>
+                                    <td style="padding: 10px;">*</td>
+                                    <td style="padding: 10px;">7.12</td>
+                                    <td style="padding: 10px;">CNY</td>
+                                    <td style="padding: 10px;">3560.00</td>
+                                    <td style="padding: 10px;">500.00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f8fafc; font-weight: 600; color: #1e293b;">
+                                    <td colspan="6" style="padding: 12px 10px; text-align: right;">已选合计</td>
+                                    <td style="padding: 12px 10px;">USD</td>
+                                    <td style="padding: 12px 10px;">500.00</td>
+                                    <td style="padding: 12px 10px;"></td>
+                                    <td style="padding: 12px 10px;"></td>
+                                    <td style="padding: 12px 10px;">CNY</td>
+                                    <td style="padding: 12px 10px;">3560.00</td>
+                                    <td style="padding: 12px 10px;">500.00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Additional Info Row -->
+                    <div
+                        style="padding: 16px; display: flex; align-items: center; gap: 48px; background: #fff; border-top: 1px solid #f1f5f9;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 13px; color: #475569;">CNY收款账户:</span>
+                            <div class="select-box" style="width: 300px; height: 32px;">
+                                <span style="color: #cbd5e1;">请选择</span>
+                                <i data-lucide="chevron-down"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 13px; color: #475569;">CNY水单:</span>
+                            <a href="#"
+                                style="color: #3b82f6; font-size: 13px; text-decoration: none; display: flex; align-items: center; gap: 4px; font-weight: 500;">
+                                <i data-lucide="paperclip" style="width: 14px; height: 14px;"></i> 附件
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Footer Actions -->
-                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button class="secondary-btn" style="height: 32px; padding: 0 20px;"
-                        onclick="closePreWriteOffModal()">退出</button>
-                    <button class="primary-btn" style="height: 32px; padding: 0 20px;">确定</button>
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; padding-top: 16px;">
+                    <button class="primary-btn"
+                        style="height: 34px; padding: 0 20px; display: flex; align-items: center; gap: 8px; background: #3b82f6; border: none;"
+                        onclick="closePreWriteOffModal()">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> 提交
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoicing Expense Config Modal -->
+    <div class="modal-overlay" id="invoice-expense-modal">
+        <div class="modal-container" style="max-width: 800px; height: auto; max-height: 90vh; background: #f8fafc;">
+            <div class="modal-header" style="background: white; border-bottom: 1px solid #e2e8f0; padding: 12px 20px;">
+                <span style="font-weight: 600; color: #334155; font-size: 1rem;">新增</span>
+                <div class="modal-actions">
+                    <i data-lucide="x" class="header-icon" id="close-expense-modal" onclick="closeInvoiceExpenseModal()"
+                        style="cursor: pointer; color: #64748b;"></i>
+                </div>
+            </div>
+
+            <div class="modal-content" style="padding: 20px; background: white;">
+                <!-- Form Row 1 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.85rem; color: #475569; white-space: nowrap;"><span
+                                style="color: #ef4444;">*</span> 税收分类</label>
+                        <div
+                            style="display: flex; gap: 0; flex-grow: 1; border: 1px solid #ffccd5; border-radius: 4px; overflow: hidden; background: #fff5f6;">
+                            <input type="text" id="invoice-tax-code" placeholder="税收分类编码"
+                                style="width: 40%; border: none; background: transparent; height: 32px; padding: 0 10px; font-size: 0.85rem; border-right: 1px solid #ffccd5;">
+                            <input type="text" id="invoice-tax-name" placeholder="税收分类名称"
+                                style="width: 60%; border: none; background: transparent; height: 32px; padding: 0 10px; font-size: 0.85rem;">
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.85rem; color: #475569; white-space: nowrap;"><span
+                                style="color: #ef4444;">*</span> 货物或应税劳务、服务名称</label>
+                        <input type="text" id="invoice-service-name" placeholder="请输入"
+                            style="flex-grow: 1; height: 32px; border: 1px solid #ffccd5; border-radius: 4px; padding: 0 10px; font-size: 0.85rem; background: #fff5f6;">
+                    </div>
+                </div>
+
+                <!-- Form Row 2 -->
+                <div style="display: flex; align-items: center; gap: 48px; margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.85rem; color: #475569; white-space: nowrap;"><span
+                                style="color: #ef4444;">*</span> 税率</label>
+                        <div
+                            style="display: flex; align-items: center; width: 150px; border: 1px solid #ffccd5; background: #fff5f6; border-radius: 4px; padding: 0 8px;">
+                            <input type="text" id="invoice-tax-rate" placeholder="请输入"
+                                style="width: 100%; border: none; background: transparent; height: 32px; text-align: center; font-size: 0.85rem;">
+                            <span style="color: #64748b; font-size: 0.85rem;">%</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <span style="font-size: 0.85rem; color: #475569;">是否免税</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label
+                                style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.85rem; color: #334155;">
+                                <input type="radio" name="tax-free" value="否" checked> 否
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.85rem; color: #334155;">
+                                <input type="radio" name="tax-free" value="是"> 是
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Section -->
+                <div style="border-top: 1px solid #f1f5f9; padding-top: 16px;">
+                    <a href="#"
+                        style="display: flex; align-items: center; gap: 6px; color: #3b82f6; text-decoration: none; font-size: 0.85rem; font-weight: 500; margin-bottom: 12px; width: fit-content; background: #eff6ff; padding: 6px 12px; border-radius: 4px;">
+                        <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> 选择费用项目
+                    </a>
+
+                    <div style="border: 1px solid #e2e8f0; border-radius: 4px; min-height: 400px; background: white;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                                    <th
+                                        style="padding: 10px; font-size: 0.85rem; color: #64748b; font-weight: 500; text-align: center; border-right: 1px solid #e2e8f0; width: 100px;">
+                                        代码</th>
+                                    <th
+                                        style="padding: 10px; font-size: 0.85rem; color: #64748b; font-weight: 500; text-align: center; border-right: 1px solid #e2e8f0;">
+                                        费用名称</th>
+                                    <th
+                                        style="padding: 10px; font-size: 0.85rem; color: #64748b; font-weight: 500; text-align: center; width: 100px;">
+                                        操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-expense-items-body">
+                                <tr>
+                                    <td colspan="3" style="padding: 100px 0; text-align: center;">
+                                        <div
+                                            style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                                            <div style="position: relative; width: 100px; height: 64px;">
+                                                <i data-lucide="search"
+                                                    style="width: 48px; height: 48px; color: #cbd5e1; opacity: 0.5;"></i>
+                                                <div
+                                                    style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); color: #94a3b8; font-size: 0.75rem;">
+                                                    No data</div>
+                                            </div>
+                                            <span style="color: #94a3b8; font-size: 0.85rem;">暂无数据</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+                    <button class="primary-btn" id="save-invoice-expense-btn" onclick="saveInvoiceExpenseConfig()"
+                        style="height: 34px; padding: 0 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> 保存
+                    </button>
                 </div>
             </div>
         </div>
