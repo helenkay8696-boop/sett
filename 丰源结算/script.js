@@ -37,7 +37,7 @@ const menuData = [
     {
         title: "充值管理",
         icon: "wallet",
-        items: ["账户充值", "后台管理"]
+        items: ["后台管理"]
     },
     {
         title: "设置",
@@ -151,7 +151,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '工作台' || activeTab === '对账单' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '账户充值' || activeTab === '后台管理') {
+    if (activeTab === '工作台' || activeTab === '对账单' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '后台管理') {
 
 
         let mainContent = '';
@@ -1116,12 +1116,17 @@ function renderTabs(activeTab) {
                         <table class="data-table" style="width: 100%;">
                             <thead>
                                 <tr style="background: #f8fafc;">
-                                    <th style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">用户信息</th>
-                                    <th style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">用户ID</th>
-                                    <th style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">账户余额</th>
-                                    <th style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">账户状态</th>
-                                    <th style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">最后充值时间</th>
-                                    <th style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">操作</th>
+                                    <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">用户信息</th>
+                                    <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">用户ID</th>
+                                    <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">公司</th>
+                                    <th colspan="2" style="padding: 16px 24px; text-align: center; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0;">账户余额</th>
+                                    <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">账户状态</th>
+                                    <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">最后充值时间</th>
+                                    <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">操作</th>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <th style="padding: 10px 24px; text-align: left; font-weight: 600; color: #64748b;">人民币</th>
+                                    <th style="padding: 10px 24px; text-align: left; font-weight: 600; color: #64748b;">美元</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1132,12 +1137,13 @@ function renderTabs(activeTab) {
                                             <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">张</div>
                                             <div>
                                                 <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">张三</div>
-                                                <div style="font-size: 0.8rem; color: #94a3b8;">创新科技有限公司</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0582</td>
+                                    <td style="padding: 16px 24px; color: #64748b;">创新科技有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥8,450</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$1,200</td>
                                     <td style="padding: 16px 24px;">
                                         <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
                                     </td>
@@ -1163,12 +1169,13 @@ function renderTabs(activeTab) {
                                             <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">李</div>
                                             <div>
                                                 <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">李四</div>
-                                                <div style="font-size: 0.8rem; color: #94a3b8;">未来科技有限公司</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0421</td>
+                                    <td style="padding: 16px 24px; color: #64748b;">未来科技有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥15,200</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$2,500</td>
                                     <td style="padding: 16px 24px;">
                                         <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
                                     </td>
@@ -1194,12 +1201,13 @@ function renderTabs(activeTab) {
                                             <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">王</div>
                                             <div>
                                                 <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">王五</div>
-                                                <div style="font-size: 0.8rem; color: #94a3b8;">智云网络有限公司</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0367</td>
+                                    <td style="padding: 16px 24px; color: #64748b;">智云网络有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥3,200</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$500</td>
                                     <td style="padding: 16px 24px;">
                                         <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
                                     </td>
@@ -1225,12 +1233,13 @@ function renderTabs(activeTab) {
                                             <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">赵</div>
                                             <div>
                                                 <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">赵六</div>
-                                                <div style="font-size: 0.8rem; color: #94a3b8;">星辰信息技术</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0198</td>
+                                    <td style="padding: 16px 24px; color: #64748b;">星辰信息技术</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">¥120</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">$0</td>
                                     <td style="padding: 16px 24px;">
                                         <span style="background: #fef3c7; color: #b45309; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">低余额</span>
                                     </td>
@@ -1256,12 +1265,13 @@ function renderTabs(activeTab) {
                                             <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">刘</div>
                                             <div>
                                                 <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">刘七</div>
-                                                <div style="font-size: 0.8rem; color: #94a3b8;">华通集团</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0789</td>
+                                    <td style="padding: 16px 24px; color: #64748b;">华通集团</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥25,600</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$3,800</td>
                                     <td style="padding: 16px 24px;">
                                         <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
                                     </td>
@@ -1287,12 +1297,13 @@ function renderTabs(activeTab) {
                                             <div style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600;">陈</div>
                                             <div>
                                                 <div style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">陈八</div>
-                                                <div style="font-size: 0.8rem; color: #94a3b8;">易联科技有限公司</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0654</td>
+                                    <td style="padding: 16px 24px; color: #64748b;">易联科技有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">¥0</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">$0</td>
                                     <td style="padding: 16px 24px;">
                                         <span style="background: #fee2e2; color: #b91c1c; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">冻结</span>
                                     </td>
@@ -2038,7 +2049,7 @@ function renderTabs(activeTab) {
 
                         <!-- Salesman Dropdown -->
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <label style="font-size: 0.8rem; color: #475569; font-weight: 500;">业务员</label>
+                            <label style="font-size: 0.8rem; color: #475569; font-weight: 500;">结算代理</label>
                             <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
                                 <span>请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
@@ -4508,11 +4519,11 @@ function renderTabs(activeTab) {
                         <div style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
                             <div class="active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
                             <div style="padding: 12px 0; cursor: pointer;">草稿/驳回</div>
-                            <div style="padding: 12px 0; cursor: pointer;">审核中 <span style="background:#f1f5f9; px-1; rounded">56</span></div>
-                            <div style="padding: 12px 0; cursor: pointer;">已批准 <span style="background:#f1f5f9; px-1; rounded">4</span></div>
+                            <div style="padding: 12px 0; cursor: pointer;">审核中 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">56</span></div>
+                            <div style="padding: 12px 0; cursor: pointer;">已批准 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">4</span></div>
                              <div style="padding: 12px 0; cursor: pointer;">部分核销</div>
-                             <div style="padding: 12px 0; cursor: pointer;">已核销 <span style="background:#f1f5f9; px-1; rounded">1</span></div>
-                             <div style="padding: 12px 0; cursor: pointer;">已过期已取消 <span style="background:#f1f5f9; px-1; rounded">1</span></div>
+                             <div style="padding: 12px 0; cursor: pointer;">已核销 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">1</span></div>
+                             <div style="padding: 12px 0; cursor: pointer;">已过期已取消 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">1</span></div>
                         </div>
                     </div>
 
@@ -4537,21 +4548,59 @@ function renderTabs(activeTab) {
                                 <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
                             </div>
                              <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #64748b;">审核状态</label>
-                                <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                <label style="color: #64748b;">单据状态</label>
+                                <div class="relative-container">
+                                    <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                        <span id="payment-doc-status-selected">请选择</span>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                    </div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-doc-status-selected', '审核中')">审核中</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-doc-status-selected', '已审核')">已审核</div>
+                                    </div>
+                                </div>
                             </div>
                              <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                 <label style="color: #64748b;">水单状态</label>
-                                <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;"><span>全部</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                <div class="relative-container">
+                                    <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                        <span id="payment-slip-status-selected">全部</span>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                    </div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-slip-status-selected', '未上传')">未上传</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-slip-status-selected', '已上传')">已上传</div>
+                                    </div>
+                                </div>
                             </div>
                              <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #64748b;">核销附件状态</label>
-                                <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;"><span>全部</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                <label style="color: #64748b;">发票附件状态</label>
+                                <div class="relative-container">
+                                    <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                        <span id="payment-invoice-attachment-status-selected">全部</span>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                    </div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-attachment-status-selected', '未上传')">未上传</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-attachment-status-selected', '已上传')">已上传</div>
+                                    </div>
+                                </div>
                             </div>
                              <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                 <label style="color: #64748b;">开票方式</label>
-                                <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                <div class="relative-container">
+                                    <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                        <span id="payment-invoice-type-selected">请选择</span>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                    </div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-type-selected', '先票后付')">先票后付</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-type-selected', '先付后票')">先付后票</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-type-selected', '不开票')">不开票</div>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
 
                         <!-- Row 2 -->
@@ -4571,10 +4620,12 @@ function renderTabs(activeTab) {
                              </button>
                              <button style="background: #4f46e5; color: white; border: none; padding: 0 16px; height: 32px; border-radius: 4px; cursor: pointer;">付款报表</button>
                              <div style="flex: 1;"></div>
-                             <!-- Create Button (New) -->
-                             <button onclick="document.getElementById('payment-application-list-view').style.display='none';document.getElementById('payment-application-create-view').style.display='flex';document.querySelector('.customer-sidebar').style.display='none';" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                             <!-- Action Buttons (List View) -->
+                             <button onclick="openPaymentApplicationCreateView()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
                                  <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> 新增
                             </button>
+                            <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer;">提交审核</button>
+                            <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 4px; cursor: pointer;">按付款对象合并</button>
                          </div>
                     </div>
 
@@ -4635,203 +4686,167 @@ function renderTabs(activeTab) {
                     </div>
                 </div>
 
-                <!-- Create View (Hidden) -->
+                <!-- Create View (Hidden) - Redesigned based on Image 2 -->
                 <div id="payment-application-create-view" style="display: none; flex-direction: column; width: 100%; height: 100%; background: #f8fafc;">
                     <!-- Header -->
-                     <div style="height: 50px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0;">
-                        <div style="font-size: 14px; color: #64748b;">申请单号: <span style="background: #84cc16; color: white; padding: 1px 6px; border-radius: 4px; font-size: 11px;">自动生成</span></div>
+                    <div style="height: 48px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #334155;">
+                            <span>申请单号:</span>
+                            <span style="background: #4f46e5; color: white; padding: 1px 4px; border-radius: 2px; font-size: 11px;">付</span>
+                            <span style="color: #64748b;">自动生成</span>
+                        </div>
                         <div style="display: flex; gap: 8px;">
-                              <button class="primary-btn" style="height: 30px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><i data-lucide="plus" style="width: 14px; height: 14px; margin-right: 4px;"></i> 新增</button>
-                              <button class="primary-btn" style="height: 30px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center;"><i data-lucide="check-square" style="width: 14px; height: 14px; margin-right: 4px;"></i> 提交审核</button>
-                             <button style="height: 30px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #475569; border-radius: 4px;">暂存草稿</button>
-                             <button onclick="document.getElementById('payment-application-list-view').style.display='flex';document.getElementById('payment-application-create-view').style.display='none';document.querySelector('.customer-sidebar').style.display='flex';" style="height: 30px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #475569; border-radius: 4px;">返回</button>
+                            <button class="primary-btn" style="height: 28px; padding: 0 12px; background: #4f46e5; border: none; border-radius: 4px; color: white; font-size: 12px; display: flex; align-items: center; gap: 4px;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增</button>
+                            <button style="height: 28px; padding: 0 12px; background: white; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 4px;"><i data-lucide="check-square" style="width: 14px; height: 14px;"></i> 提交审核</button>
+                            <button style="height: 28px; padding: 0 12px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 4px; font-size: 12px;">暂存草稿</button>
+                            <button onclick="closePaymentApplicationCreateView()" style="height: 28px; padding: 0 12px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 4px; font-size: 12px;">返回</button>
                         </div>
                     </div>
                     
                     <!-- Content -->
-                    <div style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+                    <div style="flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px;">
                         <!-- Form Area -->
-                         <div style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 24px;">
-                                <!-- Col 1 -->
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
-                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;"><span style="color: red">*</span> 结算单位</label>
-                                        <div style="flex: 1; display: flex; gap: 8px;">
-                                              <div class="select-box" style="flex: 1; height: 32px; border: 1px solid #ffddd; background: #fff1f2; display: flex; align-items: center; justify-content: space-between; padding: 0 8px;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
-                                              <div style="border: 1px solid #e2e8f0; background: #f1f5f9; padding: 0px 8px; border-radius: 4px; font-size: 12px; color: #64748b; display: flex; align-items: center;">NL</div>
-                                              <div style="border: 1px solid #e2e8f0; background: #f1f5f9; padding: 0px 8px; border-radius: 4px; font-size: 12px; color: #64748b; display: flex; align-items: center;">月结</div>
-                                        </div>
-                                     </div>
-                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">类型</label>
-                                        <div style="flex: 1; display: flex; gap: 8px;">
-                                             <div class="select-box" style="width: 80px; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; border: 1px solid #e2e8f0; border-radius: 4px;"><span>折合</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
-                                             <div class="select-box" style="width: 80px; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; border: 1px solid #e2e8f0; border-radius: 4px;"><span>CNY</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
-                                             <input type="text" value="0" style="width: 60px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; text-align: right; padding: 0 4px; outline: none;">
-                                             <a href="#" style="font-size: 12px; color: #4f46e5; display: flex; align-items: center;">汇率</a>
-                                        </div>
-                                     </div>
-                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">备注</label>
-                                        <input type="text" placeholder="请输入" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none;">
-                                     </div>
+                         <div style="background: white; border-radius: 4px; border: 1px solid #e2e8f0; padding: 16px;">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 24px;">
+                                <!-- Row 1 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;"><span style="color: red">*</span> 结算单位</label>
+                                    <div style="flex: 1; display: flex; gap: 4px;">
+                                        <div class="select-box" style="flex: 1; height: 28px; border: 1px solid #fee2e2; background: #fff1f2; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 12px;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                        <span style="background: #f1f5f9; padding: 0 4px; border-radius: 2px; font-size: 11px; color: #64748b; display: flex; align-items: center;">NL</span>
+                                        <span style="background: #f1f5f9; padding: 0 4px; border-radius: 2px; font-size: 11px; color: #64748b; display: flex; align-items: center;">月结</span>
+                                    </div>
                                 </div>
-                                
-                                <!-- Col 2 -->
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
-                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">预付款余额</label>
-                                        <span style="font-size: 12px;">-</span>
-                                     </div>
-                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">对方银行账户</label>
-                                         <div class="select-box" style="flex: 1; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; border: 1px solid #e2e8f0; border-radius: 4px;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
-                                     </div>
-                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                         <div style="flex: 1; height: 32px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 4px; margin-left: 78px;"></div>
-                                     </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">预付账余额</label>
+                                    <span style="font-size: 12px;">-</span>
                                 </div>
-                                
-                                <!-- Col 3 -->
-                                <div style="display: flex; flex-direction: column; gap: 12px;">
-                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">应支付日期</label>
-                                        <input type="date" value="2025-12-31" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-size: 0.8rem; font-family: inherit;">
-                                     </div>
-                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">开票方式</label>
-                                        <div style="flex: 1; display: flex; gap: 12px; font-size: 12px; align-items: center;">
-                                            <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="inv-type" checked> 先票后付</label>
-                                            <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="inv-type"> 先付后票</label>
-                                            <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="inv-type"> 不开票</label>
-                                        </div>
-                                     </div>
-                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">发票号</label>
-                                        <input type="text" placeholder="请输入" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none;">
-                                     </div>
-                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">开票日期</label>
-                                        <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
-                                             <input type="date" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-size: 0.8rem; font-family: inherit;">
-                                        </div>
-                                     </div>
-                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">发票文件</label>
-                                       <a href="#" style="color: #4f46e5; display: flex; align-items: center; gap: 4px; font-size: 12px;"><i data-lucide="paperclip" style="width: 12px; height: 12px;"></i> 附件</a>
-                                     </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">应支付日期</label>
+                                    <input type="date" value="2025-01-04" style="flex: 1; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; font-size: 12px; outline: none; padding: 0 8px; font-family: inherit;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">发票文件</label>
+                                    <a href="#" style="color: #4f46e5; display: flex; align-items: center; gap: 4px; font-size: 12px;"><i data-lucide="paperclip" style="width: 14px; height: 14px;"></i> 附件</a>
+                                </div>
+
+                                <!-- Row 2 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">类型</label>
+                                    <div style="flex: 1; display: flex; gap: 4px;">
+                                        <div class="select-box" style="width: 60px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font-size: 12px;"><span>折合</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
+                                        <div class="select-box" style="width: 60px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font-size: 12px;"><span>CNY</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
+                                        <input type="text" value="0" style="width: 40px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; text-align: right; outline: none; font-size: 12px;">
+                                        <a href="#" style="color: #4f46e5; font-size: 11px; display: flex; align-items: center;">汇率</a>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">对方银行账户</label>
+                                    <div class="select-box" style="flex: 1; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 12px;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">开票方式</label>
+                                    <div style="display: flex; gap: 12px; font-size: 12px; color: #334155;">
+                                        <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="pay-inv-type" checked> 先票后付</label>
+                                        <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="pay-inv-type"> 先付后票</label>
+                                        <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="pay-inv-type"> 不开票</label>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">发票号</label>
+                                    <input type="text" placeholder="请输入" style="flex: 1; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 8px; font-size: 12px; outline: none;">
+                                </div>
+
+                                <!-- Row 3 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">备注</label>
+                                    <input type="text" placeholder="请输入" style="flex: 1; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 8px; font-size: 12px; outline: none;">
+                                </div>
+                                <div style="grid-column: span 2;"></div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">开票日期</label>
+                                    <input type="date" style="flex: 1; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; font-size: 12px; outline: none; padding: 0 8px; font-family: inherit;">
                                 </div>
                             </div>
-                         </div>
-                         
-                         <!-- Filter Bar -->
-                         <div style="background: white; border-radius: 8px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                             <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b;"><input type="radio" name="item-type"> 应收</label>
-                             <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b;"><input type="radio" name="item-type" checked> 应付</label>
-                             <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b;"><input type="radio" name="item-type"> 收付</label>
-                             <input type="text" placeholder="请输入订单号/工作单号/账单号..." style="width: 250px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 12px; outline: none;">
-                             <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="search" style="width: 12px; height: 12px;"></i> 查询</button>
-                             <a href="#" style="font-size: 12px; color: #4f46e5; display: flex; align-items: center;">更多(3) <i data-lucide="chevron-down" style="width: 10px; height: 10px;"></i></a>
-                             <div style="flex: 1;"></div>
-                             <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b;"><input type="radio" name="view-type"> 仅显示已勾选</label>
-                             <label style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b;"><input type="radio" name="view-type" checked> 全部</label>
-                              <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 12px;"><span>结算币种组</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
-                         </div>
-                         
-                         <!-- Table -->
-                         <div style="flex: 1; background: white; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column;">
-                             <table class="statement-table" style="width: 100%; min-width: max-content;">
-                                 <thead>
-                                     <tr>
-                                         <th style="width: 40px; text-align: center;"><input type="checkbox"></th>
-                                         <th>账单号</th>
-                                         <th>工作单号</th>
-                                         <th>结算单位</th>
-                                         <th>计费日期</th>
-                                         <th>费用</th>
-                                         <th>原币制</th>
-                                         <th>数量</th>
-                                         <th>单价</th>
-                                         <th>金额</th>
-                                         <th>未申请金额</th>
-                                         <th>申请付款(原币)</th>
-                                         <th>申请付款(折合)</th>
-                                         <th>工作单日期</th>
-                                         <th>费用参考号</th>
-                                         <th>工作单参考号</th>
-                                         <th>中转单号</th>
-                                         <th>所属公司</th>
-                                         <th>委托人</th>
-                                     </tr>
-                                 </thead>
-                                 <tbody>
-                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        </div>
+                        
+                        <!-- Toolbar -->
+                        <div style="display: flex; align-items: center; gap: 16px; background: white; padding: 8px 12px; border-radius: 4px; border: 1px solid #e2e8f0; font-size: 12px; flex-shrink: 0;">
+                            <div style="display: flex; gap: 12px; color: #64748b;">
+                                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="pay-item-type"> 应收</label>
+                                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="pay-item-type"> 应付</label>
+                                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="pay-item-type" checked> 收付</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 4px; flex: 1;">
+                                 <input type="text" placeholder="提单号/柜号/SO/工作号/帐单号/工作单号/提单参考号/中转单号/USA号" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none;">
+                                 <button style="height: 32px; background: #4f46e5; border: none; border-radius: 4px; color: white; padding: 0 16px; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                            </div>
+                            <a href="#" style="color: #4f46e5; white-space: nowrap;">更多(0) <i data-lucide="chevron-down" style="width: 10px; height: 10px; display: inline;"></i></a>
+                            <div style="border-left: 1px solid #e2e8f0; height: 20px; margin: 0 8px;"></div>
+                            <div style="display: flex; align-items: center; gap: 12px; color: #64748b; white-space: nowrap;">
+                                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="checkbox"> 仅显示已勾选</label>
+                                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="pay-view-type" checked> 全部</label>
+                                <div class="select-box" style="width: 100px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: white;"><span>按费用明细</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button style="height: 28px; padding: 0 12px; background: white; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer;">自动分配</button>
+                                <button style="height: 28px; padding: 0 12px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 4px; cursor: pointer;">重置</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Table -->
+                        <div style="flex: 1; background: white; border: 1px solid #e2e8f0; border-radius: 4px; overflow: auto;">
+                             <table style="width: 100%; border-collapse: collapse; min-width: 2200px; font-size: 12px;">
+                                <thead style="background: #f8fafc; color: #64748b; position: sticky; top: 0; z-index: 10;">
+                                    <tr>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;">#</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox"></th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">账单号</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">工作单号</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">结算单位</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">计费日期</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">币种</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">业务项</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: right;">数量</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: center;">单位</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: right;">金额</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: right;">本期应收余额</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: right; background: #fffbeb;">本期应付(原币)</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: right; background: #fffbeb;">本期折算额(折合)</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">工作单日期</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">费用参考号</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">工作单参考号</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">中转单号</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">所属公司</th>
+                                        <th style="padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left;">委托人</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                     <tr style="border-bottom: 1px solid #f1f5f9;">
+                                         <td style="padding: 10px; text-align: center;">1</td>
                                          <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
-                                         <td style="padding: 10px;">B2023120101</td>
+                                         <td style="padding: 10px; color: #4f46e5;">B2023120101</td>
                                          <td style="padding: 10px;">Y02512-0030</td>
                                          <td style="padding: 10px;">上海市东方国际物流集团</td>
                                          <td style="padding: 10px;">2023-12-01</td>
-                                         <td style="padding: 10px;">运费</td>
                                          <td style="padding: 10px;">USD</td>
-                                         <td style="padding: 10px;">1</td>
-                                         <td style="padding: 10px;">500.00</td>
-                                         <td style="padding: 10px;">500.00</td>
-                                         <td style="padding: 10px;">500.00</td>
-                                         <td style="padding: 10px;">500.00</td>
-                                         <td style="padding: 10px;">3500.00</td>
+                                         <td style="padding: 10px;">运费</td>
+                                         <td style="padding: 10px; text-align: right;">1.00</td>
+                                         <td style="padding: 10px; text-align: center;">UNIT</td>
+                                         <td style="padding: 10px; text-align: right;">500.00</td>
+                                         <td style="padding: 10px; text-align: right;">500.00</td>
+                                         <td style="padding: 10px; text-align: right; background: #fffbeb;">500.00</td>
+                                         <td style="padding: 10px; text-align: right; background: #fffbeb;">3500.00</td>
                                          <td style="padding: 10px;">2023-12-01</td>
                                          <td style="padding: 10px;">-</td>
                                          <td style="padding: 10px;">REF123456</td>
                                          <td style="padding: 10px;">-</td>
                                          <td style="padding: 10px;">丰源集团</td>
                                          <td style="padding: 10px;">-</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                                         <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
-                                         <td style="padding: 10px;">B2023120202</td>
-                                         <td style="padding: 10px;">Y02512-0031</td>
-                                         <td style="padding: 10px;">深圳市好运来货运代理有限公司</td>
-                                         <td style="padding: 10px;">2023-12-02</td>
-                                         <td style="padding: 10px;">操作费</td>
-                                         <td style="padding: 10px;">CNY</td>
-                                         <td style="padding: 10px;">1</td>
-                                         <td style="padding: 10px;">200.00</td>
-                                         <td style="padding: 10px;">200.00</td>
-                                         <td style="padding: 10px;">200.00</td>
-                                         <td style="padding: 10px;">200.00</td>
-                                         <td style="padding: 10px;">200.00</td>
-                                         <td style="padding: 10px;">2023-12-02</td>
-                                         <td style="padding: 10px;">-</td>
-                                         <td style="padding: 10px;">REF123457</td>
-                                         <td style="padding: 10px;">-</td>
-                                         <td style="padding: 10px;">丰源集团</td>
-                                         <td style="padding: 10px;">-</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                                         <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
-                                         <td style="padding: 10px;">B2023120303</td>
-                                         <td style="padding: 10px;">Y02512-0032</td>
-                                         <td style="padding: 10px;">广州市顺风物流有限公司</td>
-                                         <td style="padding: 10px;">2023-12-03</td>
-                                         <td style="padding: 10px;">文件费</td>
-                                         <td style="padding: 10px;">CNY</td>
-                                         <td style="padding: 10px;">1</td>
-                                         <td style="padding: 10px;">50.00</td>
-                                         <td style="padding: 10px;">50.00</td>
-                                         <td style="padding: 10px;">50.00</td>
-                                         <td style="padding: 10px;">50.00</td>
-                                         <td style="padding: 10px;">50.00</td>
-                                         <td style="padding: 10px;">2023-12-03</td>
-                                         <td style="padding: 10px;">-</td>
-                                         <td style="padding: 10px;">REF123458</td>
-                                         <td style="padding: 10px;">-</td>
-                                         <td style="padding: 10px;">丰源集团</td>
-                                         <td style="padding: 10px;">-</td>
-                                    </tr>
-                                 </tbody>
+                                     </tr>
+                                </tbody>
                              </table>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -4856,250 +4871,16 @@ function renderTabs(activeTab) {
                     </div>
                 </div>`;
 
-        } else if (activeTab === '账户充值') {
-            mainContent = `
-                <!-- Recharge Container -->
-                <div class="recharge-container">
-                    <!-- Left Panel -->
-                    <div class="left-panel">
-                        <!-- User Info Card -->
-                        <div class="info-card">
-                            <div class="card-header">
-                                <h3>账户信息</h3>
-                                <i data-lucide="user" style="color: #4a9eff; width: 24px; height: 24px;"></i>
-                            </div>
-                            <div class="balance-display">
-                                <div class="balance-label">当前余额</div>
-                                <div class="balance-amount">¥8,450.00</div>
-                                <div class="balance-label">人民币</div>
-                            </div>
-                            <div class="user-details">
-                                <div class="detail-item">
-                                    <h4>用户ID</h4>
-                                    <p>ERP-2023-0582</p>
-                                </div>
-                                <div class="detail-item">
-                                    <h4>公司名称</h4>
-                                    <p>创新科技有限公司</p>
-                                </div>
-                                <div class="detail-item">
-                                    <h4>账户等级</h4>
-                                    <p>VIP 2级</p>
-                                </div>
-                                <div class="detail-item">
-                                    <h4>最后充值</h4>
-                                    <p>2023-10-15</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Records -->
-                        <div class="recent-records">
-                            <div class="card-header">
-                                <h3>最近流水记录</h3>
-                                <i data-lucide="history" style="color: #4a9eff; width: 20px; height: 20px;"></i>
-                            </div>
-                            <div class="records-list">
-                                <div class="record-item">
-                                    <div>
-                                        <div class="record-amount" style="color: #ef4444;">-¥2,000.00</div>
-                                        <div class="record-date">整车运输</div>
-                                    </div>
-                                    <div class="record-date">2025-12-29</div>
-                                </div>
-                                <div class="record-item">
-                                    <div>
-                                        <div class="record-amount">¥2,000.00</div>
-                                        <div class="record-date">支付宝充值</div>
-                                    </div>
-                                    <div class="record-date">2023-10-15</div>
-                                </div>
-                                <div class="record-item">
-                                    <div>
-                                        <div class="record-amount">¥1,500.00</div>
-                                        <div class="record-date">微信支付</div>
-                                    </div>
-                                    <div class="record-date">2023-09-28</div>
-                                </div>
-                                <div class="record-item">
-                                    <div>
-                                        <div class="record-amount">¥3,000.00</div>
-                                        <div class="record-date">银行转账</div>
-                                    </div>
-                                    <div class="record-date">2023-09-10</div>
-                                </div>
-                                <div class="record-item">
-                                    <div>
-                                        <div class="record-amount">¥1,000.00</div>
-                                        <div class="record-date">支付宝充值</div>
-                                    </div>
-                                    <div class="record-date">2023-08-25</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Panel -->
-                    <div class="recharge-panel">
-                        <!-- Steps -->
-                        <div class="step-indicator">
-                            <div class="step active">
-                                <div class="step-circle">1</div>
-                                <div class="step-text">选择金额</div>
-                            </div>
-                            <div class="step">
-                                <div class="step-circle">2</div>
-                                <div class="step-text">选择支付方式</div>
-                            </div>
-                            <div class="step">
-                                <div class="step-circle">3</div>
-                                <div class="step-text">确认支付</div>
-                            </div>
-                        </div>
-
-                        <!-- Amount Selection -->
-                        <div class="amount-selection">
-                            <h3>选择充值金额</h3>
-                            <div class="amount-options">
-                                <div class="amount-option" data-amount="100">
-                                    <div class="amount-value">¥100</div>
-                                    <div class="amount-note">普通用户</div>
-                                </div>
-                                <div class="amount-option" data-amount="500">
-                                    <div class="amount-value">¥500</div>
-                                    <div class="amount-note">赠送¥10</div>
-                                </div>
-                                <div class="amount-option selected" data-amount="1000">
-                                    <div class="amount-value">¥1,000</div>
-                                    <div class="amount-note">赠送¥30</div>
-                                </div>
-                                <div class="amount-option" data-amount="2000">
-                                    <div class="amount-value">¥2,000</div>
-                                    <div class="amount-note">赠送¥60</div>
-                                </div>
-                                <div class="amount-option" data-amount="5000">
-                                    <div class="amount-value">¥5,000</div>
-                                    <div class="amount-note">赠送¥150</div>
-                                </div>
-                                <div class="amount-option" data-amount="10000">
-                                    <div class="amount-value">¥10,000</div>
-                                    <div class="amount-note">赠送¥300</div>
-                                </div>
-                            </div>
-                            <div class="custom-amount">
-                                <h4>自定义金额</h4>
-                                <input type="number" id="customAmount" placeholder="请输入充值金额（最低100元）" min="100" step="100">
-                            </div>
-                        </div>
-
-                        <!-- Payment Methods -->
-                        <div class="payment-methods">
-                            <h3>选择支付方式</h3>
-                            <div class="payment-options">
-                                <div class="payment-option selected" data-method="alipay">
-                                    <div class="payment-icon alipay">
-                                        <i data-lucide="scan-line"></i>
-                                    </div>
-                                    <div class="payment-info">
-                                        <h4>支付宝</h4>
-                                        <p>推荐使用，即时到账</p>
-                                    </div>
-                                </div>
-                                <div class="payment-option" data-method="wechat">
-                                    <div class="payment-icon wechat">
-                                        <i data-lucide="message-circle"></i>
-                                    </div>
-                                    <div class="payment-info">
-                                        <h4>微信支付</h4>
-                                        <p>扫码支付，安全快捷</p>
-                                    </div>
-                                </div>
-                                <div class="payment-option" data-method="bank">
-                                    <div class="payment-icon bank">
-                                        <i data-lucide="landmark"></i>
-                                    </div>
-                                    <div class="payment-info">
-                                        <h4>银行转账</h4>
-                                        <p>下载导入模板对公账户，1-3工作日到账</p>
-                                    </div>
-                                </div>
-                                <div class="payment-option" data-method="other">
-                                    <div class="payment-icon other">
-                                        <i data-lucide="credit-card"></i>
-                                    </div>
-                                    <div class="payment-info">
-                                        <h4>其他支付</h4>
-                                        <p>银联、PayPal等</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="action-buttons">
-                            <button class="btn btn-secondary" id="cancelBtn">
-                                <i data-lucide="x" style="width: 16px; height: 16px;"></i> 取消
-                            </button>
-                            <button class="btn btn-primary" id="nextBtn">
-                                下一步<i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment Modal -->
-                <div class="modal" id="paymentModal">
-                    <div class="modal-content-custom">
-                        <div class="modal-header-custom">
-                            <h3>支付宝支付</h3>
-                            <button class="close-modal-btn" id="closeModal">&times;</button>
-                        </div>
-                        <div class="payment-qr">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://alipay.com/pay?amount=1000" alt="支付宝支付二维码">
-                            <p>请使用支付宝扫描二维码完成支付</p>
-                            <p>支付金额：<strong>¥1,000.00</strong></p>
-                        </div>
-                        <div class="action-buttons">
-                            <button class="btn btn-secondary" id="cancelPayment">取消支付</button>
-                            <button class="btn btn-success" id="confirmPayment">已完成支付</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Success Modal -->
-                <div class="modal" id="successModal">
-                    <div class="modal-content-custom">
-                        <div class="modal-header-custom">
-                            <h3>充值成功</h3>
-                            <button class="close-modal-btn" id="closeSuccessModal">&times;</button>
-                        </div>
-                        <div class="success-message">
-                            <div class="success-icon">
-                                <i data-lucide="check" style="width: 40px; height: 40px;"></i>
-                            </div>
-                            <h3>充值成功！</h3>
-                            <p>充值金额：<strong>¥1,000.00</strong></p>
-                            <p>赠送金额：<strong>¥30.00</strong></p>
-                            <p>到账金额：<strong>¥1,030.00</strong></p>
-                            <p style="margin-top: 20px; color: #64748b;">您的账户余额已更新</p>
-                        </div>
-                        <div class="action-buttons">
-                            <button class="btn btn-primary" id="backToRecharge">返回充值页面</button>
-                            <button class="btn btn-success" id="viewBalance">查看账户余额</button>
-                        </div>
-                    </div>
-                </div>`;
-
         } else {
             document.querySelector('.page-content').innerHTML = `
-                    <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; height: 100%;">
+                <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; height: 100%;">
                 <h2 style="color: #1e293b; margin-bottom: 1rem;">${activeTab} Content</h2>
                 <p style="color: #64748b;">This is a demonstration of the ${activeTab} page view.</p>
                 </div>`;
         }
 
         if (mainContent) {
-            const showSidebar = !['业务员成本明细', '代收代付明细', '开票费用配置', '红字申请确认单', '结算单位', '银行收款流水', '银行付款流水', '银企直连配置', '接收账单', '结算设置', '账户充值', '后台管理'].includes(activeTab);
+            const showSidebar = !['业务员成本明细', '代收代付明细', '开票费用配置', '红字申请确认单', '结算单位', '银行收款流水', '银行付款流水', '银企直连配置', '接收账单', '结算设置', '后台管理'].includes(activeTab);
             let contentHTML = '';
             if (showSidebar) {
                 contentHTML = `
@@ -5109,7 +4890,7 @@ function renderTabs(activeTab) {
                         <div class="sidebar-search">
                             <div class="search-input-group">
                                 <input type="text" placeholder="请输入">
-                                <i data-lucide="search" class="search-icon"></i>
+                                    <i data-lucide="search" class="search-icon"></i>
                             </div>
                             <button class="more-btn" style="white-space: nowrap;">更多</button>
                         </div>
@@ -5137,11 +4918,6 @@ function renderTabs(activeTab) {
 
         lucide.createIcons();
 
-        if (activeTab === '账户充值') {
-            if (typeof initRechargePage === 'function') {
-                initRechargePage();
-            }
-        }
 
         if (activeTab === '费用明细') {
             updateGenerateBillButtonState();
@@ -5184,7 +4960,7 @@ function renderTabs(activeTab) {
                         modal.classList.remove('hidden');
 
                         // Store specific current row elements to update later
-                        window.currentRowBalanceElement = btn.closest('tr').querySelector('td:nth-child(3)');
+                        window.currentRowBalanceElement = btn.closest('tr').querySelector('td:nth-child(4)');
                         window.currentUserBalanceRaw = parseFloat(balance.replace(/,/g, ''));
 
                         document.getElementById('modal-user-name').textContent = name;
@@ -5288,14 +5064,14 @@ function renderTabs(activeTab) {
 
                     const tbody = document.getElementById('details-transaction-list');
                     tbody.innerHTML = mockData.map(item => `
-                       <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
                            <td style="padding: 12px;">${item.time}</td>
                            <td style="padding: 12px;">${item.type}</td>
                            <td style="padding: 12px; font-weight: 600; color: ${item.color};">${item.amount}</td>
                            <td style="padding: 12px;">${item.method}</td>
                            <td style="padding: 12px; color: #64748b;">${item.note}</td>
-                       </tr>
-                   `).join('');
+                        </tr>
+                `).join('');
 
                     if (detailsModal) {
                         detailsModal.style.display = 'flex';
@@ -5543,8 +5319,8 @@ function showNewReceiptModal() {
     }
 
     modal.innerHTML = `
-                <div class="modal-container" style="width: 95vw; max-width: 1600px; height: 95vh; display: flex; flex-direction: column;">
-        <!-- Header -->
+                < div class="modal-container" style = "width: 95vw; max-width: 1600px; height: 95vh; display: flex; flex-direction: column;" >
+        < !--Header -->
         <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 0 16px; height: 48px; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 0.85rem; color: #64748b;">核销单号:</span>
@@ -5779,7 +5555,7 @@ function showNewReceiptModal() {
                 </table>
             </div>
         </div>
-    </div>
+    </div >
                 `;
 
     modal.classList.add('show');
@@ -5826,212 +5602,6 @@ function toggleBankConfigTab(tab) {
     }
 }
 
-/* Account Recharge Page Logic */
-function initRechargePage() {
-    const amountOptions = document.querySelectorAll('.amount-option');
-    const customAmountInput = document.getElementById('customAmount');
-    const paymentOptions = document.querySelectorAll('.payment-option');
-    const nextBtn = document.getElementById('nextBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const paymentModal = document.getElementById('paymentModal');
-    const successModal = document.getElementById('successModal');
-    const closeModalBtn = document.getElementById('closeModal');
-    const cancelPaymentBtn = document.getElementById('cancelPayment');
-    const confirmPaymentBtn = document.getElementById('confirmPayment');
-    const closeSuccessModalBtn = document.getElementById('closeSuccessModal');
-    const backToRechargeBtn = document.getElementById('backToRecharge');
-    const viewBalanceBtn = document.getElementById('viewBalance');
-    const steps = document.querySelectorAll('.step');
-
-    let selectedAmount = 1000;
-    let selectedPaymentMethod = 'alipay';
-
-    // Helper functions
-    function updateAmountSelection(amount) {
-        selectedAmount = amount;
-        amountOptions.forEach(option => {
-            const optionAmount = parseInt(option.getAttribute('data-amount'));
-            if (optionAmount === amount) option.classList.add('selected');
-            else option.classList.remove('selected');
-        });
-        const isPresetAmount = Array.from(amountOptions).some(option => parseInt(option.getAttribute('data-amount')) === amount);
-        if (!isPresetAmount) amountOptions.forEach(option => option.classList.remove('selected'));
-    }
-
-    function updatePaymentSelection(method) {
-        selectedPaymentMethod = method;
-        paymentOptions.forEach(option => {
-            if (option.getAttribute('data-method') === method) option.classList.add('selected');
-            else option.classList.remove('selected');
-        });
-    }
-
-    function resetSelections() {
-        updateAmountSelection(1000);
-        if (customAmountInput) customAmountInput.value = '';
-        updatePaymentSelection('alipay');
-        steps.forEach(step => step.classList.remove('active', 'completed'));
-        if (steps[0]) steps[0].classList.add('active');
-        if (nextBtn) {
-            nextBtn.innerHTML = '下一步 <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>';
-            nextBtn.id = 'nextBtn';
-        }
-        lucide.createIcons();
-    }
-
-    // Event Listeners
-    if (amountOptions) amountOptions.forEach(option => {
-        option.addEventListener('click', function () {
-            const amount = parseInt(this.getAttribute('data-amount'));
-            updateAmountSelection(amount);
-            if (customAmountInput) customAmountInput.value = '';
-        });
-    });
-
-    if (customAmountInput) customAmountInput.addEventListener('input', function () {
-        if (this.value) {
-            const amount = parseInt(this.value);
-            if (amount >= 100) updateAmountSelection(amount);
-        }
-    });
-
-    if (paymentOptions) paymentOptions.forEach(option => {
-        option.addEventListener('click', function () {
-            const method = this.getAttribute('data-method');
-            updatePaymentSelection(method);
-        });
-    });
-
-    let currentStep = 1;
-    if (nextBtn) {
-        const newNextBtn = nextBtn.cloneNode(true);
-        nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-
-        newNextBtn.addEventListener('click', function () {
-            if (currentStep === 1) {
-                if (selectedAmount < 100) {
-                    alert('充值金额不能低于100元');
-                    return;
-                }
-
-                steps[0].classList.remove('active');
-                steps[0].classList.add('completed');
-                steps[1].classList.add('active');
-
-                this.innerHTML = '确认支付 <i data-lucide="check" style="width: 16px; height: 16px;"></i>';
-                lucide.createIcons();
-                currentStep = 2;
-            } else if (currentStep === 2) {
-                paymentModal.style.display = 'flex';
-                // Trigger reflow/animation if needed, but flex is enough here
-
-                const modalHeader = paymentModal.querySelector('.modal-header-custom h3');
-                const qrImg = paymentModal.querySelector('.payment-qr img');
-                const amountText = paymentModal.querySelector('.payment-qr p:nth-child(3) strong');
-
-                let paymentName = '支付宝';
-                if (selectedPaymentMethod === 'wechat') paymentName = '微信';
-                else if (selectedPaymentMethod === 'bank') paymentName = '银行转账';
-                else if (selectedPaymentMethod === 'other') paymentName = '其他支付';
-
-                modalHeader.textContent = `${paymentName}支付`;
-                // Mock QR code
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://pay.com/${selectedPaymentMethod}?amount=${selectedAmount}`;
-                amountText.textContent = `¥${selectedAmount.toFixed(2)}`;
-            }
-        });
-    }
-
-    if (cancelBtn) cancelBtn.addEventListener('click', function () {
-        if (confirm('确定要取消充值吗？')) {
-            resetSelections();
-            currentStep = 1;
-        }
-    });
-
-    if (closeModalBtn) closeModalBtn.addEventListener('click', () => paymentModal.style.display = 'none');
-    if (cancelPaymentBtn) cancelPaymentBtn.addEventListener('click', () => {
-        paymentModal.style.display = 'none';
-        resetSelections();
-        currentStep = 1;
-    });
-
-    if (confirmPaymentBtn) confirmPaymentBtn.addEventListener('click', () => {
-        paymentModal.style.display = 'none';
-
-        steps[1].classList.remove('active');
-        steps[1].classList.add('completed');
-        steps[2].classList.add('active');
-
-        setTimeout(() => {
-            successModal.style.display = 'flex';
-            const rechargeAmount = successModal.querySelector('.success-message p:nth-child(3) strong');
-            const bonusAmount = successModal.querySelector('.success-message p:nth-child(4) strong');
-            const totalAmount = successModal.querySelector('.success-message p:nth-child(5) strong');
-
-            let bonus = 0;
-            if (selectedAmount === 500) bonus = 10;
-            else if (selectedAmount === 1000) bonus = 30;
-            else if (selectedAmount === 2000) bonus = 80;
-            else if (selectedAmount === 5000) bonus = 250;
-            else if (selectedAmount === 10000) bonus = 600;
-
-            rechargeAmount.textContent = `¥${selectedAmount.toFixed(2)}`;
-            bonusAmount.textContent = `¥${bonus.toFixed(2)}`;
-            totalAmount.textContent = `¥${(selectedAmount + bonus).toFixed(2)}`;
-        }, 500);
-    });
-
-    if (closeSuccessModalBtn) closeSuccessModalBtn.addEventListener('click', () => {
-        successModal.style.display = 'none';
-        resetSelections();
-        currentStep = 1;
-    });
-
-    if (backToRechargeBtn) backToRechargeBtn.addEventListener('click', () => {
-        successModal.style.display = 'none';
-        resetSelections();
-        currentStep = 1;
-    });
-
-    if (viewBalanceBtn) viewBalanceBtn.addEventListener('click', () => {
-        successModal.style.display = 'none';
-        resetSelections();
-        currentStep = 1;
-
-        const balanceAmount = document.querySelector('.balance-amount');
-        if (balanceAmount) {
-            const currentBalance = parseFloat(balanceAmount.textContent.replace(/[^0-9.-]+/g, ''));
-            const newBalance = currentBalance + selectedAmount + (selectedAmount === 1000 ? 30 : 0);
-            balanceAmount.textContent = `¥${newBalance.toFixed(2)}`;
-        }
-
-        const recordsList = document.querySelector('.records-list');
-        if (recordsList) {
-            const newRecord = document.createElement('div');
-            newRecord.className = 'record-item';
-            const date = new Date();
-            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            let paymentMethodText = '支付宝充值';
-            if (selectedPaymentMethod === 'wechat') paymentMethodText = '微信支付';
-            else if (selectedPaymentMethod === 'bank') paymentMethodText = '银行转账';
-
-            newRecord.innerHTML = `
-                <div>
-                    <div class="record-amount">¥${selectedAmount.toFixed(2)}</div>
-                    <div class="record-date">${paymentMethodText}</div>
-                </div>
-                <div class="record-date">${formattedDate}</div>
-            `;
-            recordsList.insertBefore(newRecord, recordsList.firstChild);
-        }
-    });
-
-    window.onclick = function (event) {
-        if (event.target == paymentModal) paymentModal.style.display = 'none';
-        if (event.target == successModal) successModal.style.display = 'none';
-    }
-}
 
 /**
  * Switches between internal tabs (e.g., in the Reconciliation page).
@@ -6079,9 +5649,9 @@ function toggleTabFilters(btn) {
     const isCollapsed = expandableArea.classList.toggle('collapsed');
 
     if (isCollapsed) {
-        btn.innerHTML = `更多(0) <i data-lucide="chevron-down" style="width: 12px; display: inline;"></i>`;
+        btn.innerHTML = `更多(0) < i data - lucide="chevron-down" style = "width: 12px; display: inline;" ></i > `;
     } else {
-        btn.innerHTML = `收起 <i data-lucide="chevron-up" style="width: 12px; display: inline;"></i>`;
+        btn.innerHTML = `收起 < i data - lucide="chevron-up" style = "width: 12px; display: inline;" ></i > `;
     }
 
     if (window.lucide) {
@@ -6098,9 +5668,9 @@ document.addEventListener('click', (e) => {
         if (expandableArea) {
             const isCollapsed = expandableArea.classList.toggle('collapsed');
             if (isCollapsed) {
-                btn.innerHTML = `More(2) <i data-lucide="chevron-down"></i>`;
+                btn.innerHTML = `More(2) < i data - lucide="chevron-down" ></i > `;
             } else {
-                btn.innerHTML = `Less <i data-lucide="chevron-up"></i>`;
+                btn.innerHTML = `Less < i data - lucide="chevron-up" ></i > `;
             }
             if (window.lucide) window.lucide.createIcons();
         }
@@ -6161,6 +5731,30 @@ window.showCreateStatement = function () {
 window.hideCreateStatement = function () {
     const listView = document.getElementById('statement-list-view');
     const createView = document.getElementById('statement-create-view');
+    const sidebar = document.querySelector('.customer-sidebar');
+    if (listView) listView.style.display = 'flex';
+    if (createView) createView.style.display = 'none';
+    if (sidebar) sidebar.style.display = 'flex';
+};
+
+/**
+ * Shows the Payment Application Create view and hides the List view and Sidebar.
+ */
+window.openPaymentApplicationCreateView = function () {
+    const listView = document.getElementById('payment-application-list-view');
+    const createView = document.getElementById('payment-application-create-view');
+    const sidebar = document.querySelector('.customer-sidebar');
+    if (listView) listView.style.display = 'none';
+    if (createView) createView.style.display = 'flex';
+    if (sidebar) sidebar.style.display = 'none';
+};
+
+/**
+ * Hides the Payment Application Create view and restores the List view and Sidebar.
+ */
+window.closePaymentApplicationCreateView = function () {
+    const listView = document.getElementById('payment-application-list-view');
+    const createView = document.getElementById('payment-application-create-view');
     const sidebar = document.querySelector('.customer-sidebar');
     if (listView) listView.style.display = 'flex';
     if (createView) createView.style.display = 'none';
@@ -6235,7 +5829,7 @@ window.showGenerateBillModal = function () {
         modal.id = 'generate-bill-modal';
         modal.className = 'modal-overlay';
         modal.innerHTML = `
-            <div class="modal-container" style="max-width: 1000px; height: auto; max-height: 90vh;">
+                <div class="modal-container" style="max-width: 1000px; height: auto; max-height: 90vh;">
                 <div class="modal-header">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span>账单信息</span>
@@ -6302,7 +5896,7 @@ window.showGenerateBillModal = function () {
                     <button class="primary-btn" onclick="closeGenerateBillModal()" style="height: 32px; padding: 0 20px; border: none; background: #4f46e5; color: white; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">确认</button>
                 </div>
             </div>
-        `;
+                `;
         document.body.appendChild(modal);
     }
     modal.classList.add('show');
