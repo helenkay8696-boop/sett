@@ -37,7 +37,7 @@ const menuData = [
     {
         title: "充值管理",
         icon: "wallet",
-        items: ["后台管理"]
+        items: ["油卡管理", "后台管理"]
     },
     {
         title: "设置",
@@ -45,6 +45,191 @@ const menuData = [
         items: ["结算设置"]
     }
 ];
+
+const businessMenuData = [
+    {
+        title: "业务管理",
+        icon: "briefcase",
+        items: ["录入订单"]
+    }
+];
+
+window.pendingRechargeRequests = [];
+window.processedRechargeRequests = [];
+
+// --- Expense Audit Data ---
+window.expenseAuditData = [];
+
+window.updateOrderEntryTotals = function () {
+    const additionalFeeInput = document.getElementById('entry-additional-fee');
+    const advanceTotalInput = document.getElementById('entry-advance-total');
+    const freightInput = document.getElementById('entry-freight');
+    const revenueTotalInput = document.getElementById('entry-revenue-total');
+
+    let revenueSideTotal = 0;
+    let advanceSideTotal = 0;
+
+    window.expenseAuditData.forEach(e => {
+        if (e.expenseType === 'revenue') {
+            revenueSideTotal += (parseFloat(e.revenue) || 0);
+        } else if (e.expenseType === 'advance') {
+            advanceSideTotal += (parseFloat(e.cost) || 0);
+        }
+    });
+
+    if (additionalFeeInput) additionalFeeInput.value = revenueSideTotal.toFixed(2);
+    if (advanceTotalInput) advanceTotalInput.value = advanceSideTotal.toFixed(2);
+
+    // Calculate overall revenue total: Freight + Additional Fee
+    if (revenueTotalInput) {
+        const freight = freightInput ? (parseFloat(freightInput.value) || 0) : 0;
+        const additional = revenueSideTotal;
+        revenueTotalInput.value = (freight + additional).toFixed(2);
+    }
+};
+
+/**
+ * Calculates the total pieces, weight, and volume from the cargo list.
+ */
+window.calculateItemizedBilling = function () {
+    const counts = document.querySelectorAll('.cargo-count');
+    const weights = document.querySelectorAll('.cargo-weight');
+    const volumes = document.querySelectorAll('.cargo-volume');
+    const freightSubtotals = document.querySelectorAll('.cargo-freight-subtotal');
+
+    // Get all method selects and unit price inputs to calculate row subtotals first
+    const methods = document.querySelectorAll('.cargo-pricing-method');
+    const unitPrices = document.querySelectorAll('.cargo-unit-price');
+    const mileageInput = document.getElementById('entry-mileage');
+    const mileage = parseFloat(mileageInput?.value) || 0;
+
+    const summaryCount = document.getElementById('summary-count');
+    const summaryWeight = document.getElementById('summary-weight');
+    const summaryVolume = document.getElementById('summary-volume');
+    const entryFreight = document.getElementById('entry-freight');
+
+    let totalCount = 0;
+    let totalWeight = 0;
+    let totalVolume = 0;
+    let totalFreight = 0;
+
+    // First pass: Calculate Row Subtotals
+    for (let i = 0; i < methods.length; i++) {
+        const method = methods[i].value;
+        const price = parseFloat(unitPrices[i]?.value) || 0;
+        let subtotal = 0;
+
+        if (price > 0) {
+            if (method === '按件数') {
+                const count = parseFloat(counts[i]?.value) || 0;
+                subtotal = count * price;
+            } else if (method === '按重量') {
+                const weight = parseFloat(weights[i]?.value) || 0;
+                subtotal = weight * price;
+            } else if (method === '按体积') {
+                const volume = parseFloat(volumes[i]?.value) || 0;
+                subtotal = volume * price;
+            } else if (method === '按吨公里') {
+                const weight = parseFloat(weights[i]?.value) || 0;
+                if (mileage > 0) {
+                    subtotal = weight * price * mileage;
+                } else {
+                    // Optional: alert user if mileage is missing but required
+                    // console.warn('Mileage is required for ton-kilometer pricing');
+                }
+            }
+            // Add other methods if needed, for now these are the primary ones requested
+        }
+
+        // Update the subtotal input for this row
+        if (freightSubtotals[i]) {
+            freightSubtotals[i].value = subtotal > 0 ? subtotal.toFixed(2) : '';
+        }
+    }
+
+    // Second pass: Sum up totals
+    counts.forEach(input => {
+        totalCount += (parseFloat(input.value) || 0);
+    });
+
+    weights.forEach(input => {
+        totalWeight += (parseFloat(input.value) || 0);
+    });
+
+    volumes.forEach(input => {
+        totalVolume += (parseFloat(input.value) || 0);
+    });
+
+    freightSubtotals.forEach(input => {
+        totalFreight += (parseFloat(input.value) || 0);
+    });
+
+    if (summaryCount) summaryCount.value = totalCount || '';
+    if (summaryWeight) summaryWeight.value = totalWeight ? totalWeight.toFixed(2) : '';
+    if (summaryVolume) summaryVolume.value = totalVolume ? totalVolume.toFixed(2) : '';
+    if (entryFreight) entryFreight.value = totalFreight ? totalFreight.toFixed(2) : '';
+
+    // Also update order entry totals just in case
+    window.updateOrderEntryTotals();
+};
+
+/**
+ * Synchronizes the pricing method from the summary area to all cargo items.
+ */
+window.syncPricingMethod = function () {
+    const summaryMethodSelect = document.getElementById('summary-pricing-method');
+    if (!summaryMethodSelect) return;
+
+    const selectedMethod = summaryMethodSelect.value;
+    const cargoSelects = document.querySelectorAll('.cargo-pricing-method');
+
+    cargoSelects.forEach(select => {
+        select.value = selectedMethod;
+    });
+};
+
+/**
+ * Calculates freight based on billable weight and unit price.
+ */
+window.calculateFreight = function () {
+    const billableWeightInput = document.getElementById('entry-billable-weight');
+    const unitPriceInput = document.getElementById('entry-unit-price');
+    const freightInput = document.getElementById('entry-freight');
+
+    if (billableWeightInput && unitPriceInput && freightInput) {
+        const weight = parseFloat(billableWeightInput.value) || 0;
+        const price = parseFloat(unitPriceInput.value) || 0;
+        freightInput.value = (weight * price).toFixed(2);
+
+        // Trigger total calculation update
+        window.updateOrderEntryTotals();
+    }
+};
+
+/**
+ * Submits an expense item for audit.
+ */
+window.submitExpenseAudit = function (orderId) {
+    const expense = window.expenseAuditData.find(e => e.id === orderId);
+    if (!expense || expense.status !== '未提交') return;
+
+    expense.status = '审核中';
+
+    const task = {
+        id: 'EXP-' + orderId,
+        cardId: orderId, // Reuse field for simplicity
+        cardName: expense.type,
+        amount: expense.cost,
+        applicant: expense.salesman,
+        applyTime: new Date().toLocaleString(),
+        type: 'expense_audit', // Custom type
+        orderId: orderId
+    };
+
+    window.pendingRechargeRequests.push(task);
+    alert('费用审核申请已提交至任务中心');
+    addTab('费用审核'); // Refresh view
+};
 
 function renderMenu() {
     const container = document.getElementById('secondary-content');
@@ -83,6 +268,80 @@ function renderMenu() {
     lucide.createIcons();
 }
 
+/**
+ * Renders the Workbench menu in the secondary sidebar
+ */
+function renderWorkbenchMenu() {
+    const container = document.getElementById('secondary-content');
+    container.innerHTML = '';
+
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'menu-section';
+
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `
+        <i data-lucide="layout-dashboard"></i>
+        <span>工作台</span>
+    `;
+    sectionDiv.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'menu-grid';
+
+    const items = ['运营概览', '任务中心'];
+
+    items.forEach(item => {
+        const link = document.createElement('a');
+        link.className = 'menu-link';
+        link.textContent = item;
+        link.addEventListener('click', () => addTab(item));
+        grid.appendChild(link);
+    });
+
+    sectionDiv.appendChild(grid);
+    container.appendChild(sectionDiv);
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+/**
+ * Renders the Business menu in the secondary sidebar
+ */
+function renderBusinessMenu() {
+    const container = document.getElementById('secondary-content');
+    container.innerHTML = '';
+
+    businessMenuData.forEach(section => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'menu-section';
+
+        const header = document.createElement('div');
+        header.className = 'section-header';
+        header.innerHTML = `
+            <i data-lucide="${section.icon}"></i>
+            <span>${section.title}</span>
+        `;
+        sectionDiv.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'menu-grid';
+
+        section.items.forEach(item => {
+            const link = document.createElement('a');
+            link.className = 'menu-link';
+            link.textContent = item;
+            link.addEventListener('click', () => addTab(item));
+            grid.appendChild(link);
+        });
+
+        sectionDiv.appendChild(grid);
+        container.appendChild(sectionDiv);
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
 function initSidebar() {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
@@ -92,11 +351,17 @@ function initSidebar() {
             const title = item.getAttribute('data-title');
 
             if (title === '工作台') {
-                addTab('工作台');
+                document.querySelector('.sub-sidebar').classList.remove('hidden');
+                document.getElementById('menu-mask').classList.add('show');
+                renderWorkbenchMenu();
             } else if (title === '结算' || title === '充值管理') {
                 document.querySelector('.sub-sidebar').classList.remove('hidden');
                 document.getElementById('menu-mask').classList.add('show');
                 renderMenu();
+            } else if (title === '业务') {
+                document.querySelector('.sub-sidebar').classList.remove('hidden');
+                document.getElementById('menu-mask').classList.add('show');
+                renderBusinessMenu();
             } else {
                 // For other main categories, show a placeholder or just open secondary menu if applicable
                 alert('正在开发中...');
@@ -108,7 +373,7 @@ function initSidebar() {
 // Initialize "Workbench" by default
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
-    addTab('工作台');
+    addTab('运营概览');
 });
 
 let openTabs = [];
@@ -151,100 +416,20 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '工作台' || activeTab === '对账单' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '后台管理') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '后台管理' || activeTab === '油卡管理' || activeTab === '录入订单') {
 
 
         let mainContent = '';
-        if (activeTab === '工作台') {
+        if (activeTab === '运营概览') {
             mainContent = `
-                <div style="padding: 2rem; background: var(--bg-main); min-height: 100%;">
-                    <div style="margin-bottom: 2rem;">
-                        <h2 style="font-size: 1.5rem; color: var(--text-primary); margin-bottom: 0.5rem;">运营概览</h2>
-                        <p style="color: var(--text-secondary); font-size: 0.875rem;">欢迎回来，这是您今日的数据分析。</p>
-                    </div>
-                    
-                    <div class="dashboard-grid">
-                        <div class="stats-card">
-                            <div class="card-header">
-                                <div class="icon-box"><i data-lucide="truck"></i></div>
-                                <span class="trend up">+12%</span>
-                            </div>
-                            <div class="card-label">今日发货量</div>
-                            <div class="card-value">128</div>
-                        </div>
-                        <div class="stats-card">
-                            <div class="card-header">
-                                <div class="icon-box"><i data-lucide="package"></i></div>
-                                <span class="trend up">+5%</span>
-                            </div>
-                            <div class="card-label">在途车辆</div>
-                            <div class="card-value">45</div>
-                        </div>
-                        <div class="stats-card">
-                            <div class="card-header">
-                                <div class="icon-box"><i data-lucide="check-circle"></i></div>
-                                <span class="trend up">+8%</span>
-                            </div>
-                            <div class="card-label">今日已完结</div>
-                            <div class="card-value">86</div>
-                        </div>
-                        <div class="stats-card">
-                            <div class="card-header">
-                                <div class="icon-box"><i data-lucide="banknote"></i></div>
-                                <span class="trend down">-2.4%</span>
-                            </div>
-                            <div class="card-label">待结清金额</div>
-                            <div class="card-value">¥24.8k</div>
-                        </div>
-                    </div>
-
-                    <div style="background: white; border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                            <h3 style="font-size: 1.1rem; color: var(--text-primary);">实时运单动态</h3>
-                            <span style="color: var(--primary); font-size: 0.875rem; cursor: pointer;">查看全部</span>
-                        </div>
-                        <table class="data-table" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="text-align: left; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color);">
-                                    <th style="padding: 1rem;">运单号</th>
-                                    <th style="padding: 1rem;">线路</th>
-                                    <th style="padding: 1rem;">货物</th>
-                                    <th style="padding: 1rem;">状态</th>
-                                    <th style="padding: 1rem;">更新时间</th>
-                                </tr>
-                            </thead>
-                            <tbody style="font-size: 0.875rem; color: var(--text-primary);">
-                                <tr style="border-bottom: 1px solid var(--border-color);">
-                                    <td style="padding: 1rem; font-weight: 600;">#ORD-8829</td>
-                                    <td style="padding: 1rem;">广州 → 上海</td>
-                                    <td style="padding: 1rem;">精密电子 (2.5吨)</td>
-                                    <td style="padding: 1rem;"><span class="badge badge-blue">运输中</span></td>
-                                    <td style="padding: 1rem;">10:24</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid var(--border-color);">
-                                    <td style="padding: 1rem; font-weight: 600;">#ORD-8825</td>
-                                    <td style="padding: 1rem;">深圳 → 成都</td>
-                                    <td style="padding: 1rem;">日化用品 (8吨)</td>
-                                    <td style="padding: 1rem;"><span class="badge badge-green">待提货</span></td>
-                                    <td style="padding: 1rem;">09:15</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid var(--border-color);">
-                                    <td style="padding: 1rem; font-weight: 600;">#ORD-8821</td>
-                                    <td style="padding: 1rem;">北京 → 杭州</td>
-                                    <td style="padding: 1rem;">生鲜蔬果 (5吨)</td>
-                                    <td style="padding: 1rem;"><span class="badge badge-blue">运输中</span></td>
-                                    <td style="padding: 1rem;">08:45</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 1rem; font-weight: 600;">#ORD-8818</td>
-                                    <td style="padding: 1rem;">上海 → 苏州</td>
-                                    <td style="padding: 1rem;">机械零件 (1.2吨)</td>
-                                    <td style="padding: 1rem;"><span class="badge badge-yellow">待派货</span></td>
-                                    <td style="padding: 1rem;">08:12</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div id="workbench-content-area" style="height: 100%; overflow: auto; background: var(--bg-main);">
+                    ${window.renderWorkbenchOverview()}
+                </div>
+            `;
+        } else if (activeTab === '任务中心') {
+            mainContent = `
+                <div id="workbench-content-area" style="height: 100%; overflow: auto; background: var(--bg-main);">
+                    ${window.renderTaskCenter()}
                 </div>
             `;
         } else if (activeTab === '对账单') {
@@ -1428,6 +1613,153 @@ function renderTabs(activeTab) {
                             <button id="btn-details-recharge" onclick="switchToRechargeFromDetails()" style="height: 48px; padding: 0 32px; border: none; border-radius: 6px; background: #3b82f6; color: white; cursor: pointer; font-size: 1rem; font-weight: 500;">为此账户充值</button>
                         </div>
                     </div>
+                </div>
+            </div>`;
+        } else if (activeTab === '油卡管理') {
+            mainContent = `
+            <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white;">
+                <!-- Status Tabs -->
+                <div style="border-bottom: 1px solid #e2e8f0; padding: 0 24px;">
+                    <div class="status-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569; overflow-x: auto; align-items: center;">
+                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">待发放</div>
+                        <div style="width: 1px; height: 16px; background: #e2e8f0; margin: 0 -4px;"></div>
+                        <div class="status-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;" onclick="switchFuelCardTab(this)">全部</div>
+                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">在库</div>
+                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">发放</div>
+                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">注销</div>
+                    </div>
+                </div>
+
+                <!-- Filter Area -->
+                <div class="fuel-card-filter-area" style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: #fff; position: relative; z-index: 10;">
+                    <!-- 归属网点 -->
+                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                        <label style="font-size: 0.8rem; color: #475569;">归属网点</label>
+                        <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="event.stopPropagation(); window.toggleFuelCardDropdown('branch-dropdown')">
+                            <span id="fuel-card-branch-val">所有网点</span>
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                        </div>
+                        <div id="branch-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 1000; min-width: 120px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '所有网点', 'branch-dropdown')">所有网点</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '孝感总部', 'branch-dropdown')">孝感总部</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '快省供应链', 'branch-dropdown')">快省供应链</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '满满运', 'branch-dropdown')">满满运</div>
+                        </div>
+                    </div>
+                    <!-- 油卡编号 -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.8rem; color: #475569;">油卡编号</label>
+                        <input type="text" placeholder="请输入" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                    </div>
+                    <!-- 油卡类型 -->
+                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                        <label style="font-size: 0.8rem; color: #475569;">油卡类型</label>
+                        <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="event.stopPropagation(); window.toggleFuelCardDropdown('type-dropdown')">
+                            <span id="fuel-card-type-val">所有类型</span>
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                        </div>
+                        <div id="type-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 1000; min-width: 120px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-type-val', '所有类型', 'type-dropdown')">所有类型</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-type-val', '公司卡', 'type-dropdown')">公司卡</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-type-val', '客户卡', 'type-dropdown')">客户卡</div>
+                        </div>
+                    </div>
+                    <!-- 油卡状态 -->
+                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                        <label style="font-size: 0.8rem; color: #475569;">油卡状态</label>
+                        <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="event.stopPropagation(); window.toggleFuelCardDropdown('status-dropdown')">
+                            <span id="fuel-card-status-val">所有状态</span>
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                        </div>
+                        <div id="status-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 1000; min-width: 100px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '所有状态', 'status-dropdown')">所有状态</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '在库', 'status-dropdown')">在库</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '发放', 'status-dropdown')">发放</div>
+                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '注销', 'status-dropdown')">注销</div>
+                        </div>
+                    </div>
+                    <!-- 登记日期 -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.8rem; color: #475569;">登记日期</label>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569;">
+                            <span style="color: #94a3b8; font-size: 0.8rem;">-</span>
+                            <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569;">
+                        </div>
+                    </div>
+                    <!-- 注销日期 -->
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label style="font-size: 0.8rem; color: #475569;">注销日期</label>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569;">
+                            <span style="color: #94a3b8; font-size: 0.8rem;">-</span>
+                            <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569;">
+                        </div>
+                    </div>
+                    <!-- Search/Reset buttons -->
+                    <div style="display: flex; gap: 8px; margin-left: auto;">
+                        <button class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.8rem;">
+                            <i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询
+                        </button>
+                        <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">重置</button>
+                    </div>
+                </div>
+
+                <!-- Action Button Area -->
+                <div id="fuel-card-action-bar" style="padding: 8px 24px; border-bottom: 1px solid #e2e8f0; display: flex; gap: 8px; flex-wrap: wrap; background: #fff;">
+                    <button class="action-btn-custom" onclick="window.showFuelCardImportModal()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="upload" style="width: 12px; height: 12px;"></i> 油卡导入
+                    </button>
+                    <button class="action-btn-custom" onclick="window.showFuelCardRechargeModal()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="plus-square" style="width: 12px; height: 12px;"></i> 充值
+                    </button>
+                    <button class="action-btn-custom" onclick="window.showIssueFuelCardModal()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="arrow-right-circle" style="width: 12px; height: 12px;"></i> 发放
+                    </button>
+                    <button class="action-btn-custom" onclick="window.showRecoverFuelCardModal()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="rotate-ccw" style="width: 12px; height: 12px;"></i> 回收
+                    </button>
+                    <button class="action-btn-custom" onclick="window.logoutFuelCards()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #ef4444; color: #ef4444; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i> 注销
+                    </button>
+                    <button class="action-btn-custom" onclick="window.restoreFuelCards()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #10b981; color: #10b981; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> 恢复
+                    </button>
+                    <button class="action-btn-custom" onclick="window.showFuelCardRecordModal()" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="history" style="width: 12px; height: 12px;"></i> 油卡记录查询
+                    </button>
+                    <button class="action-btn-custom" style="height: 28px; padding: 0 12px; background: #fff; border: 1px solid #64748b; color: #64748b; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="download" style="width: 12px; height: 12px;"></i> 导出
+                    </button>
+                </div>
+
+                <!-- Table Content -->
+                <div style="flex-grow: 1; overflow: auto; background: #fff; padding: 0 24px;">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 1600px; font-size: 0.8rem;">
+                        <thead style="background: #f8fafc; color: #1e293b; position: sticky; top: 0; z-index: 5;">
+                            <tr>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" id="fuel-card-select-all" onchange="window.toggleAllFuelCardCheckboxes(this)"></th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">系统编号</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡编号</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡类型</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡名称</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">油卡状态</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油卡余额</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油卡押金</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">登记日期</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">发放日期</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">发放运单号</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号码</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">联系电话</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
+                                <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fuel-card-table-body">
+                            <!-- Data populated by renderFuelCardTableBody -->
+                        </tbody>
+                    </table>
                 </div>
             </div>`;
         } else if (activeTab === '应收明细') {
@@ -4283,14 +4615,9 @@ function renderTabs(activeTab) {
                                     <th>应收（增减）</th>
                                     <th>应付</th>
                                     <th>应付（增减）</th>
-                                    <th>应收</th>
-                                    <th>应付</th>
-                                    <th>业务员成本</th>
-                                    <th>公司毛利</th>
+                                    <th>审核状态</th>
                                     <th>客服</th>
-                                    <th>业务员毛利</th>
-                                    <th>应收完成</th>
-                                    <th>应付完成</th>
+                                    <th>审核时间</th>
                                     <th>收款状态</th>
                                     <th>付款状态</th>
                                     <th>所属公司</th>
@@ -4298,66 +4625,34 @@ function renderTabs(activeTab) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Placeholder row -->
-                                <tr style="background: white;">
-                                    <td style="text-align: center;"><input type="checkbox"></td>
-                                    <td style="text-align: center;">1</td>
-                                    <td>YO2512-0019</td>
-                                    <td>2025-12-25</td>
-                                    <td>2025-12-26</td>
-                                    <td>100</td>
-                                    <td>整车</td>
-                                    <td>1200.50</td>
-                                    <td>张三</td>
-                                    <td>2.5</td>
-                                    <td>李四</td>
-                                    <td>5000.00</td>
-                                    <td>0.00</td>
-                                    <td>3500.00</td>
-                                    <td>0.00</td>
-                                    <td>5000.00</td>
-                                    <td>3500.00</td>
-                                    <td>3500.00</td>
-                                    <td>1500.00</td>
-                                    <td>王五</td>
-                                    <td>1500.00</td>
-                                    <td>已完成</td>
-                                    <td>未完成</td>
-                                    <td>部分收款</td>
-                                    <td>未付款</td>
-                                    <td>丰园物流</td>
-                                    <td style="text-align: center;"><a href="#" style="color: #4f46e5;">详情</a></td>
-                                </tr>
-                                <tr style="background: #f8fafc;">
-                                    <td style="text-align: center;"><input type="checkbox"></td>
-                                    <td style="text-align: center;">2</td>
-                                    <td>YO2512-0020</td>
-                                    <td>2025-12-26</td>
-                                    <td>2025-12-27</td>
-                                    <td>50</td>
-                                    <td>零担</td>
-                                    <td>450.00</td>
-                                    <td>马六</td>
-                                    <td>1.2</td>
-                                    <td>陈七</td>
-                                    <td>8000.00</td>
-                                    <td>100.00</td>
-                                    <td>6000.00</td>
-                                    <td>50.00</td>
-                                    <td>8100.00</td>
-                                    <td>6050.00</td>
-                                    <td>6050.00</td>
-                                    <td>2050.00</td>
-                                    <td>赵八</td>
-                                    <td>2050.00</td>
-                                    <td>未完成</td>
-                                    <td>未完成</td>
-                                    <td>未收款</td>
-                                    <td>未付款</td>
-                                    <td>贝塔测试</td>
-                                    <td style="text-align: center;"><a href="#" style="color: #4f46e5;">详情</a></td>
-                                </tr>
-
+                                ${window.expenseAuditData.map((req, index) => `
+                                    <tr style="background: ${index % 2 === 0 ? 'white' : '#f8fafc'};">
+                                        <td style="text-align: center;"><input type="checkbox"></td>
+                                        <td style="text-align: center;">${index + 1}</td>
+                                        <td>${req.id}</td>
+                                        <td>${req.date}</td>
+                                        <td>${req.signDate}</td>
+                                        <td>${req.pieces}</td>
+                                        <td>${req.type}</td>
+                                        <td>${req.weight}</td>
+                                        <td>${req.salesman}</td>
+                                        <td>${req.volume}</td>
+                                        <td>${req.operator}</td>
+                                        <td>${req.revenue.toFixed(2)}</td>
+                                        <td>0.00</td>
+                                        <td>${req.cost.toFixed(2)}</td>
+                                        <td>0.00</td>
+                                        <td><span style="color: ${req.status === '审核通过' ? '#10b981' : (req.status === '审核中' ? '#3b82f6' : '#64748b')}">${req.status}</span></td>
+                                        <td>王五</td>
+                                        <td>${req.status === '审核通过' ? '2025-12-28 10:00' : '-'}</td>
+                                        <td>部分收款</td>
+                                        <td>未付款</td>
+                                        <td>${req.customer}</td>
+                                        <td style="text-align: center;">
+                                            ${req.status === '未提交' ? `<a href="javascript:void(0)" onclick="window.submitExpenseAudit('${req.id}')" style="color: #4f46e5;">审核</a>` : `<a href="javascript:void(0)" style="color: #94a3b8; cursor: not-allowed; text-decoration: none;">已审核</a>`}
+                                        </td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
                     </div>
@@ -4871,7 +5166,340 @@ function renderTabs(activeTab) {
                     </div>
                 </div>`;
 
+        } else if (activeTab === '录入订单') {
+            mainContent = `
+                <div class="order-entry-form" style="display: flex; flex-direction: column; height: 100%; background: #f1f5f9; gap: 12px; padding: 12px; font-family: inherit;">
+                    <!-- Header Section: Tabs and Top Controls -->
+                    <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 12px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; gap: 2px;">
+                                <div style="background: #4f46e5; color: white; padding: 6px 16px; border-radius: 4px 4px 0 0; font-size: 0.85rem; font-weight: 600; cursor: pointer;">货物、费用</div>
+                                <div style="background: #f8fafc; color: #64748b; padding: 6px 16px; border-radius: 4px 4px 0 0; font-size: 0.85rem; cursor: pointer; border: 1px solid #e2e8f0; border-bottom: none;">其他信息</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.8rem; color: #ef4444; font-weight: 600;">里程 (KM):</label>
+                                    <input id="entry-mileage" type="text" style="width: 100px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; text-align: center; font-weight: 600;">
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="window.calculateFreight()" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="calculator" style="width: 14px; height: 14px; color: #4f46e5;"></i> 计算运费</button>
+                                    <button onclick="window.calculateItemizedBilling()" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="plus-circle" style="width: 14px; height: 14px; color: #10b981;"></i> 单品计费</button>
+                                    <button style="background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 0 16px; height: 32px; font-size: 0.8rem; cursor: pointer;">规格录入 (F5)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cargo Table Grid -->
+                    <div style="flex-grow: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column;">
+                        <div style="overflow: auto; flex-grow: 1;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 1200px;">
+                                <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                                    <tr>
+                                        <th style="width: 40px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px;">#</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: left;">货物名称</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: left;">商品类型</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: right;">件数</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: left;">包装</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: left;">规格</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: right; color: #000000;">重量小计</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: right; color: #000000;">体积小计</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: left;">计价方式</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: right;">车长</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; padding: 8px; text-align: right;">运费单价</th>
+                                        <th style="border-bottom: 1px solid #e2e8f0; padding: 8px; text-align: right; background: #f8fafc; color: #000000;">运费小计</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td style="text-align: center; border-right: 1px solid #f1f5f9; padding: 6px; background: #f8fafc; font-weight: 600;">1</td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-count" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-weight" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-volume" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;">
+                                            <select class="cargo-pricing-method" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; font-size: 0.8rem; cursor: pointer;">
+                                                <option value="按件数">按件数</option>
+                                                <option value="按重量">按重量</option>
+                                                <option value="按体积">按体积</option>
+                                                <option value="按计费重量">按计费重量</option>
+                                                <option value="按车">按车</option>
+                                                <option value="按吨公里">按吨公里</option>
+                                            </select>
+                                        </td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-unit-price" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="padding: 0;"><input type="text" class="cargo-freight-subtotal" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
+                                    </tr>
+                                    <!-- Additional 2 empty rows just for visuals -->
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td style="text-align: center; border-right: 1px solid #f1f5f9; padding: 6px; background: #f8fafc; font-weight: 600;">2</td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-count" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-weight" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-volume" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;">
+                                            <select class="cargo-pricing-method" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; font-size: 0.8rem; cursor: pointer;">
+                                                <option value="按件数">按件数</option>
+                                                <option value="按重量">按重量</option>
+                                                <option value="按体积">按体积</option>
+                                                <option value="按计费重量">按计费重量</option>
+                                                <option value="按车">按车</option>
+                                                <option value="按吨公里">按吨公里</option>
+                                            </select>
+                                        </td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-unit-price" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="padding: 0;"><input type="text" class="cargo-freight-subtotal" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td style="text-align: center; border-right: 1px solid #f1f5f9; padding: 6px; background: #f8fafc; font-weight: 600;">3</td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-count" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-weight" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-volume" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;">
+                                            <select class="cargo-pricing-method" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; font-size: 0.8rem; cursor: pointer;">
+                                                <option value="按件数">按件数</option>
+                                                <option value="按重量">按重量</option>
+                                                <option value="按体积">按体积</option>
+                                                <option value="按计费重量">按计费重量</option>
+                                                <option value="按车">按车</option>
+                                                <option value="按吨公里">按吨公里</option>
+                                            </select>
+                                        </td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-unit-price" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Summary & Calculation Section -->
+                    <div style="display: flex; gap: 12px; height: 300px; flex-shrink: 0;">
+                        <!-- Middle Calculation Summary -->
+                        <div style="flex: 2; background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; overflow: auto; position: relative;">
+                            <!-- Config Button -->
+                            <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; left: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                                <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px;">
+                                <!-- Row 1 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">数量合计:</label>
+                                    <input id="summary-count" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">重量合计:</label>
+                                    <input id="summary-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">体积合计:</label>
+                                    <input id="summary-volume" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <!-- Row 2 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">计费重量:</label>
+                                    <input id="entry-billable-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">货物分类:</label>
+                                    <select style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; outline: none; padding: 0 8px; font-size: 0.8rem; background: white;"><option></option></select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">计价方式:</label>
+                                    <select id="summary-pricing-method" onchange="window.syncPricingMethod()" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; outline: none; padding: 0 8px; font-size: 0.8rem; background: white;">
+                                        <option value="按件数">按件数</option>
+                                        <option value="按重量">按重量</option>
+                                        <option value="按体积">按体积</option>
+                                        <option value="按计费重量">按计费重量</option>
+                                        <option value="按车">按车</option>
+                                        <option value="按吨公里">按吨公里</option>
+                                    </select>
+                                </div>
+                                <!-- Row 3 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">运费单价:</label>
+                                    <input id="entry-unit-price" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600;">运  费:</label>
+                                    <input id="entry-freight" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">送 货 费:</label>
+                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <!-- Row 4 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">装 货 费:</label>
+                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">卸 货 费:</label>
+                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                 <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">附 加 费:</label>
+                                    <input id="entry-additional-fee" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed;">
+                                </div>
+                                <!-- Row 5 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">收入合计:</label>
+                                    <input id="entry-revenue-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">待垫合计:</label>
+                                    <input id="entry-advance-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">代收货款:</label>
+                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side Mini Tables -->
+                        <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                             <!-- Toolbar -->
+                             <div style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: flex-start; background: #f8fafc;">
+                                 <button onclick="window.showExpenseModal()" style="background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                     <i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增费用
+                                 </button>
+                             </div>
+                             <!-- Table 1 -->
+                             <div style="flex: 1; overflow: auto; border-bottom: 2px solid #e2e8f0;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">费用项目</th>
+                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 12%;">收入金额</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 18%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 18%;">计费日期</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'revenue').map(e => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.itemName || e.id}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;">${e.revenue.toFixed(2)}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.customer}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; white-space: nowrap;">${e.date}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.remark || '-'}</td>
+                                                <td style="padding: 4px 8px;"><span style="color: ${e.status === '审核通过' ? '#10b981' : e.status === '审核驳回' ? '#ef4444' : '#f59e0b'}">${e.status}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'revenue').length < 8 ? Array(8 - window.expenseAuditData.filter(e => e.expenseType === 'revenue').length).fill(0).map(() => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px;"></td>
+                                            </tr>
+                                        `).join('') : ''}
+                                    </tbody>
+                                </table>
+                             </div>
+                             <!-- Table 2 -->
+                             <div style="flex: 1; overflow: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 14%;">费用项目</th>
+                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">代垫金额</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 14%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">联系人</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">电话</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 16%;">计费日期</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'advance').map(e => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.itemName || e.id}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;">${e.cost.toFixed(2)}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.customer}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; white-space: nowrap;">${e.date}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.remark || '-'}</td>
+                                                <td style="padding: 4px 8px;"><span style="color: ${e.status === '审核通过' ? '#10b981' : e.status === '审核驳回' ? '#ef4444' : '#f59e0b'}">${e.status}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'advance').length < 8 ? Array(8 - window.expenseAuditData.filter(e => e.expenseType === 'advance').length).fill(0).map(() => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px;"></td>
+                                            </tr>
+                                        `).join('') : ''}
+                                    </tbody>
+                                </table>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Settlement Footer -->
+                    <div style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 36px; min-width: 120px;">
+                                    <select id="settlementMethod" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 12px; cursor: pointer;">
+                                        <option value="现付">现付</option>
+                                        <option value="到付">到付</option>
+                                        <option value="双付">双付</option>
+                                        <option value="月结">月结</option>
+                                        <option value="回单付">回单付</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 24px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.85rem; color: #db2777; font-weight: 600;">现付金额:</label>
+                                    <input id="cashAmount" type="text" style="width: 100px; height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; font-weight: 700; color: #000000; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.85rem; color: #db2777; font-weight: 600;">到付金额:</label>
+                                    <input id="deliveryAmount" type="text" style="width: 100px; height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; font-weight: 700; color: #000000; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.85rem; color: #db2777; font-weight: 600;">欠付金额:</label>
+                                    <input type="text" style="width: 100px; height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; font-weight: 700; color: #000000; text-align: right;">
+                                </div>
+
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" style="width: 18px; height: 18px;"> 到付款月结
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
         } else {
+
             document.querySelector('.page-content').innerHTML = `
                 <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; height: 100%;">
                 <h2 style="color: #1e293b; margin-bottom: 1rem;">${activeTab} Content</h2>
@@ -4880,7 +5508,8 @@ function renderTabs(activeTab) {
         }
 
         if (mainContent) {
-            const showSidebar = !['业务员成本明细', '代收代付明细', '开票费用配置', '红字申请确认单', '结算单位', '银行收款流水', '银行付款流水', '银企直连配置', '接收账单', '结算设置', '后台管理'].includes(activeTab);
+            // Default to NO sidebar unless explicitly included (User Request: "Don't add customer list automatically")
+            const showSidebar = ['对账单', '客户账单', '费用明细', '应收明细', '应付明细', '收付款', '付款申请', '发票管理', '开票申请', '批量确认', '费用审核'].includes(activeTab);
             let contentHTML = '';
             if (showSidebar) {
                 contentHTML = `
@@ -4917,6 +5546,48 @@ function renderTabs(activeTab) {
         }
 
         lucide.createIcons();
+
+        if (activeTab === '录入订单') {
+            const settlementSelect = document.getElementById('settlementMethod');
+            const cashInput = document.getElementById('cashAmount');
+            const deliveryInput = document.getElementById('deliveryAmount');
+
+            if (settlementSelect && cashInput && deliveryInput) {
+                const handleSettlementChange = () => {
+                    const method = settlementSelect.value;
+                    if (method === '现付') {
+                        deliveryInput.disabled = true;
+                        deliveryInput.style.backgroundColor = '#f8fafc';
+                        deliveryInput.style.cursor = 'not-allowed';
+                        deliveryInput.value = '';
+                        cashInput.disabled = false;
+                        cashInput.style.backgroundColor = 'white';
+                        cashInput.style.cursor = 'text';
+                    } else if (method === '到付') {
+                        cashInput.disabled = true;
+                        cashInput.style.backgroundColor = '#f8fafc';
+                        cashInput.style.cursor = 'not-allowed';
+                        cashInput.value = '';
+                        deliveryInput.disabled = false;
+                        deliveryInput.style.backgroundColor = 'white';
+                        deliveryInput.style.cursor = 'text';
+                    } else {
+                        cashInput.disabled = false;
+                        cashInput.style.backgroundColor = 'white';
+                        cashInput.style.cursor = 'text';
+                        deliveryInput.disabled = false;
+                        deliveryInput.style.backgroundColor = 'white';
+                        deliveryInput.style.cursor = 'text';
+                    }
+                };
+                settlementSelect.addEventListener('change', handleSettlementChange);
+                // Initial call to set state
+                handleSettlementChange();
+            }
+
+            // Sync totals for mini tables
+            window.updateOrderEntryTotals();
+        }
 
 
         if (activeTab === '费用明细') {
@@ -5107,6 +5778,15 @@ function renderTabs(activeTab) {
         }
     }
 
+    // Initialize Lucide icons
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
+    // Population table data initially for Fuel Card Management
+    if (activeTab === '油卡管理' && window.renderFuelCardTableBody) {
+        window.renderFuelCardTableBody('全部');
+    }
 }
 
 function closeTab(title) {
@@ -5122,31 +5802,8 @@ function closeTab(title) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderMenu();
+    // Conflicting sidebar logic removed.
 
-    // Add interactivity to sidebar
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
-            // Ensure sub-sidebar is shown when clicking primary nav
-            document.querySelector('.sub-sidebar').classList.remove('hidden');
-            document.getElementById('menu-mask').classList.add('show');
-
-            // In a real app, this would change the content
-            if (item.getAttribute('data-title') === '结算') {
-                renderMenu();
-            } else {
-                document.getElementById('secondary-content').innerHTML = `
-                <div style="padding: 2rem; color: #64748b; font-size: 1.2rem;">
-                    ${item.getAttribute('data-title')} content loading...
-                </div>
-                `;
-            }
-        });
-    });
 
     // Mask Click to close
     document.getElementById('menu-mask').addEventListener('click', () => {
@@ -5306,6 +5963,297 @@ function switchInternalTab(tabType) {
         if (window.lucide) window.lucide.createIcons();
     }, 50);
 }
+
+// Function to handle fuel card manager tab switching
+function switchFuelCardTab(element) {
+    const tabs = element.parentElement.querySelectorAll('.status-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.borderBottom = 'none';
+        tab.style.color = '#475569';
+        tab.style.fontWeight = '400';
+    });
+
+    element.classList.add('active');
+    element.style.borderBottom = '2px solid #4f46e5';
+    element.style.color = '#4f46e5';
+    element.style.fontWeight = '500';
+
+    // Link tab to table filter
+    const status = element.textContent.trim();
+    if (window.renderFuelCardTableBody) {
+        window.renderFuelCardTableBody(status);
+    }
+
+    // Toggle action bar visibility: hide for "待发放", show for others
+    const actionBar = document.getElementById('fuel-card-action-bar');
+    if (actionBar) {
+        if (status === '待发放') {
+            actionBar.style.display = 'none';
+        } else {
+            actionBar.style.display = 'flex';
+        }
+    }
+
+    // Refresh icons just in case (though not strictly needed here as no icons are inside the tabs yet)
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// Function to toggle fuel card manager dropdowns
+window.toggleFuelCardDropdown = function (dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+    const isHidden = dropdown.classList.contains('hidden');
+
+    // Close all other fuel card dropdowns first
+    document.querySelectorAll('.fuel-card-filter-area .dropdown-menu-custom').forEach(d => {
+        d.classList.add('hidden');
+    });
+
+    if (isHidden) {
+        dropdown.classList.remove('hidden');
+    }
+};
+
+// Function to handle option selection for fuel card dropdowns
+window.selectFuelCardOption = function (targetId, value, dropdownId) {
+    const target = document.getElementById(targetId);
+    if (target) {
+        target.textContent = value;
+    }
+    const dropdown = document.getElementById(dropdownId);
+    if (dropdown) {
+        dropdown.classList.add('hidden');
+    }
+};
+
+// Mock Data for Fuel Cards
+window.fuelCardData = [
+    { id: 'W1', sysId: 'SY-W001', waybillNo: 'YD20260121001', waybillDate: '2026-01-21', fuelCost: '800.00', plateNo: '鄂A·12345', contactPhone: '13811112222', remarks: '测试运单1', status: '待发放' },
+    { id: 'W2', sysId: 'SY-W002', waybillNo: 'YD20260121002', waybillDate: '2026-01-21', fuelCost: '1200.00', plateNo: '鄂B·67890', contactPhone: '13933334444', remarks: '测试运单2', status: '待发放' },
+    { id: 'W3', sysId: 'SY-W003', waybillNo: 'YD20260121003', waybillDate: '2026-01-21', fuelCost: '500.00', plateNo: '鄂C·54321', contactPhone: '13755556666', remarks: '测试运单3', status: '待发放' },
+    { id: 1, sysId: 'SY20250101003', cardNo: '6228 4801 2345 6789', type: '客户卡', name: '丰源中石油', status: '在库', balance: '1,500.00', deposit: '0.00', regDate: '2025-01-01', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '暂无' },
+    { id: 2, sysId: 'SY20250101004', cardNo: '6228 4801 9876 5432', type: '公司卡', name: '丰源中石化', status: '发放', balance: '500.00', deposit: '100.00', regDate: '2025-01-02', issueDate: '2025-01-15', waybillNo: 'YD202501150001', plateNo: '鄂A·88888', contactPhone: '138 0000 0000', remarks: '-' },
+    { id: 3, sysId: 'SY20250101005', cardNo: '6228 4801 1111 2222', type: '客户卡', name: '丰源特种油', status: '注销', balance: '0.00', deposit: '0.00', regDate: '2024-12-20', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '已退押金' },
+    { id: 4, sysId: 'SY20250101006', cardNo: '6228 4801 3333 4444', type: '公司卡', name: '丰源中石油', status: '在库', balance: '2,800.00', deposit: '0.00', regDate: '2025-01-05', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '-' },
+    { id: 5, sysId: 'SY20250101007', cardNo: '6228 4801 5555 6666', type: '公司卡', name: '丰源中石化', status: '发放', balance: '1,200.00', deposit: '50.00', regDate: '2025-01-10', issueDate: '2025-01-18', waybillNo: 'YD202501180099', plateNo: '鄂A·66666', contactPhone: '139 1111 2222', remarks: '司机反馈卡片消磁' }
+];
+
+// Function to render the fuel card table body based on status
+window.renderFuelCardTableBody = function (status) {
+    const tbody = document.getElementById('fuel-card-table-body');
+    if (!tbody) return;
+
+    // Update headers dynamically based on status
+    const table = tbody.closest('table');
+    const thead = table ? table.querySelector('thead') : null;
+    if (thead) {
+        if (status === '待发放') {
+            thead.innerHTML = `
+                <tr>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" id="fuel-card-select-all" onchange="window.toggleAllFuelCardCheckboxes(this)"></th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">运单号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">运单日期</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油费</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">联系电话</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
+                </tr>
+            `;
+        } else {
+            thead.innerHTML = `
+                <tr>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" id="fuel-card-select-all" onchange="window.toggleAllFuelCardCheckboxes(this)"></th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">系统编号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡编号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡类型</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡名称</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">油卡状态</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油卡余额</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油卡押金</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">登记日期</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">发放日期</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">发放运单号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号码</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">联系电话</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
+                </tr>
+            `;
+        }
+    }
+
+    const cardStatuses = ['在库', '发放', '注销'];
+    const filteredData = status === '全部'
+        ? window.fuelCardData.filter(item => cardStatuses.includes(item.status))
+        : window.fuelCardData.filter(item => item.status === status);
+
+    if (status === '待发放') {
+        tbody.innerHTML = filteredData.map((item, index) => `
+            <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
+                <td style="padding: 10px 8px; text-align: center;"><input type="checkbox" class="fuel-card-checkbox" data-sysid="${item.sysId}"></td>
+                <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
+                <td style="padding: 10px 8px;">${item.waybillNo || '-'}</td>
+                <td style="padding: 10px 8px; text-align: center;">${item.waybillDate || '-'}</td>
+                <td style="padding: 10px 8px; text-align: right;">${item.fuelCost || '-'}</td>
+                <td style="padding: 10px 8px;">${item.plateNo || '-'}</td>
+                <td style="padding: 10px 8px;">${item.contactPhone || '-'}</td>
+                <td style="padding: 10px 8px; color: #94a3b8;">${item.remarks || '-'}</td>
+                <td style="padding: 10px 8px; text-align: center;">
+                    <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showIssueSelectionModal('${item.waybillNo}')">发放</a>
+                </td>
+            </tr>
+        `).join('');
+    } else {
+        tbody.innerHTML = filteredData.map((item, index) => `
+            <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
+                <td style="padding: 10px 8px; text-align: center;"><input type="checkbox" class="fuel-card-checkbox" data-sysid="${item.sysId}"></td>
+                <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
+                <td style="padding: 10px 8px;">${item.sysId}</td>
+                <td style="padding: 10px 8px;">${item.cardNo}</td>
+                <td style="padding: 10px 8px;">${item.type}</td>
+                <td style="padding: 10px 8px;">${item.name}</td>
+                <td style="padding: 10px 8px; text-align: center;">
+                    <span style="background: ${item.status === '在库' ? '#ecfdf5' : item.status === '发放' ? '#eff6ff' : '#fff1f2'}; 
+                                 color: ${item.status === '在库' ? '#059669' : item.status === '发放' ? '#2563eb' : '#e11d48'}; 
+                                 padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">
+                        ${item.status}
+                    </span>
+                </td>
+                <td style="padding: 10px 8px; text-align: right;">${item.balance}</td>
+                <td style="padding: 10px 8px; text-align: right;">${item.deposit}</td>
+                <td style="padding: 10px 8px; text-align: center;">${item.regDate}</td>
+                <td style="padding: 10px 8px; text-align: center;">${item.issueDate || '-'}</td>
+                <td style="padding: 10px 8px;">${item.waybillNo || '-'}</td>
+                <td style="padding: 10px 8px;">${item.plateNo || '-'}</td>
+                <td style="padding: 10px 8px;">${item.contactPhone || '-'}</td>
+                <td style="padding: 10px 8px; color: #94a3b8;">${item.remarks || '-'}</td>
+                <td style="padding: 10px 8px; text-align: center;">
+                    <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showFuelCardDetailModal('${item.sysId}')">详情</a>
+                </td>
+            </tr>
+        `).join('');
+    }
+};
+
+// Function to show modal specifically for selecting an "In Stock" fuel card to issue
+window.showIssueSelectionModal = function (waybillNo) {
+    const availableCards = window.fuelCardData.filter(item => item.status === '在库');
+
+    // Create modal if not exists
+    let modal = document.getElementById('issue-selection-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'issue-selection-modal';
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10000;';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background: white; width: 800px; max-height: 80vh; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+            <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
+                <h3 style="margin: 0; font-size: 1.1rem; color: #1e293b;">选择油卡 - 运单: ${waybillNo}</h3>
+                <i data-lucide="x" style="width: 20px; height: 20px; color: #64748b; cursor: pointer;" onclick="window.closeIssueSelectionModal()"></i>
+            </div>
+            <div style="padding: 24px; overflow: auto; flex-grow: 1;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                    <thead style="background: #f1f5f9;">
+                        <tr>
+                            <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">油卡编号</th>
+                            <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">油卡名称</th>
+                            <th style="padding: 12px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">类型</th>
+                            <th style="padding: 12px 8px; text-align: right; border-bottom: 1px solid #e2e8f0;">余额</th>
+                            <th style="padding: 12px 8px; text-align: center; border-bottom: 1px solid #e2e8f0;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${availableCards.length > 0 ? availableCards.map(card => `
+                            <tr style="border-bottom: 1px solid #f1f5f9; hover: background: #f8fafc;">
+                                <td style="padding: 12px 8px;">${card.cardNo}</td>
+                                <td style="padding: 12px 8px;">${card.name}</td>
+                                <td style="padding: 12px 8px;">${card.type}</td>
+                                <td style="padding: 12px 8px; text-align: right;">${card.balance}</td>
+                                <td style="padding: 12px 8px; text-align: center; display: flex; gap: 8px; justify-content: center;">
+                                    <button style="padding: 4px 12px; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem;" onclick="window.confirmIssueFuelCard('${waybillNo}', '${card.sysId}')">选择</button>
+                                    <button style="padding: 4px 12px; background: #fff; border: 1px solid #4f46e5; color: #4f46e5; border-radius: 4px; cursor: pointer; font-size: 0.75rem;" onclick="window.showFuelCardRechargeModal('${card.sysId}')">充值</button>
+                                </td>
+                            </tr>
+                        `).join('') : '<tr><td colspan="5" style="padding: 24px; text-align: center; color: #94a3b8;">暂无在库油卡</td></tr>'}
+                    </tbody>
+                </table>
+            </div>
+            <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                <button style="padding: 6px 16px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569; cursor: pointer; font-size: 0.85rem;" onclick="window.closeIssueSelectionModal()">取消</button>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+};
+
+window.closeIssueSelectionModal = function () {
+    const modal = document.getElementById('issue-selection-modal');
+    if (modal) modal.remove();
+};
+
+/**
+ * Confirms the fuel card issuance and updates statuses.
+ */
+window.confirmIssueFuelCard = function (waybillNo, cardSysId) {
+    const waybillEntry = window.fuelCardData.find(item => item.waybillNo === waybillNo && item.status === '待发放');
+    const cardEntry = window.fuelCardData.find(item => item.sysId === cardSysId);
+
+    if (!waybillEntry || !cardEntry) {
+        alert('数据错误，无法完成发放');
+        return;
+    }
+
+    // Validation: Check if card balance is enough for waybill fuel cost
+    const fuelCost = parseFloat(waybillEntry.fuelCost.replace(/,/g, ''));
+    const cardBalance = parseFloat(cardEntry.balance.replace(/,/g, ''));
+
+    if (isNaN(fuelCost) || isNaN(cardBalance)) {
+        alert('金额数据异常，无法校验余额');
+        return;
+    }
+
+    if (cardBalance < fuelCost) {
+        alert(`油卡余额不足，无法发放！\n所需油费: ${waybillEntry.fuelCost}\n当前余额: ${cardEntry.balance}`);
+        return;
+    }
+
+    // Update waybill status
+    waybillEntry.status = '已发放';
+
+    // Update card data
+    const now = new Date();
+    cardEntry.status = '发放';
+    cardEntry.waybillNo = waybillEntry.waybillNo;
+    cardEntry.plateNo = waybillEntry.plateNo;
+    cardEntry.contactPhone = waybillEntry.contactPhone;
+    cardEntry.issueDate = now.toLocaleDateString('zh-CN').replace(/\//g, '-');
+    cardEntry.remarks = waybillEntry.remarks;
+
+    alert(`成功为运单 ${waybillNo} 发放油卡 ${cardEntry.cardNo}`);
+    window.closeIssueSelectionModal();
+
+    // Refresh the table body
+    if (window.renderFuelCardTableBody) {
+        window.renderFuelCardTableBody('待发放');
+    }
+};
+
+// Global click listener to close fuel card dropdowns when clicking outside
+document.addEventListener('click', function (event) {
+    if (!event.target.closest('.select-box') && !event.target.closest('.dropdown-menu-custom')) {
+        document.querySelectorAll('.fuel-card-filter-area .dropdown-menu-custom').forEach(d => {
+            d.classList.add('hidden');
+        });
+    }
+});
 
 // Function to show the "New Receipt" (新建收款) modal
 function showNewReceiptModal() {
@@ -6119,5 +7067,1747 @@ window.deleteInvoiceExpenseConfig = function (index) {
     if (confirm('确定要删除这条配置吗？')) {
         window.invoiceExpenseConfigs.splice(index, 1);
         renderTabs('开票费用配置');
+    }
+};
+
+/**
+ * Shows the "Oil Card Import" modal.
+ */
+window.showFuelCardImportModal = function () {
+    let modal = document.getElementById('fuel-card-import-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fuel-card-import-modal';
+        modal.className = 'modal-overlay';
+        modal.style.display = 'none';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="modal-container" style="width: 90vw; max-width: 1200px; height: 85vh; display: flex; flex-direction: column; background: #f8fafc; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+            <!-- Toolbar -->
+            <div style="background: #eef2ff; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <button class="action-btn-classic" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <i data-lucide="file-spreadsheet" style="width: 14px; height: 14px;"></i> 导入油卡
+                </button>
+                <button class="action-btn-classic" onclick="window.removeDuplicateFuelCards()" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <i data-lucide="database-zap" style="width: 14px; height: 14px;"></i> 剔除重复
+                </button>
+                <button class="action-btn-classic" onclick="window.clearFuelCardImport()" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i> 清空
+                </button>
+                
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+                    <label style="font-size: 0.75rem; color: #475569;">油卡类型:</label>
+                    <select style="height: 28px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 8px; font-size: 0.75rem; outline: none; background: white;">
+                        <option>公司卡</option>
+                        <option>客户卡</option>
+                    </select>
+                    <button style="background: #dcfce7; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">批量设置</button>
+                </div>
+            </div>
+
+            <!-- Header Text -->
+            <div style="text-align: center; padding: 18px 0; background: #fff;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">油卡信息导入</h2>
+            </div>
+
+            <!-- Table Area -->
+            <div style="flex-grow: 1; padding: 0 16px 16px 16px; overflow: auto; background: #fff;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 1000px; font-size: 0.8rem; border: 1px solid #e2e8f0;">
+                    <thead style="background: #f1f5f9; color: #475569; position: sticky; top: 0;">
+                        <tr>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: left;">油卡编号</th>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: left;">油卡类型</th>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: left;">油卡名称</th>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: right;">油卡余额</th>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: right;">油卡押金</th>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: left;">联系人员</th>
+                            <th style="padding: 10px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注信息</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Array(14).fill(0).map((_, i) => `
+                            <tr style="border-bottom: 1px solid #f1f5f9; ${i % 2 === 0 ? '' : 'background: #fbfcfe;'}">
+                                <td style="padding: 0; border-right: 1px solid #f1f5f9; height: 32px;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b;">
+                                </td>
+                                <td style="padding: 0; border-right: 1px solid #f1f5f9;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b;">
+                                </td>
+                                <td style="padding: 0; border-right: 1px solid #f1f5f9;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b;">
+                                </td>
+                                <td style="padding: 0; border-right: 1px solid #f1f5f9;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b; text-align: right;">
+                                </td>
+                                <td style="padding: 0; border-right: 1px solid #f1f5f9;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b; text-align: right;">
+                                </td>
+                                <td style="padding: 0; border-right: 1px solid #f1f5f9;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b;">
+                                </td>
+                                <td style="padding: 0;">
+                                    <input type="text" style="width: 100%; height: 32px; border: none; outline: none; background: transparent; padding: 0 8px; font-size: 0.8rem; color: #1e293b;">
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Toolbar -->
+            <div style="background: #fff; padding: 12px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="action-btn-classic" onclick="window.closeFuelCardImportModal()" style="background: #fef2f2; border: 1px solid #ef4444; color: #b91c1c; padding: 6px 20px; border-radius: 4px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <i data-lucide="x-circle" style="width: 14px; height: 14px;"></i> 取消
+                </button>
+                <button class="action-btn-classic" onclick="window.saveFuelCardImport()" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 6px 20px; border-radius: 4px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <i data-lucide="save" style="width: 14px; height: 14px;"></i> 保存
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+
+    // Closer on click outside
+    modal.onclick = (e) => {
+        if (e.target === modal) window.closeFuelCardImportModal();
+    };
+};
+
+/**
+ * Closes the "Oil Card Import" modal.
+ */
+window.closeFuelCardImportModal = function () {
+    const modal = document.getElementById('fuel-card-import-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
+/**
+ * Toggles all checkboxes in the fuel card management table.
+ * @param {HTMLInputElement} selectAllCheckbox - The header checkbox element.
+ */
+window.toggleAllFuelCardCheckboxes = function (selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('.fuel-card-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = selectAllCheckbox.checked;
+    });
+};
+
+/**
+ * Saves the data from the import modal to the main fuel card list.
+ */
+window.saveFuelCardImport = function () {
+    const modal = document.getElementById('fuel-card-import-modal');
+    if (!modal) return;
+
+    const tbody = modal.querySelector('tbody');
+    const rows = tbody.querySelectorAll('tr');
+    const newCards = [];
+    const timestamp = new Date().getTime().toString();
+
+    rows.forEach((row, index) => {
+        const inputs = row.querySelectorAll('input');
+        if (inputs.length < 7) return;
+
+        const cardNo = inputs[0].value.trim();
+        const type = inputs[1].value.trim();
+        const name = inputs[2].value.trim();
+        const balance = inputs[3].value.trim();
+        const deposit = inputs[4].value.trim();
+        const contact = inputs[5].value.trim();
+        const remarks = inputs[6].value.trim();
+
+        if (cardNo) {
+            newCards.push({
+                id: window.fuelCardData.length + newCards.length + 1,
+                sysId: 'SY' + timestamp.slice(-8) + String(index).padStart(3, '0'),
+                cardNo: cardNo,
+                type: type || '公司卡',
+                name: name || '-',
+                status: '在库',
+                balance: balance || '0.00',
+                deposit: deposit || '0.00',
+                regDate: new Date().toISOString().split('T')[0],
+                issueDate: '-',
+                waybill: '-',
+                plate: '-',
+                phone: contact || '-',
+                remarks: remarks || '导入'
+            });
+        }
+    });
+
+    if (newCards.length > 0) {
+        window.fuelCardData = [...newCards, ...window.fuelCardData];
+        alert(`成功导入 ${newCards.length} 条油卡信息`);
+
+        // Refresh the main table
+        if (window.renderFuelCardTableBody) {
+            const activeTab = document.querySelector('.status-tab.active');
+            window.renderFuelCardTableBody(activeTab ? activeTab.textContent.trim() : '全部');
+        }
+
+        window.closeFuelCardImportModal();
+    } else {
+        alert('请至少填写一个油卡编号');
+    }
+};
+
+/**
+ * Clears all inputs in the import modal.
+ */
+window.clearFuelCardImport = function () {
+    const modal = document.getElementById('fuel-card-import-modal');
+    if (!modal) return;
+    const inputs = modal.querySelectorAll('tbody input');
+    inputs.forEach(input => {
+        input.value = '';
+    });
+};
+
+/**
+ * Removes duplicate oil card numbers from the import modal list.
+ */
+window.removeDuplicateFuelCards = function () {
+    const modal = document.getElementById('fuel-card-import-modal');
+    if (!modal) return;
+
+    const tbody = modal.querySelector('tbody');
+    const rows = tbody.querySelectorAll('tr');
+    const seenCards = new Set();
+    let removedCount = 0;
+
+    rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        if (inputs.length > 0) {
+            const cardNo = inputs[0].value.trim();
+            if (cardNo) {
+                if (seenCards.has(cardNo)) {
+                    // Duplicate found, clear the row
+                    inputs.forEach(input => input.value = '');
+                    removedCount++;
+                } else {
+                    seenCards.add(cardNo);
+                }
+            }
+        }
+    });
+
+    if (removedCount > 0) {
+        alert(`已成功剔除 ${removedCount} 条重复数据`);
+    } else {
+        alert('未发现重复的油卡编号');
+    }
+};
+
+/**
+ * Logouts selected fuel cards (status: 在库 -> 注销).
+ */
+window.logoutFuelCards = function () {
+    const checkedCheckboxes = document.querySelectorAll('.fuel-card-checkbox:checked');
+    if (checkedCheckboxes.length === 0) {
+        alert('请先勾选需要注销的油卡');
+        return;
+    }
+
+    const sysIds = Array.from(checkedCheckboxes).map(cb => cb.dataset.sysid);
+    const selectedCards = window.fuelCardData.filter(card => sysIds.includes(card.sysId));
+
+    // Validation: only "在库" can be logged out
+    const invalidCards = selectedCards.filter(card => card.status !== '在库');
+    if (invalidCards.length > 0) {
+        alert(`注销失败：勾选的数据中包含状态为“${invalidCards[0].status}”的卡，仅“在库”状态的油卡可以执行注销操作`);
+        return;
+    }
+
+    // Perform logout
+    selectedCards.forEach(card => {
+        card.status = '注销';
+    });
+
+    alert('操作成功');
+    const activeTab = document.querySelector('.status-tab.active');
+    window.renderFuelCardTableBody(activeTab ? activeTab.textContent.trim() : '全部');
+};
+
+/**
+ * Restores selected fuel cards (status: 注销 -> 在库).
+ */
+window.restoreFuelCards = function () {
+    const checkedCheckboxes = document.querySelectorAll('.fuel-card-checkbox:checked');
+    if (checkedCheckboxes.length === 0) {
+        alert('请先勾选需要恢复的油卡');
+        return;
+    }
+
+    const sysIds = Array.from(checkedCheckboxes).map(cb => cb.dataset.sysid);
+    const selectedCards = window.fuelCardData.filter(card => sysIds.includes(card.sysId));
+
+    // Validation: only "注销" can be restored
+    const invalidCards = selectedCards.filter(card => card.status !== '注销');
+    if (invalidCards.length > 0) {
+        alert(`恢复失败：勾选的数据中包含状态为“${invalidCards[0].status}”的卡，仅“注销”状态的油卡可以执行恢复操作`);
+        return;
+    }
+
+    // Perform restore
+    selectedCards.forEach(card => {
+        card.status = '在库';
+    });
+
+    alert('操作成功');
+    const activeTab = document.querySelector('.status-tab.active');
+    window.renderFuelCardTableBody(activeTab ? activeTab.textContent.trim() : '全部');
+};
+
+/**
+ * Shows the "Fuel Card Recharge" modal.
+ */
+window.showFuelCardRechargeModal = function (targetSysId) {
+    let sysId = targetSysId;
+
+    if (!sysId) {
+        const checkedCheckboxes = document.querySelectorAll('.fuel-card-checkbox:checked');
+        if (checkedCheckboxes.length === 0) {
+            alert('请先选择一张需要充值的油卡');
+            return;
+        }
+        if (checkedCheckboxes.length > 1) {
+            alert('每次只能为一张油卡进行充值');
+            return;
+        }
+
+        sysId = checkedCheckboxes[0].dataset.sysid;
+    }
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (!card) return;
+
+    const now = new Date();
+    const timeStr = now.toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
+
+    let modal = document.getElementById('fuel-card-recharge-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fuel-card-recharge-modal';
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 10001; font-family: "Microsoft YaHei", sans-serif;';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background: #fff; width: 600px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div style="background: #f8fafc; padding: 18px 0; border-bottom: 1px solid #e2e8f0; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">油卡充值</h2>
+            </div>
+            
+            <!-- Body -->
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: 80px 1fr 80px 1.5fr; gap: 16px; align-items: center;">
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">系统编号:</label>
+                    <input type="text" value="${card.sysId}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">油卡编号:</label>
+                    <input type="text" value="${card.cardNo}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">油卡名称:</label>
+                    <input type="text" value="${card.name}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">油卡余额:</label>
+                    <input type="text" value="${card.balance}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; text-align: right; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">充值时间:</label>
+                    <input type="text" value="${timeStr}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right; font-weight: 600;">充值金额:</label>
+                    <input type="number" id="recharge-amount" style="width: 100%; padding: 6px 10px; border: 1px solid #3b82f6; border-radius: 4px; background: #fff; color: #1e293b; font-size: 1.1rem; text-align: right; outline: none; font-weight: 600;" value="0.00" onfocus="this.select()">
+                    
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right; align-self: start; margin-top: 8px;">备注信息:</label>
+                    <textarea id="recharge-remarks" style="grid-column: span 3; width: 100%; height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #1e293b; font-size: 0.85rem; resize: none; outline: none; transition: border-color 0.2s;" placeholder="请输入充值备注..."></textarea>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 24px;">
+                <button onclick="window.closeFuelCardRechargeModal()" style="background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 8px 30px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+                    <i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> 取消
+                </button>
+                <button onclick="window.saveFuelCardRecharge('${sysId}')" style="background: #3b82f6; border: 1px solid #2563eb; color: #fff; padding: 8px 30px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s;">
+                    <i data-lucide="save" style="width: 18px; height: 18px;"></i> 确认充值
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+
+    // Focus amount input
+    setTimeout(() => {
+        const amountInput = document.getElementById('recharge-amount');
+        if (amountInput) amountInput.focus();
+    }, 100);
+
+    // Modal click out to close
+    modal.onclick = (e) => {
+        if (e.target === modal) window.closeFuelCardRechargeModal();
+    };
+};
+
+/**
+ * Saves the fuel card recharge and updates the card balance.
+ */
+window.saveFuelCardRecharge = function (sysId) {
+    const amountInput = document.getElementById('recharge-amount');
+    if (!amountInput) return;
+    const amount = parseFloat(amountInput.value);
+    const remark = document.getElementById('recharge-remarks')?.value || '';
+
+    if (isNaN(amount) || amount <= 0) {
+        alert('请输入正确的充值金额');
+        return;
+    }
+
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (card) {
+        // Create a pending request instead of updating balance immediately
+        const requestId = 'REQ-' + Date.now();
+        const newRequest = {
+            id: requestId,
+            cardId: card.cardId,
+            sysId: sysId,
+            cardName: card.name,
+            amount: amount,
+            remark: remark,
+            applicant: '张三', // Simulated applicant
+            applyTime: new Date().toLocaleString(),
+            status: 'pending'
+        };
+
+        window.pendingRechargeRequests.push(newRequest);
+
+        alert('已提交付款申请至任务中心，审核通过后余额将自动增加');
+        window.closeFuelCardRechargeModal();
+
+        // Refresh fuel card table if visible
+        const activeTab = document.querySelector('.status-tab.active');
+        window.renderFuelCardTableBody(activeTab ? activeTab.textContent.trim() : '全部');
+    }
+};
+
+/**
+ * Closes the recharge modal.
+ */
+window.closeFuelCardRechargeModal = function () {
+    const modal = document.getElementById('fuel-card-recharge-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
+/**
+ * Shows the "Issue Fuel Card" modal.
+ */
+window.showIssueFuelCardModal = function () {
+    const checkedCheckboxes = document.querySelectorAll('.fuel-card-checkbox:checked');
+    if (checkedCheckboxes.length === 0) {
+        alert('请先选择一张需要发放的油卡');
+        return;
+    }
+    if (checkedCheckboxes.length > 1) {
+        alert('每次只能发放一张油卡');
+        return;
+    }
+
+    const sysId = checkedCheckboxes[0].dataset.sysid;
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (!card) return;
+
+    // Validation: status check
+    if (card.status === '发放' || card.status === '注销') {
+        alert(`发放失败：该油卡已处于“${card.status}”状态，无法再次发放`);
+        return;
+    }
+
+    // Validation: must have balance
+    if (parseFloat(card.balance || 0) <= 0) {
+        alert('发放失败：该油卡余额为0，无法发放');
+        return;
+    }
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('zh-CN').replace(/\//g, '-');
+
+    let modal = document.getElementById('fuel-card-issue-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fuel-card-issue-modal';
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; font-family: "Microsoft YaHei", sans-serif;';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background: #fff; width: 500px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div style="background: #f8fafc; padding: 18px 0; border-bottom: 1px solid #e2e8f0; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">油卡发放</h2>
+            </div>
+            
+            <!-- Body -->
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 16px; align-items: center;">
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">发放日期:</label>
+                    <input type="text" value="${dateStr}" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">发放运单号:</label>
+                    <input type="text" id="issue-waybill" placeholder="请输入运单号" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">车牌号码:</label>
+                    <input type="text" id="issue-plate" placeholder="请输入车牌号码" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">联系电话:</label>
+                    <input type="text" id="issue-phone" placeholder="请输入联系电话" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right; align-self: start; margin-top: 8px;">备注:</label>
+                    <textarea id="issue-remarks" placeholder="请输入备注信息" style="width: 100%; height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; resize: none; outline: none; transition: border-color 0.2s;"></textarea>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 24px;">
+                <button onclick="window.closeIssueFuelCardModal()" style="background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 8px 30px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+                    <i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> 取消
+                </button>
+                <button onclick="window.saveIssueFuelCard('${sysId}')" style="background: #3b82f6; border: 1px solid #2563eb; color: #fff; padding: 8px 30px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s;">
+                    <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> 确认发放
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+
+    // Focus waybill input
+    setTimeout(() => {
+        const waybillInput = document.getElementById('issue-waybill');
+        if (waybillInput) waybillInput.focus();
+    }, 100);
+
+    // Modal click out to close
+    modal.onclick = (e) => {
+        if (e.target === modal) window.closeIssueFuelCardModal();
+    };
+};
+
+/**
+ * Saves fuel card issuance data.
+ */
+window.saveIssueFuelCard = function (sysId) {
+    const waybill = document.getElementById('issue-waybill').value.trim();
+    const plate = document.getElementById('issue-plate').value.trim();
+    const phone = document.getElementById('issue-phone').value.trim();
+    const remarks = document.getElementById('issue-remarks').value.trim();
+
+    if (!waybill) {
+        alert('请输入发放运单号');
+        return;
+    }
+
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (!card) return;
+
+    // Update card data
+    const now = new Date();
+    card.status = '发放';
+    card.issueDate = now.toLocaleDateString('zh-CN').replace(/\//g, '-');
+    card.waybillNo = waybill;
+    card.plateNo = plate;
+    card.contactPhone = phone;
+    card.remarks = remarks;
+
+    alert('发放成功');
+    window.closeIssueFuelCardModal();
+
+    const activeTab = document.querySelector('.status-tab.active');
+    window.renderFuelCardTableBody(activeTab ? activeTab.textContent.trim() : '全部');
+};
+
+/**
+ * Closes the Issue Fuel Card modal.
+ */
+window.closeIssueFuelCardModal = function () {
+    const modal = document.getElementById('fuel-card-issue-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+/**
+ * Shows the "Recover Fuel Card" modal.
+ */
+window.showRecoverFuelCardModal = function () {
+    const checkedCheckboxes = document.querySelectorAll('.fuel-card-checkbox:checked');
+    if (checkedCheckboxes.length === 0) {
+        alert('请先选择一张需要回收的油卡');
+        return;
+    }
+    if (checkedCheckboxes.length > 1) {
+        alert('每次只能回收一张油卡');
+        return;
+    }
+
+    const sysId = checkedCheckboxes[0].dataset.sysid;
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (!card) return;
+
+    // Validation: status must be '发放'
+    if (card.status !== '发放') {
+        alert(`回收失败：该油卡当前状态为“${card.status}”，仅“发放”状态的油卡可以进行回收操作`);
+        return;
+    }
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('zh-CN').replace(/\//g, '-');
+
+    let modal = document.getElementById('fuel-card-recover-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fuel-card-recover-modal';
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; font-family: "Microsoft YaHei", sans-serif;';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background: #fff; width: 400px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div style="background: #f8fafc; padding: 18px 0; border-bottom: 1px solid #e2e8f0; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">油卡回收</h2>
+            </div>
+            
+            <!-- Body -->
+            <div style="padding: 24px;">
+                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: center;">
+                    <label style="font-size: 0.85rem; color: #64748b; text-align: right;">回收日期:</label>
+                    <input type="text" value="${dateStr}" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">油卡余额:</label>
+                    <input type="number" id="recover-balance" value="${card.balance}" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                    
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right; align-self: start; margin-top: 8px;">备注:</label>
+                    <textarea id="recover-remarks" placeholder="请输入备注信息" style="width: 100%; height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; resize: none; outline: none; transition: border-color 0.2s;"></textarea>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: center; gap: 24px;">
+                <button onclick="window.closeRecoverFuelCardModal()" style="background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 8px 30px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">
+                    <i data-lucide="x-circle" style="width: 18px; height: 18px;"></i> 取消
+                </button>
+                <button onclick="window.saveRecoverFuelCard('${sysId}')" style="background: #3b82f6; border: 1px solid #2563eb; color: #fff; padding: 8px 30px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s;">
+                    <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i> 确认回收
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+
+    // Focus balance input
+    setTimeout(() => {
+        const balInput = document.getElementById('recover-balance');
+        if (balInput) balInput.select();
+    }, 100);
+
+    // Modal click out to close
+    modal.onclick = (e) => {
+        if (e.target === modal) window.closeRecoverFuelCardModal();
+    };
+};
+
+/**
+ * Saves fuel card recovery data.
+ */
+window.saveRecoverFuelCard = function (sysId) {
+    const balance = document.getElementById('recover-balance').value.trim();
+    const remarks = document.getElementById('recover-remarks').value.trim();
+
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (!card) return;
+
+    // Update card data
+    card.status = '在库';
+    card.balance = parseFloat(balance).toFixed(2);
+    // Clear issuance details
+    card.waybillNo = '';
+    card.plateNo = '';
+    card.contactPhone = '';
+    card.remarks = remarks; // Update remarks for the recovery action
+
+    alert('回收成功');
+    window.closeRecoverFuelCardModal();
+
+    const activeTab = document.querySelector('.status-tab.active');
+    window.renderFuelCardTableBody(activeTab ? activeTab.textContent.trim() : '全部');
+};
+
+/**
+ * Closes the Recover Fuel Card modal.
+ */
+window.closeRecoverFuelCardModal = function () {
+    const modal = document.getElementById('fuel-card-recover-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+// Mock Data for Fuel Card Records
+window.fuelCardRecordMockData = [
+    { cardNo: '5Y20250101001', status: '已回收', balance: '1500.00', issueDate: '2025-01-01', issuer: '张三', recoverDate: '2025-01-15', recoverer: '李四' },
+    { cardNo: '5Y20250101002', status: '发放中', balance: '500.00', issueDate: '2025-01-10', issuer: '王五', recoverDate: '-', recoverer: '-' },
+    { cardNo: '5Y20250101003', status: '已回收', balance: '0.00', issueDate: '2024-12-20', issuer: '赵六', recoverDate: '2025-01-05', recoverer: '孙七' },
+    { cardNo: '5Y20250101004', status: '在库', balance: '2800.00', issueDate: '-', issuer: '-', recoverDate: '-', recoverer: '-' },
+    { cardNo: '5Y20250101005', status: '发放中', balance: '1200.00', issueDate: '2025-01-18', issuer: '张三', recoverDate: '-', recoverer: '-' }
+];
+
+/**
+ * Shows the "Fuel Card Record Query" modal.
+ */
+window.showFuelCardRecordModal = function () {
+    let modal = document.getElementById('fuel-card-record-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fuel-card-record-modal';
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; font-family: "Microsoft YaHei", sans-serif;';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background: #fff; width: 900px; height: 600px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div style="background: #f8fafc; padding: 18px 0; border-bottom: 1px solid #e2e8f0; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">油卡记录查询</h2>
+            </div>
+            
+            <!-- Search Area -->
+            <div style="padding: 20px 24px; background: #fff; border-bottom: 1px solid #e2e8f0; display: flex; gap: 16px; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 0.85rem; color: #64748b;">油卡编号:</label>
+                    <input type="text" id="record-card-no" placeholder="输入油卡编号" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; width: 140px;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 0.85rem; color: #64748b;">充值日期:</label>
+                    <input type="date" id="record-recharge-date" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="font-size: 0.85rem; color: #64748b;">发放日期:</label>
+                    <input type="date" id="record-issue-date" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                </div>
+                <button onclick="window.searchFuelCardRecords()" style="margin-left: auto; background: #3b82f6; border: 1px solid #2563eb; color: #fff; padding: 6px 20px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询
+                </button>
+            </div>
+
+            <!-- Table Area -->
+            <div style="flex-grow: 1; overflow: auto; padding: 0;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                    <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">油卡编号</th>
+                            <th style="padding: 12px 16px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">油卡状态</th>
+                            <th style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">油卡余额</th>
+                            <th style="padding: 12px 16px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">发放日期</th>
+                            <th style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">发放人员</th>
+                            <th style="padding: 12px 16px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">回收日期</th>
+                            <th style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; color: #475569; font-weight: 600;">回收人员</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fuel-card-record-tbody">
+                        <!-- Data rows will be rendered here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #f8fafc; padding: 12px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+                <button onclick="window.closeFuelCardRecordModal()" style="background: #fff; border: 1px solid #cbd5e1; color: #64748b; padding: 6px 20px; border-radius: 4px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;">
+                    <i data-lucide="x" style="width: 14px; height: 14px;"></i> 关闭
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+
+    // Initial Render
+    window.renderFuelCardRecordTable(window.fuelCardRecordMockData);
+
+    // Modal click out to close
+    modal.onclick = (e) => {
+        if (e.target === modal) window.closeFuelCardRecordModal();
+    };
+};
+
+/**
+ * Renders the record table.
+ */
+window.renderFuelCardRecordTable = function (data) {
+    const tbody = document.getElementById('fuel-card-record-tbody');
+    if (!tbody) return;
+
+    if (data.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="padding: 30px; text-align: center; color: #94a3b8;">
+                    暂无相关记录
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = data.map(item => `
+        <tr style="border-bottom: 1px solid #f1f5f9; hover: background-color: #f8fafc;">
+            <td style="padding: 12px 16px;">${item.cardNo}</td>
+            <td style="padding: 12px 16px; text-align: center;">
+                 <span style="background: ${item.status === '在库' ? '#ecfdf5' : item.status === '发放中' ? '#eff6ff' : '#fef2f2'}; 
+                             color: ${item.status === '在库' ? '#059669' : item.status === '发放中' ? '#2563eb' : '#ef4444'}; 
+                             padding: 2px 8px; border-radius: 12px; font-size: 0.75rem;">
+                    ${item.status}
+                </span>
+            </td>
+            <td style="padding: 12px 16px; text-align: right; font-weight: 500;">${item.balance}</td>
+            <td style="padding: 12px 16px; text-align: center;">${item.issueDate}</td>
+            <td style="padding: 12px 16px;">${item.issuer}</td>
+            <td style="padding: 12px 16px; text-align: center;">${item.recoverDate}</td>
+            <td style="padding: 12px 16px;">${item.recoverer}</td>
+        </tr>
+    `).join('');
+};
+
+/**
+ * Filters the mock records.
+ */
+window.searchFuelCardRecords = function () {
+    const cardNo = document.getElementById('record-card-no').value.trim().toLowerCase();
+    const issueDate = document.getElementById('record-issue-date').value;
+
+    // We ignore recharge date for now as per mock data limits, or we could add a dummy filter
+    const filtered = window.fuelCardRecordMockData.filter(item => {
+        const matchCard = !cardNo || item.cardNo.toLowerCase().includes(cardNo);
+        const matchIssue = !issueDate || item.issueDate === issueDate;
+        return matchCard && matchIssue;
+    });
+
+    window.renderFuelCardRecordTable(filtered);
+};
+
+/**
+ * Closes the record modal.
+ */
+window.closeFuelCardRecordModal = function () {
+    const modal = document.getElementById('fuel-card-record-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+/**
+ * Shows the "Fuel Card Detail" modal.
+ */
+window.showFuelCardDetailModal = function (sysId) {
+    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    if (!card) return;
+
+    let modal = document.getElementById('fuel-card-detail-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'fuel-card-detail-modal';
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 9999; font-family: "Microsoft YaHei", sans-serif;';
+        document.body.appendChild(modal);
+    }
+
+    // Determine values for display
+    const statusColor = card.status === '在库' ? '#059669' : card.status === '发放' ? '#2563eb' : '#e11d48';
+
+    modal.innerHTML = `
+        <div style="background: #fff; width: 800px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
+            <!-- Modal Header -->
+            <div style="background: #fff; padding: 20px 0; text-align: center; position: relative; border-bottom: 2px solid #5fa55a;">
+                 <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; letter-spacing: 4px; margin: 0;">油 卡 信 息 查 看</h2>
+                  <button onclick="window.closeFuelCardDetailModal()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; cursor: pointer; color: #64748b;">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            
+            <div style="padding: 24px;">
+                <!-- Section 1: Basic Info -->
+                <div style="background: #84cc7f; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px 4px 0 0; display: inline-block;">基本信息</div>
+                <div style="border: 2px solid #84cc7f; margin-top: -2px; margin-bottom: 24px;">
+                     <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem;">
+                        <tr>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">油卡编号</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; width: 35%;">${card.cardNo}</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">油卡名称</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f; width: 35%;">${card.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">当前状态</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; color: ${statusColor}; font-weight: bold;">${card.status}</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">油卡余额</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f;">${card.balance}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">登记日期</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f;">${card.regDate}</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">登记人员</td>
+                            <td style="padding: 10px;">张三</td> <!-- Hardcoded as example/placeholder -->
+                        </tr>
+                     </table>
+                </div>
+
+                <!-- Section 2: Last Usage -->
+                <div style="background: #84cc7f; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px 4px 0 0; display: inline-block;">上次使用</div>
+                <div style="border: 2px solid #84cc7f; margin-top: -2px;">
+                     <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem;">
+                        <tr>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">充值时间</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; width: 35%;">- - : :</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">充值金额</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f; width: 35%;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">发放时间</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f;">${card.issueDate || '- - : :'}</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">发放对象</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f;">${card.plateNo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">回收时间</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f;">- - : :</td>
+                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">回收余额</td>
+                            <td style="padding: 10px;"></td>
+                        </tr>
+                     </table>
+                </div>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+
+    // Modal click out to close
+    modal.onclick = (e) => {
+        if (e.target === modal) window.closeFuelCardDetailModal();
+    };
+};
+
+/**
+ * Closes the detail modal.
+ */
+window.closeFuelCardDetailModal = function () {
+    const modal = document.getElementById('fuel-card-detail-modal');
+    if (modal) modal.style.display = 'none';
+};
+
+
+/**
+ * Switches the Workbench view.
+ */
+window.switchWorkbenchView = function (view, el) {
+    // Update active menu item
+    document.querySelectorAll('.workbench-menu-item').forEach(item => item.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    const contentArea = document.getElementById('workbench-content-area');
+    if (!contentArea) return;
+
+    if (view === 'overview') {
+        contentArea.innerHTML = window.renderWorkbenchOverview();
+    } else if (view === 'task-center') {
+        contentArea.innerHTML = window.renderTaskCenter();
+    }
+    if (window.lucide) window.lucide.createIcons();
+};
+
+/**
+ * Returns the HTML for the Workbench Overview (Dashboard).
+ */
+window.renderWorkbenchOverview = function () {
+    return `
+        <div style="padding: 2rem; background: var(--bg-main); min-height: 100%;">
+            <div style="margin-bottom: 2rem;">
+                <h2 style="font-size: 1.5rem; color: var(--text-primary); margin-bottom: 0.5rem;">运营概览</h2>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">欢迎回来，这是您今日的数据分析。</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="icon-box"><i data-lucide="truck"></i></div>
+                        <span class="trend up">+12%</span>
+                    </div>
+                    <div class="card-label">今日发货量</div>
+                    <div class="card-value">128</div>
+                </div>
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="icon-box"><i data-lucide="package"></i></div>
+                        <span class="trend up">+5%</span>
+                    </div>
+                    <div class="card-label">在途车辆</div>
+                    <div class="card-value">45</div>
+                </div>
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="icon-box"><i data-lucide="check-circle"></i></div>
+                        <span class="trend up">+8%</span>
+                    </div>
+                    <div class="card-label">今日已完结</div>
+                    <div class="card-value">86</div>
+                </div>
+                <div class="stats-card">
+                    <div class="card-header">
+                        <div class="icon-box"><i data-lucide="banknote"></i></div>
+                        <span class="trend down">-2.4%</span>
+                    </div>
+                    <div class="card-label">待结清金额</div>
+                    <div class="card-value">¥24.8k</div>
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.1rem; color: var(--text-primary);">实时运单动态</h3>
+                    <span style="color: var(--primary); font-size: 0.875rem; cursor: pointer;">查看全部</span>
+                </div>
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color);">
+                            <th style="padding: 1rem;">运单号</th>
+                            <th style="padding: 1rem;">线路</th>
+                            <th style="padding: 1rem;">货物</th>
+                            <th style="padding: 1rem;">状态</th>
+                            <th style="padding: 1rem;">更新时间</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size: 0.875rem; color: var(--text-primary);">
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem; font-weight: 600;">#ORD-8829</td>
+                            <td style="padding: 1rem;">广州 → 上海</td>
+                            <td style="padding: 1rem;">精密电子 (2.5吨)</td>
+                            <td style="padding: 1rem;"><span class="badge badge-blue">运输中</span></td>
+                            <td style="padding: 1rem;">10:24</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem; font-weight: 600;">#ORD-8825</td>
+                            <td style="padding: 1rem;">深圳 → 成都</td>
+                            <td style="padding: 1rem;">日化用品 (8吨)</td>
+                            <td style="padding: 1rem;"><span class="badge badge-green">待提货</span></td>
+                            <td style="padding: 1rem;">09:15</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1rem; font-weight: 600;">#ORD-8821</td>
+                            <td style="padding: 1rem;">北京 → 杭州</td>
+                            <td style="padding: 1rem;">生鲜蔬果 (5吨)</td>
+                            <td style="padding: 1rem;"><span class="badge badge-blue">运输中</span></td>
+                            <td style="padding: 1rem;">08:45</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1rem; font-weight: 600;">#ORD-8818</td>
+                            <td style="padding: 1rem;">上海 → 苏州</td>
+                            <td style="padding: 1rem;">机械零件 (1.2吨)</td>
+                            <td style="padding: 1rem;"><span class="badge badge-yellow">待派货</span></td>
+                            <td style="padding: 1rem;">08:12</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
+
+/**
+ * Returns the HTML for the Task Center.
+ */
+window.renderTaskCenter = function () {
+    return `
+        <div style="display: flex; height: 100%; background: #fff;">
+            <!-- Inner Sidebar -->
+            <div style="width: 200px; border-right: 1px solid #e2e8f0; padding: 16px 0;">
+                <div style="padding: 0 16px; margin-bottom: 12px; font-weight: 600; color: #1e293b; font-size: 0.9rem;">业务功能</div>
+                <div class="task-menu-item active" onclick="window.switchBusinessFunction(this, 'payment')">付款申请</div>
+                <div class="task-menu-item" onclick="window.switchBusinessFunction(this, 'invoice')">开票申请</div>
+                <div class="task-menu-item" onclick="window.switchBusinessFunction(this, 'expense')">费用申请</div>
+            </div>
+
+            <!-- Main Task Content -->
+            <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                <!-- Tabs -->
+                <div style="display: flex; border-bottom: 1px solid #e2e8f0; padding: 0 20px;">
+                    <div class="task-tab active" onclick="window.switchTaskTab(this, 'pending')">待处理的</div>
+                    <div class="task-tab" onclick="window.switchTaskTab(this, 'initiated')">我发起的</div>
+                    <div class="task-tab" onclick="window.switchTaskTab(this, 'processed')">已处理的</div>
+                    <div class="task-tab" onclick="window.switchTaskTab(this, 'about_me')">关于我的</div>
+                </div>
+
+                <!-- Table Header -->
+                <div style="padding: 0;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead style="background: #f8fafc; color: #64748b;">
+                            <tr>
+                                <th style="padding: 12px 16px; text-align: left; width: 40px;">#</th>
+                                <th style="padding: 12px 16px; text-align: left;">申请单号</th>
+                                <th style="padding: 12px 16px; text-align: left;">分类</th>
+                                <th style="padding: 12px 16px; text-align: left;">业务说明</th>
+                                <th style="padding: 12px 16px; text-align: left;">所属公司</th>
+                                <th style="padding: 12px 16px; text-align: left;">结算单位</th>
+                                <th style="padding: 12px 16px; text-align: left;">申请金额</th>
+                                <th style="padding: 12px 16px; text-align: left;">流程名称</th>
+                                <th style="padding: 12px 16px; text-align: left;">当前节点</th>
+                                <th style="padding: 12px 16px; text-align: left;">审批状态</th>
+                                <th style="padding: 12px 16px; text-align: left;">发起人</th>
+                                <th style="padding: 12px 16px; text-align: left;">申请时间</th>
+                                <th style="padding: 12px 16px; text-align: left;">流程结束时间</th>
+                                <th style="padding: 12px 16px; text-align: left;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="task-table-body">
+                            ${window.renderTaskTableBody('pending')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .workbench-menu-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px 20px;
+                cursor: pointer;
+                color: #64748b;
+                font-size: 0.9rem;
+                border-left: 3px solid transparent;
+            }
+            .workbench-menu-item:hover {
+                background: #f8fafc;
+                color: #3b82f6;
+            }
+            .workbench-menu-item.active {
+                background: #eff6ff;
+                color: #3b82f6;
+                border-left-color: #3b82f6;
+            }
+            .task-menu-item {
+                padding: 10px 24px;
+                cursor: pointer;
+                color: #64748b;
+                font-size: 0.85rem;
+            }
+            .task-menu-item:hover {
+                color: #3b82f6;
+                background: #f8fafc;
+            }
+            .task-menu-item.active {
+                color: #3b82f6;
+                background: #eff6ff;
+                font-weight: 500;
+            }
+            .task-tab {
+                padding: 14px 20px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                color: #64748b;
+                border-bottom: 2px solid transparent;
+            }
+            .task-tab.active {
+                color: #3b82f6;
+                border-bottom-color: #3b82f6;
+                font-weight: 500;
+            }
+        </style>
+    `;
+};
+
+/**
+ * Handles switching between task status tabs.
+ */
+window.switchTaskTab = function (el, status) {
+    // Update active state of tabs
+    const tabs = el.parentElement.querySelectorAll('.task-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    el.classList.add('active');
+
+    // Update the inner table body
+    const tbody = document.getElementById('task-table-body');
+    if (tbody) {
+        tbody.innerHTML = window.renderTaskTableBody(status);
+    }
+
+    console.log(`Switching to task status: ${status}`);
+};
+
+/**
+ * Returns the HTML for the task table body based on status.
+ */
+window.renderTaskTableBody = function (status) {
+    if (status === 'processed') {
+        return `
+            <tr>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">1</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">PAY-20231024-001</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">付款申请</span></td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">10月物流运费结算</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">丰源物流</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">顺丰速运有限公司</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 500;">¥1,200.00</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">流程结算</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="color: #10b981; background: #d1fae5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">已通过</span></td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">张三</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">2023-10-24 10:00</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">2023-10-24 14:00</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <a href="javascript:void(0)" style="color: #3b82f6; text-decoration: none;">查看</a>
+                </td>
+            </tr>
+        `;
+    } else if (status === 'initiated') {
+        return `
+            <tr>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">1</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">EXP-20231021-002</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">费用申请</span></td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">10月差旅费报销</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">丰源物流</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 500;">¥850.00</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">报销流程</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">经理审核</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="color: #3b82f6; background: #dbeafe; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">进行中</span></td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">我</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">2023-10-21 09:30</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <a href="javascript:void(0)" style="color: #3b82f6; text-decoration: none;">查看</a>
+                </td>
+            </tr>
+        `;
+    } else if (status === 'about_me') {
+        return `
+            <tr>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">1</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">INV-20231020-003</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="background: #f0fdf4; color: #16a34a; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">开票申请</span></td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">客户指定发票申请</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">丰源物流</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">贝塔测试科技有限公司</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 500;">¥3,200.00</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">开票核销流程</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">财务确认</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="color: #ea580c; background: #ffedd5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">待审批</span></td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">李四</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">2023-10-20 15:45</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                    <a href="javascript:void(0)" style="color: #3b82f6; text-decoration: none;">查看</a>
+                </td>
+            </tr>
+        `;
+    }
+
+    let html = '';
+    let counter = 1;
+
+    if (status === 'pending') {
+        window.pendingRechargeRequests.forEach(req => {
+            const isExpense = req.type === 'expense_audit';
+            html += `
+                <tr>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${counter++}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.id}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="background: ${isExpense ? '#fef3c7' : '#e0f2fe'}; color: ${isExpense ? '#92400e' : '#0284c7'}; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${isExpense ? '费用审核' : '付款申请'}</span></td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${isExpense ? `费用项目: ${req.cardId} (${req.cardName})` : `油卡充值: ${req.cardId} (${req.cardName})`}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">丰源物流</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 500;">¥${req.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${isExpense ? '费用审核审批' : '油卡充值审批'}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">财务审核</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="color: #ea580c; background: #ffedd5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">待审批</span></td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.applicant}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.applyTime}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 8px;">
+                        <a href="javascript:void(0)" onclick="window.approveRechargeRequest('${req.id}')" style="color: #10b981; text-decoration: none;">同意</a>
+                        <a href="javascript:void(0)" onclick="window.rejectRechargeRequest('${req.id}')" style="color: #ef4444; text-decoration: none;">驳回</a>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    if (status === 'processed') {
+        window.processedRechargeRequests.forEach(req => {
+            const isExpense = req.type === 'expense_audit';
+            html += `
+                <tr>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${counter++}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.id}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="background: ${isExpense ? '#fef3c7' : '#e0f2fe'}; color: ${isExpense ? '#92400e' : '#0284c7'}; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${isExpense ? '费用审核' : '付款申请'}</span></td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${isExpense ? `费用项目: ${req.cardId} (${req.cardName})` : `油卡充值: ${req.cardId} (${req.cardName})`}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">丰源物流</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-weight: 500;">¥${req.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${isExpense ? '费用审核审批' : '油卡充值审批'}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">流程结算</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;"><span style="color: ${req.status === 'approved' ? '#10b981' : '#ef4444'}; background: ${req.status === 'approved' ? '#d1fae5' : '#fee2e2'}; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${req.status === 'approved' ? '已通过' : '已驳回'}</span></td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.applicant}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.applyTime}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.processTime}</td>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                        <a href="javascript:void(0)" style="color: #3b82f6; text-decoration: none;">查看</a>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    if (html) return html;
+
+    return `
+        <tr>
+            <td colspan="14" style="padding: 40px; text-align: center; color: #94a3b8;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <i data-lucide="inbox" style="width: 32px; height: 32px; color: #cbd5e1;"></i>
+                    <span>暂无此类任务</span>
+                </div>
+            </td>
+        </tr>
+    `;
+};
+
+/**
+ * Handles switching between business functions in Task Center.
+ */
+window.switchBusinessFunction = function (el, func) {
+    // Update active state of menu items
+    const items = el.parentElement.querySelectorAll('.task-menu-item');
+    items.forEach(item => item.classList.remove('active'));
+    el.classList.add('active');
+
+    // In a real app, this would load different categories of tasks
+    console.log(`Switching to business function: ${func}`);
+};
+
+/**
+ * Approves a fuel card recharge request.
+ */
+window.approveRechargeRequest = function (requestId) {
+    const index = window.pendingRechargeRequests.findIndex(r => r.id === requestId);
+    if (index === -1) return;
+
+    const request = window.pendingRechargeRequests.splice(index, 1)[0];
+
+    if (request.type === 'expense_audit') {
+        const expense = window.expenseAuditData.find(e => e.id === request.orderId);
+        if (expense) {
+            expense.status = '审核通过';
+        }
+        alert(`费用审核通过: ${request.orderId}`);
+    } else {
+        const card = window.fuelCardData.find(c => c.sysId === request.sysId);
+        if (card) {
+            const currentBalance = parseFloat(card.balance.toString().replace(/,/g, '')) || 0;
+            const newBalance = currentBalance + request.amount;
+            card.balance = newBalance.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        alert('审批通过，油卡余额已更新');
+    }
+
+    request.status = 'approved';
+    request.processTime = new Date().toLocaleString();
+    window.processedRechargeRequests.push(request);
+
+    // Refresh task list
+    const activeTab = document.querySelector('.task-tab.active');
+    if (activeTab) {
+        const onclickAttr = activeTab.getAttribute('onclick');
+        if (onclickAttr) {
+            const match = onclickAttr.match(/'([^']+)'/);
+            if (match) {
+                const status = match[1];
+                const tbody = document.getElementById('task-table-body');
+                if (tbody) tbody.innerHTML = window.renderTaskTableBody(status);
+            }
+        }
+    }
+
+    // Refresh other views if active
+    const activeTabElement = document.querySelector('.tab-item.active');
+    if (activeTabElement) {
+        const activeTabTitle = activeTabElement.textContent.trim();
+        if (activeTabTitle === '费用审核' || activeTabTitle === '录入订单') {
+            renderTabs(activeTabTitle);
+        }
+    }
+};
+
+/**
+ * Rejects a fuel card recharge request or expense audit.
+ */
+window.rejectRechargeRequest = function (requestId) {
+    const index = window.pendingRechargeRequests.findIndex(r => r.id === requestId);
+    if (index === -1) return;
+
+    const request = window.pendingRechargeRequests.splice(index, 1)[0];
+
+    if (request.type === 'expense_audit') {
+        const expense = window.expenseAuditData.find(e => e.id === request.orderId);
+        if (expense) {
+            expense.status = '审核驳回';
+        }
+        alert(`费用申请已驳回: ${request.orderId}`);
+    } else {
+        alert('申请已驳回');
+    }
+
+    request.status = 'rejected';
+    request.processTime = new Date().toLocaleString();
+    window.processedRechargeRequests.push(request);
+
+    // Refresh task list
+    const activeTab = document.querySelector('.task-tab.active');
+    if (activeTab) {
+        const onclickAttr = activeTab.getAttribute('onclick');
+        if (onclickAttr) {
+            const match = onclickAttr.match(/'([^']+)'/);
+            if (match) {
+                const status = match[1];
+                const tbody = document.getElementById('task-table-body');
+                if (tbody) tbody.innerHTML = window.renderTaskTableBody(status);
+            }
+        }
+    }
+
+    // Refresh other views if active
+    const activeTabElement = document.querySelector('.tab-item.active');
+    if (activeTabElement) {
+        const activeTabTitle = activeTabElement.textContent.trim();
+        if (activeTabTitle === '费用审核' || activeTabTitle === '录入订单') {
+            renderTabs(activeTabTitle);
+        }
+    }
+};
+
+// --- Expense Modal Logic ---
+
+/**
+ * Injects the expense entry modal if it doesn't already exist.
+ */
+window.injectExpenseModal = function () {
+    if (document.getElementById('expense-modal-container')) return;
+
+    const modalHtml = `
+        <div id="expense-modal-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; font-family: sans-serif;">
+            <div style="background: white; border-radius: 8px; width: 1000px; max-width: 95%; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+                <div style="padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1rem; color: #1e293b;">新增费用项目</h3>
+                    <button onclick="window.closeExpenseModal()" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 4px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px dashed #e2e8f0;">
+                        <label style="font-size: 0.85rem; color: #64748b; font-weight: 600;">费用类型:</label>
+                        <select id="modal-expense-type" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.85rem; outline: none; background: #f8fafc; cursor: pointer;">
+                            <option value="revenue">收入金额</option>
+                            <option value="advance">代垫金额</option>
+                        </select>
+                    </div>
+                    
+                    <div id="modal-table-container" style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; background: white;">
+                        <!-- Table will be injected here -->
+                    </div>
+                </div>
+                <div style="padding: 16px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                    <button onclick="window.closeExpenseModal()" style="padding: 8px 20px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; color: #64748b; font-size: 0.9rem; cursor: pointer;">取消</button>
+                    <button onclick="window.saveExpense()" style="padding: 8px 24px; border: none; border-radius: 6px; background: #4f46e5; color: white; font-size: 0.9rem; cursor: pointer; font-weight: 600;">保存</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    /**
+     * Updates the modal table structure based on the selected expense type.
+     */
+    window.updateModalTable = function () {
+        const typeSelect = document.getElementById('modal-expense-type');
+        if (!typeSelect) return;
+        const type = typeSelect.value;
+        const container = document.getElementById('modal-table-container');
+        if (!container) return;
+
+        let tableHtml = '';
+        if (type === 'revenue') {
+            tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+                    <thead style="background: #f1f5f9;">
+                        <tr>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 20%;"><span style="color: #ef4444;">*</span> 费用项目</th>
+                            <th style="padding: 8px; text-align: right; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 15%;"><span style="color: #ef4444;">*</span> 收入金额</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 25%;"><span style="color: #ef4444;">*</span> 结算公司</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 15%;">计费日期</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;">
+                                <select id="modal-item" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="" disabled selected>选择项目</option>
+                                    <option value="信息费">信息费</option>
+                                    <option value="送货费">送货费</option>
+                                    <option value="接货费">接货费</option>
+                                    <option value="停车费">停车费</option>
+                                    <option value="保险费">保险费</option>
+                                    <option value="其它">其它</option>
+                                </select>
+                            </td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="number" id="modal-amount" placeholder="0.00" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; text-align: right; font-weight: 600;"></td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;">
+                                <select id="modal-company" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="" disabled selected>选择公司</option>
+                                    <option value="丰源物流">丰源物流</option>
+                                    <option value="顺丰速运">顺丰速运</option>
+                                    <option value="中通快递">中通快递</option>
+                                    <option value="圆通速运">圆通速运</option>
+                                    <option value="申通快递">申通快递</option>
+                                    <option value="韵达快递">韵达快递</option>
+                                </select>
+                            </td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="date" id="modal-date" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;"></td>
+                            <td style="padding: 0;"><input type="text" id="modal-remark" placeholder="..." style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        } else {
+            tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+                    <thead style="background: #f1f5f9;">
+                        <tr>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 15%;"><span style="color: #ef4444;">*</span> 费用项目</th>
+                            <th style="padding: 8px; text-align: right; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 12%;"><span style="color: #ef4444;">*</span> 代垫金额</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 18%;"><span style="color: #ef4444;">*</span> 结算公司</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 12%;">联系人</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 12%;">电话</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 12%;">计费日期</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;">
+                                <select id="modal-item" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="" disabled selected>选择项目</option>
+                                    <option value="运费">运费</option>
+                                    <option value="装货费">装货费</option>
+                                    <option value="卸货费">卸货费</option>
+                                    <option value="停车费">停车费</option>
+                                    <option value="保险费">保险费</option>
+                                    <option value="其它">其它</option>
+                                </select>
+                            </td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="number" id="modal-amount" placeholder="0.00" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; text-align: right; font-weight: 600;"></td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;">
+                                <select id="modal-company" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="" disabled selected>选择公司</option>
+                                    <option value="丰源物流">丰源物流</option>
+                                    <option value="顺丰速运">顺丰速运</option>
+                                    <option value="中通快递">中通快递</option>
+                                    <option value="圆通速运">圆通速运</option>
+                                    <option value="申通快递">申通快递</option>
+                                    <option value="韵达快递">韵达快递</option>
+                                </select>
+                            </td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="text" id="modal-contact" placeholder="联系人" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem;"></td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="text" id="modal-phone" placeholder="电话" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem;"></td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="date" id="modal-date" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;"></td>
+                            <td style="padding: 0;"><input type="text" id="modal-remark" placeholder="..." style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+        container.innerHTML = tableHtml;
+
+        // Default date to today
+        const dateInput = document.getElementById('modal-date');
+        if (dateInput) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+        }
+    };
+
+    const typeSelect = document.getElementById('modal-expense-type');
+    if (typeSelect) {
+        typeSelect.addEventListener('change', window.updateModalTable);
+    }
+};
+
+/**
+ * Shows the expense entry modal.
+ */
+window.showExpenseModal = function () {
+    window.injectExpenseModal();
+    const container = document.getElementById('expense-modal-container');
+    if (container) {
+        container.style.display = 'flex';
+        // Force table update and reset
+        window.updateModalTable();
+    }
+};
+
+/**
+ * Closes the expense entry modal.
+ */
+window.closeExpenseModal = function () {
+    const container = document.getElementById('expense-modal-container');
+    if (container) {
+        container.style.display = 'none';
+    }
+};
+
+/**
+ * Saves the expense from the modal, adds it to the audit list and creates a task.
+ */
+window.saveExpense = function () {
+    const itemInput = document.getElementById('modal-item');
+    const amountInput = document.getElementById('modal-amount');
+    const companyInput = document.getElementById('modal-company');
+    const dateInput = document.getElementById('modal-date');
+    const remarkInput = document.getElementById('modal-remark');
+    const typeSelect = document.getElementById('modal-expense-type');
+
+    if (!itemInput || !amountInput || !companyInput || !itemInput.value.trim() || !amountInput.value.trim() || !companyInput.value.trim()) {
+        alert('请填写必要字段 (费用项目, 金额, 结算公司)');
+        return;
+    }
+
+    const type = typeSelect ? typeSelect.value : 'revenue';
+    const amount = parseFloat(amountInput.value);
+    const itemName = itemInput.value;
+    const company = companyInput ? companyInput.value : '未指定公司';
+    const date = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+    const remark = remarkInput ? remarkInput.value : '';
+
+    // 1. Add to expenseAuditData
+    const newOrderId = 'EXP-' + Date.now();
+    const newExpense = {
+        id: newOrderId,
+        itemName: itemName,
+        remark: remark,
+        expenseType: type, // 'revenue' or 'advance'
+        date: date,
+        signDate: '-',
+        pieces: 1,
+        type: '费用单',
+        weight: '0.00',
+        salesman: '当前用户',
+        volume: '0.00',
+        operator: '当前用户',
+        revenue: type === 'revenue' ? amount : 0,
+        cost: type === 'advance' ? amount : 0,
+        status: '审核中',
+        customer: company
+    };
+
+    window.expenseAuditData.unshift(newExpense);
+
+    // 2. Create Task in Task Center
+    const newTask = {
+        id: 'TASK-' + Date.now(),
+        type: 'expense_audit',
+        orderId: newOrderId,
+        cardId: newOrderId, // Using orderId as identifier
+        cardName: itemName,
+        amount: amount,
+        remark: remark,
+        applicant: '当前用户',
+        applyTime: new Date().toLocaleString(),
+        status: 'pending'
+    };
+
+    window.pendingRechargeRequests.push(newTask);
+
+    alert('保存成功，已提交审核申请至任务中心');
+    window.closeExpenseModal();
+
+    // Refresh views if they are currently active
+    const activeTabElement = document.querySelector('.tab-item.active');
+    if (activeTabElement) {
+        const activeTab = activeTabElement.textContent.trim();
+        if (activeTab === '费用审核' || activeTab === '录入订单') {
+            renderTabs(activeTab);
+        }
+    }
+
+    // Also refresh workbench if active
+    const workbenchActive = document.querySelector('.workbench-menu-item.active');
+    if (workbenchActive && workbenchActive.textContent.includes('任务中心')) {
+        window.switchWorkbenchView('task-center', workbenchActive);
+    }
+};
+
+/**
+ * Injects the configuration fields modal.
+ */
+window.injectConfigModal = function () {
+    if (document.getElementById('config-modal-container')) return;
+
+    const modalHtml = `
+        <div id="config-modal-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10001; align-items: center; justify-content: center; font-family: sans-serif;">
+            <div style="background: white; border-radius: 8px; width: 500px; max-width: 90%; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+                <div style="padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1rem; color: #1e293b;">配置字段</h3>
+                    <button onclick="window.closeConfigModal()" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 4px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                    <p style="font-size: 0.85rem; color: #64748b; margin: 0;">在这里配置显示的字段...</p>
+                    <!-- Additional config options can be added here -->
+                </div>
+                <div style="padding: 16px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                    <button onclick="window.closeConfigModal()" style="padding: 8px 20px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; color: #64748b; font-size: 0.9rem; cursor: pointer;">取消</button>
+                    <button onclick="window.closeConfigModal()" style="padding: 8px 24px; border: none; border-radius: 6px; background: #4f46e5; color: white; font-size: 0.9rem; cursor: pointer; font-weight: 600;">确定</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+/**
+ * Shows the configuration fields modal.
+ */
+window.showConfigModal = function () {
+    window.injectConfigModal();
+    const container = document.getElementById('config-modal-container');
+    if (container) {
+        container.style.display = 'flex';
+    }
+};
+
+/**
+ * Closes the configuration fields modal.
+ */
+window.closeConfigModal = function () {
+    const container = document.getElementById('config-modal-container');
+    if (container) {
+        container.style.display = 'none';
     }
 };
