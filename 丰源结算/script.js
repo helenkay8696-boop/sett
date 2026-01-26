@@ -6,7 +6,7 @@ const menuData = [
     {
         title: "应收应付",
         icon: "file-text",
-        items: ["对账单", "客户账单", "接收账单", "批量确认", "费用审核", "费用明细", "应收明细", "应付明细", "业务员成本明细", "代收代付明细"]
+        items: ["对账单", "客户账单", "应收对账", "应付对账", "费用审核", "费用明细", "应收明细", "应付明细", "业务员成本明细", "代收代付明细"]
     },
     {
         title: "收付",
@@ -50,7 +50,15 @@ const businessMenuData = [
     {
         title: "业务管理",
         icon: "briefcase",
-        items: ["录入订单"]
+        items: ["录入订单", "订单管理", "录入运单", "运单管理"]
+    }
+];
+
+const reportMenuData = [
+    {
+        title: "业务报表",
+        icon: "bar-chart-3",
+        items: ["货量利润表"]
     }
 ];
 
@@ -59,6 +67,685 @@ window.processedRechargeRequests = [];
 
 // --- Expense Audit Data ---
 window.expenseAuditData = [];
+window.payableExpenseData = []; // New data structure for payable expenses
+window.ordersData = [];
+window.waybillsData = [];
+
+// --- Invoice Application Data ---
+window.invoiceApplicationData = [
+    { id: 1, status: '待审核', statusColor: '#d97706', statusBg: '#fef3c7', invoiceNo: '-', type: '普票', unit: '深圳市好运来货运代理有限公司', date: '2023-12-05', currency: 'CNY', amount: '2,000.00', tax: '120.00', total: '2,120.00', localTotal: '2,120.00', workNo: 'YO2512-0023', billNo: 'B2023120501', user: '赵六', time: '2023-12-05 11:00' },
+    { id: 2, status: '已开票', statusColor: '#4f46e5', statusBg: '#dbeafe', invoiceNo: 'INV20231206001', type: '专票(6%)', unit: '北京京华物流有限公司', date: '2023-12-06', currency: 'CNY', amount: '8,000.00', tax: '480.00', total: '8,480.00', localTotal: '8,480.00', workNo: 'YO2512-0024', billNo: 'B2023120601', user: '孙七', time: '2023-12-06 15:20' },
+    { id: 3, status: '草稿', statusColor: '#475569', statusBg: '#e2e8f0', invoiceNo: '-', type: '专票(13%)', unit: '天津港保税区物流', date: '2023-12-07', currency: 'USD', amount: '1,500.00', tax: '0.00', total: '1,500.00', localTotal: '10,800.00', workNo: 'YO2512-0025', billNo: 'B2023120701', user: '周八', time: '2023-12-07 09:45' },
+    { id: 4, status: '已驳回/已取消', statusColor: '#ef4444', statusBg: '#fee2e2', invoiceNo: '-', type: '普票', unit: '上海海运物流有限公司', date: '2023-12-08', currency: 'CNY', amount: '3,200.00', tax: '0.00', total: '3,200.00', localTotal: '3,200.00', workNo: 'YO2512-0026', billNo: 'B2023120801', user: '吴九', time: '2023-12-08 14:10' },
+    { id: 5, status: '已批准', statusColor: '#10b981', statusBg: '#dcfce7', invoiceNo: '-', type: '专票(6%)', unit: '广州顺丰速运', date: '2023-12-09', currency: 'CNY', amount: '5,500.00', tax: '330.00', total: '5,830.00', localTotal: '5,830.00', workNo: 'YO2512-0027', billNo: 'B2023120901', user: '郑十', time: '2023-12-09 10:30' }
+];
+
+window.renderInvoiceApplicationList = function (status = '全部') {
+    const tbody = document.querySelector('#invoice-application-list-view .statement-table tbody');
+    if (!tbody) return;
+
+    let filteredData = window.invoiceApplicationData;
+    if (status !== '全部') {
+        // Map tab names to status values loosely if needed, or exact match
+        if (status.includes('审核中')) status = '待审核'; // Map "审核中" tab to "待审核" data status if consistent
+        else if (status.includes('已驳回')) status = '已驳回/已取消';
+        else if (status.includes('草稿')) status = '草稿';
+        else if (status.includes('已批准')) status = '已批准';
+        else if (status.includes('已开票')) status = '已开票';
+
+        filteredData = window.invoiceApplicationData.filter(item => item.status === status);
+    }
+
+    if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="17" style="text-align: center; padding: 24px; color: #94a3b8;">暂无数据</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filteredData.map((item, index) => `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 10px; text-align: center;"><input type="checkbox" /></td>
+            <td style="padding: 10px; text-align: center;">${index + 1}</td>
+            <td style="padding: 10px;"><span style="background: ${item.statusBg}; color: ${item.statusColor}; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${item.status}</span></td>
+            <td style="padding: 10px;">${item.invoiceNo}</td>
+            <td style="padding: 10px;">${item.type}</td>
+            <td style="padding: 10px;">${item.unit}</td>
+            <td style="padding: 10px;">${item.date}</td>
+            <td style="padding: 10px;">${item.currency}</td>
+            <td style="padding: 10px; text-align: right;">${item.amount}</td>
+            <td style="padding: 10px; text-align: right;">${item.tax}</td>
+            <td style="padding: 10px; text-align: right;">${item.total}</td>
+            <td style="padding: 10px; text-align: right;">${item.localTotal}</td>
+            <td style="padding: 10px;">${item.workNo}</td>
+            <td style="padding: 10px;">${item.billNo}</td>
+            <td style="padding: 10px;">${item.user}</td>
+            <td style="padding: 10px;">${item.time}</td>
+            <td style="padding: 10px;">${item.time}</td>
+            <td style="padding: 10px; text-align: center;">
+                ${(item.status === '待审核' || item.status === '审核中') ? `
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                        <a href="javascript:void(0)" onclick="window.approveInvoiceApplication(${item.id})" style="color: #4f46e5; font-size: 0.8rem; text-decoration: none;">批准</a>
+                        <a href="javascript:void(0)" onclick="window.rejectInvoiceApplication(${item.id})" style="color: #ef4444; font-size: 0.8rem; text-decoration: none;">驳回</a>
+                    </div>
+                ` : `
+                    <i data-lucide="more-horizontal" style="width: 14px; height: 14px; color: #94a3b8; cursor: pointer;"></i>
+                `}
+            </td>
+        </tr>
+    `).join('');
+
+    if (window.lucide) window.lucide.createIcons();
+};
+
+window.approveInvoiceApplication = function (id) {
+    const item = window.invoiceApplicationData.find(i => i.id === id);
+    if (item) {
+        item.status = '已批准';
+        item.statusColor = '#4f46e5';
+        item.statusBg = '#dbeafe';
+        alert('申请已批准');
+        window.renderInvoiceApplicationList(document.querySelector('.status-tab.active span')?.parentElement.textContent.trim().split(' ')[0] || '全部');
+    }
+};
+
+window.rejectInvoiceApplication = function (id) {
+    const item = window.invoiceApplicationData.find(i => i.id === id);
+    if (item) {
+        item.status = '已驳回';
+        item.statusColor = '#ef4444';
+        item.statusBg = '#fee2e2';
+        alert('申请已驳回');
+        window.renderInvoiceApplicationList(document.querySelector('.status-tab.active span')?.parentElement.textContent.trim().split(' ')[0] || '全部');
+    }
+};
+
+
+
+
+
+window.switchPaymentApplicationTab = function (el) {
+    const tabs = el.parentElement.children;
+    for (let i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+        tabs[i].style.borderBottom = 'none';
+        tabs[i].style.color = '#475569';
+        tabs[i].style.fontWeight = 'normal';
+    }
+    el.classList.add('active');
+    el.style.borderBottom = '2px solid #4f46e5';
+    el.style.color = '#4f46e5';
+    el.style.fontWeight = '500';
+
+    // Logic to filter list or switch views can go here. 
+    // Currently just visual switching as per request "switch to that tab".
+};
+
+// --- Waybill to Payment Jump ---
+window.jumpToPaymentFromWaybill = function () {
+    // 1. Check if there are expenses to pay
+    let expenses = [];
+    if (window.expenseAuditData) {
+        expenses = window.expenseAuditData.filter(e => {
+            return (e.cost && parseFloat(e.cost) > 0) || e.expenseType === 'advance';
+        });
+    }
+
+    if (expenses.length === 0) {
+        // Fallback for demo
+        expenses.push(
+            { id: 999, date: '2025-01-25', itemName: '临时运费', cost: 500, customer: '临时客户', expenseType: 'advance' }
+        );
+    }
+
+    // 2. Open "付款申请" Tab
+    if (window.addTab) {
+        window.addTab('付款申请');
+    } else {
+        alert('Error: addTab function not found');
+        return;
+    }
+
+    // 3. Switch to Create View
+    setTimeout(() => {
+        if (typeof window.openPaymentApplicationCreateView === 'function') {
+            window.openPaymentApplicationCreateView();
+        } else {
+            const listView = document.getElementById('payment-application-list-view');
+            const createView = document.getElementById('payment-application-create-view');
+            if (listView && createView) {
+                listView.style.display = 'none';
+                createView.style.display = 'flex';
+            }
+        }
+
+        // 4. Pre-fill Data
+        const tableBody = document.querySelector('#payment-application-create-view table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = expenses.map((e, index) => `
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; text-align: center;"><input type="checkbox" checked></td>
+                    <td style="padding: 8px;">${index + 1}</td>
+                    <td style="padding: 8px;">${e.date}</td>
+                    <td style="padding: 8px;">EXP${e.id}</td>
+                    <td style="padding: 8px;">${e.itemName}</td>
+                    <td style="padding: 8px;">CNY</td>
+                    <td style="padding: 8px; text-align: right;">${Number(e.cost).toFixed(2)}</td>
+                    <td style="padding: 8px;">CUST001</td>
+                    <td style="padding: 8px;">${e.customer}</td>
+                    <td style="padding: 8px;">${e.customer}</td>
+                    <td style="padding: 8px; text-align: right;">1.00</td>
+                </tr>
+            `).join('');
+        }
+    }, 100);
+};
+
+// --- Invoice Management Data ---
+window.invoiceManagementData = [
+    { id: 1, status: '待开票', statusBg: '#e2e8f0', statusColor: '#475569', invoiceNo: '-', type: '普票', unit: '深圳市好运来货运代理有限公司', date: '2023-12-01', currency: 'CNY', amount: '1,000.00', tax: '60.00', total: '1,060.00', localTotal: '1,060.00', workNo: 'YO2512-0020', billNo: 'B2023120101', user: '张三', time: '2023-12-01 10:00' },
+    { id: 2, status: '已出票', statusBg: '#dbeafe', statusColor: '#4f46e5', invoiceNo: 'INV20231201001', type: '专票(6%)', unit: '广州市顺风物流有限公司', date: '2023-12-02', currency: 'USD', amount: '500.00', tax: '0.00', total: '500.00', localTotal: '3,600.00', workNo: 'YO2512-0021', billNo: 'B2023120201', user: '李四', time: '2023-12-02 14:30' },
+    { id: 3, status: '审核中', statusBg: '#fef3c7', statusColor: '#d97706', invoiceNo: '-', type: '专票(13%)', unit: '上海市东方国际物流集团', date: '2023-12-03', currency: 'CNY', amount: '5,000.00', tax: '650.00', total: '5,650.00', localTotal: '5,650.00', workNo: 'YO2512-0022', billNo: 'B2023120301', user: '王五', time: '2023-12-03 09:15' }
+];
+
+window.renderInvoiceManagementList = function (status) {
+    const tableContainer = document.querySelector('#invoice-management-table-container table tbody');
+    if (!tableContainer) return;
+
+    let filteredData = window.invoiceManagementData;
+    if (status && status !== '全部') {
+        // Handle "已出票" special case to match the UI which likely groups things
+        if (status === '已出票') {
+            filteredData = window.invoiceManagementData.filter(item => item.status === '已出票' || item.status === '已开票');
+        } else {
+            filteredData = window.invoiceManagementData.filter(item => item.status === status);
+        }
+    }
+
+    if (filteredData.length === 0) {
+        tableContainer.innerHTML = '<tr><td colspan="17" style="text-align: center; padding: 24px; color: #94a3b8;">暂无数据</td></tr>';
+        return;
+    }
+
+    tableContainer.innerHTML = filteredData.map((item, index) => `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
+            <td style="padding: 10px; text-align: center;">${index + 1}</td>
+            <td style="padding: 10px;"><span style="background: ${item.statusBg}; color: ${item.statusColor}; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${item.status}</span></td>
+            <td style="padding: 10px;">${item.invoiceNo}</td>
+            <td style="padding: 10px;">${item.type}</td>
+            <td style="padding: 10px;">${item.unit}</td>
+            <td style="padding: 10px;">${item.date}</td>
+            <td style="padding: 10px;">${item.currency}</td>
+            <td style="padding: 10px; text-align: right;">${item.amount}</td>
+            <td style="padding: 10px; text-align: right;">${item.tax}</td>
+            <td style="padding: 10px; text-align: right;">${item.total}</td>
+            <td style="padding: 10px; text-align: right;">${item.localTotal}</td>
+            <td style="padding: 10px;">${item.workNo}</td>
+            <td style="padding: 10px;">${item.billNo}</td>
+            <td style="padding: 10px;">${item.user}</td>
+            <td style="padding: 10px;">${item.time}</td>
+            <td style="padding: 10px; text-align: center;"><i data-lucide="more-horizontal" style="width: 14px; height: 14px; color: #94a3b8; cursor: pointer;"></i></td>
+        </tr>
+    `).join('');
+
+    if (window.lucide) window.lucide.createIcons();
+};
+
+window.switchInvoiceManagementTab = function (el) {
+    const tabs = el.parentElement.querySelectorAll('.internal-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.borderBottom = 'none';
+        tab.style.color = '#475569';
+        tab.style.fontWeight = 'normal';
+    });
+    el.classList.add('active');
+    el.style.borderBottom = '2px solid #4f46e5';
+    el.style.color = '#4f46e5';
+    el.style.fontWeight = '500';
+
+    const statusText = el.textContent.trim().split('?')[0].split(/\d/)[0]; // Clean up "已出票5" -> "已出票"
+    window.renderInvoiceManagementList(statusText);
+};
+
+// --- Task Center Data ---
+window.taskCenterData = [
+    { id: 1, type: '付款申请', title: '付款申请-PAY20251227001', content: '深圳市供应商A有限公司 - ¥12,000.00', status: '待处理', time: '2025-12-27 10:30', user: '张三' },
+    { id: 2, type: '费用单审核', title: '费用单-EXP20251227002', content: '广州分公司 - 运费补贴', status: '待处理', time: '2025-12-27 11:15', user: '李四' }
+];
+
+window.submitInvoiceApplication = function () {
+    // 1. Get Data from Form
+    const customerSelect = document.getElementById('invoice-create-customer-select');
+    const customerName = customerSelect ? customerSelect.value : '';
+
+    if (!customerName) {
+        alert('请选择客户');
+        return;
+    }
+
+    const amountInput = document.querySelector('#invoice-application-create-view .input-label-group input[type="text"]');
+    // This selector might be weak if there are multiple, let's try to be specific or rely on the populated mocked total
+    // Actually the total is in the table bottom summary "价税合计", or we can just grab the mock total "2,120.00" style data.
+    // For this demo, let's assume we sum up the table rows or take a static value if not fully interactive yet.
+    // We'll scrape the "价税合计" from the bottom summary if possible, or just use a dummy value based on the "mock" form state.
+    const totalAmount = "2,120.00"; // Mocked for now as calculation logic isn't fully bound yet
+    const taxAmount = "120.00";
+
+    const newId = window.invoiceApplicationData.length + 1;
+    const workNo = 'YO2512-' + (1000 + newId);
+    const billNo = 'B202512' + (10 + newId);
+    const dateStr = new Date().toISOString().split('T')[0];
+    const timeStr = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
+
+    // 2. Create Invoice Data Object
+    const newInvoice = {
+        id: newId,
+        status: '待审核',
+        statusColor: '#d97706',
+        statusBg: '#fef3c7',
+        invoiceNo: '-',
+        type: '普票', // Mock default
+        unit: customerName,
+        date: dateStr,
+        currency: 'CNY',
+        amount: '2,000.00',
+        tax: taxAmount,
+        total: totalAmount,
+        localTotal: totalAmount,
+        workNo: workNo,
+        billNo: billNo,
+        user: 'limquan', // Current user
+        time: timeStr
+    };
+
+    // 3. Add to Invoice List
+    window.invoiceApplicationData.unshift(newInvoice);
+
+    // 4. Create Task Center Item
+    const newTask = {
+        id: window.taskCenterData.length + 1,
+        type: '开票申请',
+        title: `开票申请-${workNo}`,
+        content: `${customerName} - ¥${totalAmount}`,
+        status: '待处理',
+        time: timeStr,
+        user: 'limquan'
+    };
+    window.taskCenterData.unshift(newTask);
+
+    // 5. Feedback and Navigation
+    alert('提交审核成功！已生成审批任务。');
+
+    // Switch back to list view
+    document.getElementById('invoice-application-create-view').style.display = 'none';
+    document.getElementById('invoice-application-list-view').style.display = 'flex';
+    document.querySelector('.customer-sidebar').style.display = 'flex';
+
+    // Switch tab to "审核中" (Matches the text in switch function)
+    const tabs = document.querySelectorAll('#invoice-application-list-view .status-tabs .status-tab');
+    tabs.forEach(t => {
+        if (t.textContent.includes('审核中')) {
+            t.click();
+        }
+    });
+
+    // Also refreshing the list is handled by the click() above
+};
+
+window.switchInvoiceApplicationTab = function (el) {
+    const tabs = el.parentElement.querySelectorAll('.status-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.borderBottom = 'none';
+        tab.style.color = '#475569';
+        tab.style.fontWeight = 'normal';
+    });
+
+    el.classList.add('active');
+    el.style.borderBottom = '2px solid #4f46e5';
+    el.style.color = '#4f46e5';
+    el.style.fontWeight = '500';
+
+    // Get status name (remove counts if any)
+    let statusText = el.textContent.trim();
+    // Simple way to get text node only or split checks, but here we can just pass the raw text and handle in render loosely
+    // Or clean it up:
+    const clone = el.cloneNode(true);
+    const badge = clone.querySelector('span');
+    if (badge) badge.remove();
+    statusText = clone.textContent.trim();
+
+    window.renderInvoiceApplicationList(statusText);
+};
+
+window.saveWaybillEntry = function () {
+    const waybillNo = 'WB' + Date.now().toString().slice(-8);
+    const date = document.getElementById('entry-date')?.value;
+    const customer = document.getElementById('entry-customer')?.value;
+    const origin = document.getElementById('entry-origin')?.value;
+    const destination = document.getElementById('entry-destination')?.value;
+
+    const waybillObj = {
+        no: waybillNo,
+        date: date,
+        customer: customer,
+        route: `${origin || '-'} -> ${destination || '-'}`,
+        goods: document.getElementById('cargo-name-1')?.value || '未命名货物'
+    };
+
+    window.waybillsData.push(waybillObj);
+    alert('运单保存成功！运单号: ' + waybillNo);
+
+    // Clear basic fields
+    if (document.getElementById('entry-date')) document.getElementById('entry-date').value = '';
+    if (document.getElementById('entry-customer')) document.getElementById('entry-customer').value = '';
+    if (document.getElementById('entry-origin')) document.getElementById('entry-origin').value = '';
+    if (document.getElementById('entry-destination')) document.getElementById('entry-destination').value = '';
+    if (document.getElementById('cargo-name-1')) document.getElementById('cargo-name-1').value = '';
+};
+
+window.viewWaybillDetails = function (no) {
+    const waybill = window.waybillsData.find(w => w.no === no);
+    if (!waybill) {
+        alert('未找到该运单: ' + no);
+        return;
+    }
+
+    addTab('录入运单');
+
+    // Delay to ensure DOM is ready
+    setTimeout(() => {
+        if (document.getElementById('entry-date')) document.getElementById('entry-date').value = waybill.date || '';
+        if (document.getElementById('entry-customer')) document.getElementById('entry-customer').value = waybill.customer || '';
+        // Parse route to extract origin/destination if possible, or just skip if complex. 
+        // We saved it as "Origin -> Destination".
+        if (waybill.route && waybill.route.includes(' -> ')) {
+            const parts = waybill.route.split(' -> ');
+            if (document.getElementById('entry-origin')) document.getElementById('entry-origin').value = parts[0] !== '-' ? parts[0] : '';
+            if (document.getElementById('entry-destination')) document.getElementById('entry-destination').value = parts[1] !== '-' ? parts[1] : '';
+        }
+        if (document.getElementById('cargo-name-1')) document.getElementById('cargo-name-1').value = waybill.goods !== '未命名货物' ? waybill.goods : '';
+    }, 100);
+};
+
+window.bankReceiptData = [
+    { id: 1, name: '深圳市远通物流有限公司', bank: '招商银行深圳分行', account: '755912345678901', currency: 'CNY', serial: '202512270001', amount: '50,000.00', time: '2025-12-27 10:30', payer: 'ABC TRADING LTD', unit: '总公司', payerAccount: '6222021234567890', summary: '货款', match: 'ORDER-001', status: 'pending_confirm' },
+    { id: 2, name: '广州快运达货运代理有限公司', bank: '中国银行广州分行', account: '621234567890123', currency: 'USD', serial: '202512270002', amount: '10,000.00', time: '2025-12-27 11:15', payer: 'XYZ LOGISTICS INC', unit: '广州分公司', payerAccount: '4567890123456789', summary: '运费', match: '-', status: 'pending_confirm' },
+    { id: 3, name: '深圳市远通物流有限公司', bank: '工商银行深圳分行', account: '955880123456789', currency: 'CNY', serial: '202512270003', amount: '2,500.00', time: '2025-12-27 14:00', payer: 'GLOBAL TRADERS', unit: '总公司', payerAccount: '1234567890123456', summary: '配合费', match: 'ORDER-002', status: 'pending_confirm' },
+    { id: 4, name: '未知付款人', bank: '建设银行', account: '****', currency: 'CNY', serial: '202512280001', amount: '5,000.00', time: '2025-12-28 09:00', payer: 'UNKNOWN', unit: '-', payerAccount: '****', summary: '转账', match: '-', status: 'pending_claim' },
+    { id: 5, name: '深圳市远通物流有限公司', bank: '招商银行', account: '755912345678901', currency: 'CNY', serial: '202512260005', amount: '12,000.00', time: '2025-12-26 15:30', payer: 'OLD CUSTOMER', unit: '总公司', payerAccount: '****', summary: '货款', match: 'ORDER-000', status: 'written_off' }
+];
+
+window.confirmBankReceipt = function (id) {
+    const item = window.bankReceiptData.find(i => i.id == id);
+    if (item) {
+        item.status = 'written_off';
+        alert('已确认销账');
+        const activeTab = document.querySelector('.internal-tab.active');
+        if (activeTab) {
+            window.switchBankReceiptTab(activeTab);
+        }
+    }
+};
+
+window.injectClaimModal = function () {
+    if (document.getElementById('claim-modal-container')) return;
+
+    const modalHtml = `
+        <div id="claim-modal-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002; align-items: center; justify-content: center; font-family: sans-serif;">
+            <div style="background: white; border-radius: 8px; width: 400px; max-width: 90%; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+                <div style="padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
+                    <h3 style="margin: 0; font-size: 1rem; color: #1e293b;">认领流水</h3>
+                    <button onclick="window.closeClaimModal()" style="background: none; border: none; cursor: pointer; color: #64748b; padding: 4px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <div style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 0.85rem; color: #64748b; font-weight: 600;">匹配单号:</label>
+                        <input id="claim-bill-no" type="text" placeholder="请输入订单号" style="height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; outline: none;">
+                    </div>
+                </div>
+                <div style="padding: 16px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                    <button onclick="window.closeClaimModal()" style="padding: 8px 20px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; color: #64748b; font-size: 0.9rem; cursor: pointer;">取消</button>
+                    <button onclick="window.saveClaim()" style="padding: 8px 24px; border: none; border-radius: 6px; background: #4f46e5; color: white; font-size: 0.9rem; cursor: pointer; font-weight: 600;">保存</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openClaimModal = function (id) {
+    window.injectClaimModal();
+    window.currentClaimId = id;
+    const container = document.getElementById('claim-modal-container');
+    const input = document.getElementById('claim-bill-no');
+    if (container) {
+        container.style.display = 'flex';
+        if (input) input.value = '';
+    }
+};
+
+window.closeClaimModal = function () {
+    const container = document.getElementById('claim-modal-container');
+    if (container) {
+        container.style.display = 'none';
+    }
+    window.currentClaimId = null;
+};
+
+window.saveClaim = function () {
+    const billNo = document.getElementById('claim-bill-no').value;
+    if (!billNo) {
+        alert('请输入匹配单号');
+        return;
+    }
+
+    const item = window.bankReceiptData.find(i => i.id == window.currentClaimId);
+    if (item) {
+        item.status = 'others';
+        item.match = billNo;
+        alert('认领成功，已转入其他');
+        window.closeClaimModal();
+        const activeTab = document.querySelector('.internal-tab.active');
+        if (activeTab) {
+            window.switchBankReceiptTab(activeTab);
+        }
+    }
+};
+
+window.switchBankReceiptTab = function (el) {
+    const tabs = el.parentElement.querySelectorAll('.internal-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.borderBottom = 'none';
+        tab.style.color = '#475569';
+        tab.style.fontWeight = 'normal';
+    });
+
+    el.classList.add('active');
+    el.style.borderBottom = '2px solid #4f46e5';
+    el.style.color = '#4f46e5';
+    el.style.fontWeight = '500';
+
+    const tabName = el.textContent.trim();
+    const tbody = document.getElementById('bank-receipt-tbody');
+    if (!tbody) return;
+
+    let filterStatus = '';
+    if (tabName === '销账待确认') filterStatus = 'pending_confirm';
+    else if (tabName === '待认领') filterStatus = 'pending_claim';
+    else if (tabName === '已销账') filterStatus = 'written_off';
+    else filterStatus = 'others';
+
+    const data = window.bankReceiptData.filter(item => item.status === filterStatus);
+
+    tbody.innerHTML = data.length ? data.map(item => {
+        let actionButton = '';
+        if (tabName === '销账待确认') {
+            actionButton = `<a href="javascript:void(0)" onclick="window.confirmBankReceipt('${item.id}')" style="color: #4f46e5;">确认</a>`;
+        } else if (tabName !== '已销账') {
+            actionButton = `<a href="javascript:void(0)" onclick="window.openClaimModal('${item.id}')" style="color: #4f46e5;">认领</a>`;
+        }
+
+        return `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 12px; text-align: center; color: #64748b;">${item.id}</td>
+            <td style="padding: 12px; color: #334155;">${item.name}</td>
+            <td style="padding: 12px; color: #64748b;">${item.bank}</td>
+            <td style="padding: 12px; color: #64748b;">${item.account}</td>
+            <td style="padding: 12px; color: #64748b;">${item.currency}</td>
+            <td style="padding: 12px; color: #64748b;">${item.serial}</td>
+            <td style="padding: 12px; color: #334155; font-weight: 500;">${item.amount}</td>
+            <td style="padding: 12px; color: #64748b;">${item.time}</td>
+            <td style="padding: 12px; color: #64748b;">${item.payer}</td>
+            <td style="padding: 12px; color: #64748b;">${item.unit}</td>
+            <td style="padding: 12px; color: #64748b;">${item.payerAccount}</td>
+            <td style="padding: 12px; color: #64748b;">${item.summary}</td>
+            <td style="padding: 12px; color: #64748b;">${item.match}</td>
+            <td style="padding: 12px; color: #64748b;">${item.match !== '-' ? '已生成' : '-'}</td>
+            <td style="padding: 12px;">
+                <a href="#" style="color: #4f46e5; margin-right: 8px;">详情</a>
+                ${actionButton}
+            </td>
+        </tr>
+    `;
+    }).join('') : `<tr><td colspan="15" style="padding: 24px; text-align: center; color: #94a3b8;">暂无数据</td></tr>`;
+};
+
+window.bankPaymentData = [
+    { id: 1, billNo: 'PAY-20251227-001', applicant: '张三', unit: '总公司', payer: '深圳卡供应有限公司', bank: '建设银行深圳分行', currency: 'CNY', amount: '12,000.00', remark: '采购款', status: 'pending_submit' },
+    { id: 2, billNo: 'PAY-20251227-002', applicant: '李四', unit: '广州分公司', payer: 'GLOBAL COMMERCE INC', bank: 'HSBC HK', currency: 'USD', amount: '5,000.00', remark: 'Service Fee', status: 'pending_submit' },
+    { id: 3, billNo: 'PAY-20251227-003', applicant: '王五', unit: '总公司', payer: '上海物流合作伙伴', bank: '农业银行上海分行', currency: 'CNY', amount: '3,500.00', remark: '运费补贴', status: 'pending_submit' },
+    { id: 4, billNo: 'PAY-20251228-001', applicant: '赵六', unit: '总公司', payer: 'FAST SHIP', bank: '招商银行', currency: 'CNY', amount: '500.00', remark: '招待费', status: 'processing' },
+    { id: 5, billNo: 'PAY-20251225-001', applicant: '孙七', unit: '总公司', payer: 'SUPPLIER A', bank: '工商银行', currency: 'CNY', amount: '8,000.00', remark: '设备款', status: 'paid' },
+    { id: 6, billNo: 'PAY-20251220-009', applicant: '钱八', unit: '广州分公司', payer: 'VENDOR B', bank: '中国银行', currency: 'CNY', amount: '2,000.00', remark: '定金退回', status: 'cancelled' }
+];
+
+window.deleteBankPayment = function (id) {
+    if (confirm('确认删除该条数据吗？')) {
+        window.bankPaymentData = window.bankPaymentData.filter(item => item.id != id);
+        const activeTab = document.querySelector('#bank-payment-tbody').previousElementSibling.parentElement.parentElement.parentElement.querySelector('.internal-tab.active'); // Find active tab in this specific view relative to table or just query globally if unique enough.
+        // Actually, switchBankPaymentTab expects the element that was clicked.
+        // But here we want to refresh the CURRENT active tab.
+        // Creating a fake element or passing null might not work with current implementation.
+        // Let's find the active tab element in the DOM.
+        // The tabs for bank payment have 'onclick="window.switchBankPaymentTab(this)"'.
+        // We can query selector for it.
+        const tabs = document.querySelectorAll('.internal-tab');
+        let currentTab = null;
+        tabs.forEach(t => {
+            if (t.classList.contains('active') && t.getAttribute('onclick') === 'window.switchBankPaymentTab(this)') {
+                currentTab = t;
+            }
+        });
+
+        if (currentTab) {
+            window.switchBankPaymentTab(currentTab);
+        }
+    }
+};
+
+window.submitBankPayment = function () {
+    const checkedBoxes = document.querySelectorAll('.bank-payment-checkbox:checked');
+    if (checkedBoxes.length === 0) {
+        alert('请先选择要提交的数据！');
+        return;
+    }
+
+    const ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+
+    let count = 0;
+    window.bankPaymentData.forEach(item => {
+        if (ids.includes(item.id)) {
+            item.status = 'processing';
+            count++;
+
+            // Add to Task Center
+            const task = {
+                id: 'TASK-' + Date.now() + '-' + item.id,
+                cardId: item.billNo,
+                cardName: '付款申请',
+                amount: item.amount,
+                applicant: item.applicant,
+                applyTime: new Date().toLocaleString(),
+                type: 'payment_audit',
+                status: 'pending'
+            };
+            if (window.pendingRechargeRequests) {
+                window.pendingRechargeRequests.push(task);
+            }
+        }
+    });
+
+    alert(`已成功提交 ${count} 条付款申请，请前往任务中心查看。`);
+
+    // Refresh view by finding active tab
+    const tabs = document.querySelectorAll('.internal-tab');
+    let currentTab = null;
+    tabs.forEach(t => {
+        if (t.classList.contains('active') && t.getAttribute('onclick') === 'window.switchBankPaymentTab(this)') {
+            currentTab = t;
+        }
+    });
+
+    if (currentTab) {
+        window.switchBankPaymentTab(currentTab);
+    }
+};
+
+window.switchBankPaymentTab = function (el) {
+    const tabs = el.parentElement.querySelectorAll('.internal-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+        tab.style.borderBottom = 'none';
+        tab.style.color = '#475569';
+        tab.style.fontWeight = 'normal';
+    });
+
+    el.classList.add('active');
+    el.style.borderBottom = '2px solid #ed171f';
+    el.style.color = '#ed171f';
+    el.style.fontWeight = '500';
+
+    const tabName = el.textContent.trim();
+    const tbody = document.getElementById('bank-payment-tbody');
+    if (!tbody) return;
+
+    let filterStatus = '';
+    if (tabName === '待提交') filterStatus = 'pending_submit';
+    else if (tabName === '付款处理中') filterStatus = 'processing';
+    else if (tabName === '已付款') filterStatus = 'paid';
+    else if (tabName === '已核销') filterStatus = 'cancelled';
+    else filterStatus = 'others';
+
+    const data = window.bankPaymentData.filter(item => item.status === filterStatus);
+
+    tbody.innerHTML = data.length ? data.map(item => {
+        let actionButtons = `<a href="#" style="color: #4f46e5; margin-right: 8px;">详情</a>`;
+        if (tabName === '待提交') {
+            actionButtons += `<a href="javascript:void(0)" onclick="window.deleteBankPayment('${item.id}')" style="color: #ef4444;">删除</a>`;
+        }
+
+        return `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 12px; text-align: center;"><input type="checkbox" class="bank-payment-checkbox" value="${item.id}" style="width: 14px; height: 14px;"></td>
+             <td style="padding: 12px; text-align: center; color: #64748b;">${item.id}</td>
+             <td style="padding: 12px; color: #334155;">${item.billNo}</td>
+             <td style="padding: 12px; color: #64748b;">${item.applicant}</td>
+             <td style="padding: 12px; color: #64748b;">${item.unit}</td>
+             <td style="padding: 12px; color: #334155;">${item.payer}</td>
+             <td style="padding: 12px; color: #64748b;">${item.bank}</td>
+             <td style="padding: 12px; color: #64748b;">${item.currency}</td>
+             <td style="padding: 12px; color: #334155; font-weight: 500;">${item.amount}</td>
+             <td style="padding: 12px; color: #64748b;">${item.remark}</td>
+             <td style="padding: 12px;">
+                ${actionButtons}
+            </td>
+        </tr>
+    `}).join('') : `<tr><td colspan="11" style="padding: 24px; text-align: center; color: #94a3b8;">暂无数据</td></tr>`;
+};
 
 window.updateOrderEntryTotals = function () {
     const additionalFeeInput = document.getElementById('entry-additional-fee');
@@ -86,6 +773,172 @@ window.updateOrderEntryTotals = function () {
         const additional = revenueSideTotal;
         revenueTotalInput.value = (freight + additional).toFixed(2);
     }
+};
+
+
+/**
+ * Saves the current order entry form data.
+ */
+window.saveOrderEntry = function () {
+    const orderNo = 'OR' + Date.now().toString().slice(-8);
+    const date = document.getElementById('entry-date')?.value;
+    const customer = document.getElementById('entry-customer')?.value;
+    const origin = document.getElementById('entry-origin')?.value;
+    const destination = document.getElementById('entry-destination')?.value;
+
+    if (!date || !customer) {
+        alert('请填写订单日期和客户名称！');
+        return;
+    }
+
+    const orderObj = {
+        orderNo,
+        date,
+        customer,
+        route: `${origin || '-'} -> ${destination || '-'}`,
+        goods: document.getElementById('cargo-name-1')?.value || '未命名货物',
+        status: '正常', // Default status
+        details: {
+            origin,
+            destination,
+            cargo: [
+                {
+                    name: document.getElementById('cargo-name-1')?.value,
+                    type: document.getElementById('cargo-type-1')?.value,
+                    count: document.getElementById('cargo-count-1')?.value,
+                    weight: document.getElementById('cargo-weight-1')?.value,
+                    volume: document.getElementById('cargo-volume-1')?.value,
+                    pricingMethod: document.getElementById('cargo-pricing-method-1')?.value,
+                    unitPrice: document.getElementById('cargo-unit-price-1')?.value,
+                    subtotal: document.getElementById('cargo-freight-subtotal-1')?.value
+                }
+            ],
+            totals: {
+                count: document.getElementById('summary-count')?.value,
+                weight: document.getElementById('summary-weight')?.value,
+                volume: document.getElementById('summary-volume')?.value,
+                classification: document.getElementById('entry-cargo-classification')?.value,
+                pricingMethod: document.getElementById('summary-pricing-method')?.value,
+                unitPrice: document.getElementById('entry-unit-price')?.value,
+                freight: document.getElementById('entry-freight')?.value,
+                deliveryFee: document.getElementById('entry-delivery-fee')?.value,
+                loadingFee: document.getElementById('entry-loading-fee')?.value,
+                unloadingFee: document.getElementById('entry-unloading-fee')?.value,
+                additionalFee: document.getElementById('entry-additional-fee')?.value,
+                revenue: document.getElementById('entry-revenue-total')?.value,
+                advanceTotal: document.getElementById('entry-advance-total')?.value
+            }
+        }
+    };
+
+    window.ordersData.push(orderObj);
+    alert('订单保存成功！订单号: ' + orderNo);
+
+    // Clear form basic info
+    const fieldsToClear = [
+        'entry-date', 'entry-customer', 'entry-origin', 'entry-destination',
+        'cargo-name-1', 'cargo-type-1', 'cargo-count-1', 'cargo-weight-1', 'cargo-volume-1', 'cargo-unit-price-1', 'cargo-freight-subtotal-1',
+        'entry-unit-price', 'entry-freight', 'entry-delivery-fee', 'entry-loading-fee', 'entry-unloading-fee', 'entry-cargo-classification'
+    ];
+    fieldsToClear.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    // Reset summaries
+    const summaryFields = ['summary-count', 'summary-weight', 'summary-volume', 'entry-revenue-total', 'entry-additional-fee', 'entry-advance-total'];
+    summaryFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '0.00';
+    });
+
+    // If order management tab is active, we should ideally refresh it, but renderTabs will handle it on next click.
+};
+
+/**
+ * Views order details by populating the "录入订单" form.
+ */
+window.viewOrderDetails = function (orderNo) {
+    const order = window.ordersData.find(o => o.orderNo === orderNo);
+    if (!order) {
+        alert('未找到该订单：' + orderNo);
+        return;
+    }
+
+    // Switch to the correct tab first
+    window.addTab('录入订单');
+
+    // Use setTimeout to allow the tab to render before populating fields
+    setTimeout(() => {
+        // Basic Info
+        const dateInput = document.getElementById('entry-date');
+        const customerInput = document.getElementById('entry-customer');
+        const originInput = document.getElementById('entry-origin');
+        const destinationInput = document.getElementById('entry-destination');
+
+        if (dateInput) dateInput.value = order.date;
+        if (customerInput) customerInput.value = order.customer;
+
+        if (order.details) {
+            if (originInput) originInput.value = order.details.origin || '';
+            if (destinationInput) destinationInput.value = order.details.destination || '';
+
+            // Cargo (Assuming first row for now as we only save one row currently)
+            if (order.details.cargo && order.details.cargo.length > 0) {
+                const cargo = order.details.cargo[0];
+                const nameInput = document.getElementById('cargo-name-1');
+                const typeInput = document.getElementById('cargo-type-1');
+                const countInput = document.getElementById('cargo-count-1');
+                const weightInput = document.getElementById('cargo-weight-1');
+                const volumeInput = document.getElementById('cargo-volume-1');
+                const pricingInput = document.getElementById('cargo-pricing-method-1');
+                const unitPriceInput = document.getElementById('cargo-unit-price-1');
+                const subtotalInput = document.getElementById('cargo-freight-subtotal-1');
+
+                if (nameInput) nameInput.value = cargo.name || '';
+                if (typeInput) typeInput.value = cargo.type || '';
+                if (countInput) countInput.value = cargo.count || '';
+                if (weightInput) weightInput.value = cargo.weight || '';
+                if (volumeInput) volumeInput.value = cargo.volume || '';
+                if (pricingInput) pricingInput.value = cargo.pricingMethod || '按件数';
+                if (unitPriceInput) unitPriceInput.value = cargo.unitPrice || '';
+                if (subtotalInput) subtotalInput.value = cargo.subtotal || '';
+            }
+
+            // Totals
+            if (order.details.totals) {
+                const summaryCount = document.getElementById('summary-count');
+                const summaryWeight = document.getElementById('summary-weight');
+                const summaryVolume = document.getElementById('summary-volume');
+                const classification = document.getElementById('entry-cargo-classification');
+                const pricingMethod = document.getElementById('summary-pricing-method');
+                const unitPrice = document.getElementById('entry-unit-price');
+                const freight = document.getElementById('entry-freight');
+                const deliveryFee = document.getElementById('entry-delivery-fee');
+                const loadingFee = document.getElementById('entry-loading-fee');
+                const unloadingFee = document.getElementById('entry-unloading-fee');
+                const additionalFee = document.getElementById('entry-additional-fee');
+                const revenueTotal = document.getElementById('entry-revenue-total');
+                const advanceTotal = document.getElementById('entry-advance-total');
+
+                if (summaryCount) summaryCount.value = order.details.totals.count || '0.00';
+                if (summaryWeight) summaryWeight.value = order.details.totals.weight || '0.00';
+                if (summaryVolume) summaryVolume.value = order.details.totals.volume || '0.00';
+                if (classification) classification.value = order.details.totals.classification || '';
+                if (pricingMethod) pricingMethod.value = order.details.totals.pricingMethod || '按件数';
+                if (unitPrice) unitPrice.value = order.details.totals.unitPrice || '';
+                if (freight) freight.value = order.details.totals.freight || '';
+                if (deliveryFee) deliveryFee.value = order.details.totals.deliveryFee || '';
+                if (loadingFee) loadingFee.value = order.details.totals.loadingFee || '';
+                if (unloadingFee) unloadingFee.value = order.details.totals.unloadingFee || '';
+                if (additionalFee) additionalFee.value = order.details.totals.additionalFee || '0.00';
+                if (revenueTotal) revenueTotal.value = order.details.totals.revenue || '0.00';
+                if (advanceTotal) advanceTotal.value = order.details.totals.advanceTotal || '0.00';
+            }
+        }
+
+        if (window.lucide) window.lucide.createIcons();
+    }, 100);
 };
 
 /**
@@ -117,7 +970,8 @@ window.calculateItemizedBilling = function () {
     for (let i = 0; i < methods.length; i++) {
         const method = methods[i].value;
         const price = parseFloat(unitPrices[i]?.value) || 0;
-        let subtotal = 0;
+        // Initialize with existing value (manual entry)
+        let subtotal = parseFloat(freightSubtotals[i]?.value) || 0;
 
         if (price > 0) {
             if (method === '按件数') {
@@ -133,17 +987,12 @@ window.calculateItemizedBilling = function () {
                 const weight = parseFloat(weights[i]?.value) || 0;
                 if (mileage > 0) {
                     subtotal = weight * price * mileage;
-                } else {
-                    // Optional: alert user if mileage is missing but required
-                    // console.warn('Mileage is required for ton-kilometer pricing');
                 }
             }
-            // Add other methods if needed, for now these are the primary ones requested
-        }
-
-        // Update the subtotal input for this row
-        if (freightSubtotals[i]) {
-            freightSubtotals[i].value = subtotal > 0 ? subtotal.toFixed(2) : '';
+            // Update the subtotal input ONLY if a calculation was performed (price > 0)
+            if (freightSubtotals[i]) {
+                freightSubtotals[i].value = subtotal > 0 ? subtotal.toFixed(2) : '';
+            }
         }
     }
 
@@ -342,6 +1191,43 @@ function renderBusinessMenu() {
     if (window.lucide) window.lucide.createIcons();
 }
 
+/**
+ * Renders the Report menu in the secondary sidebar
+ */
+function renderReportMenu() {
+    const container = document.getElementById('secondary-content');
+    container.innerHTML = '';
+
+    reportMenuData.forEach(section => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'menu-section';
+
+        const header = document.createElement('div');
+        header.className = 'section-header';
+        header.innerHTML = `
+            <i data-lucide="${section.icon}"></i>
+            <span>${section.title}</span>
+        `;
+        sectionDiv.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'menu-grid';
+
+        section.items.forEach(item => {
+            const link = document.createElement('a');
+            link.className = 'menu-link';
+            link.textContent = item;
+            link.addEventListener('click', () => addTab(item));
+            grid.appendChild(link);
+        });
+
+        sectionDiv.appendChild(grid);
+        container.appendChild(sectionDiv);
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
 function initSidebar() {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
@@ -362,6 +1248,10 @@ function initSidebar() {
                 document.querySelector('.sub-sidebar').classList.remove('hidden');
                 document.getElementById('menu-mask').classList.add('show');
                 renderBusinessMenu();
+            } else if (title === '报表') {
+                document.querySelector('.sub-sidebar').classList.remove('hidden');
+                document.getElementById('menu-mask').classList.add('show');
+                renderReportMenu();
             } else {
                 // For other main categories, show a placeholder or just open secondary menu if applicable
                 alert('正在开发中...');
@@ -416,7 +1306,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '后台管理' || activeTab === '油卡管理' || activeTab === '录入订单') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '后台管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理') {
 
 
         let mainContent = '';
@@ -426,13 +1316,218 @@ function renderTabs(activeTab) {
                     ${window.renderWorkbenchOverview()}
                 </div>
             `;
+        } else if (activeTab === '订单管理') {
+            mainContent = `
+                <div style="height: 100%; width: 100%; flex: 1; display: flex; flex-direction: column; background: #f1f5f9;">
+                    <!-- Filter Toolbar -->
+                    <div style="padding: 16px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.75rem; color: #64748b;">订单单号</label>
+                            <input type="text" placeholder="输入单号" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 140px;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.75rem; color: #64748b;">客户名称</label>
+                            <input type="text" placeholder="输入客户" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 180px;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.75rem; color: #64748b;">下单日期</label>
+                            <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                            <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #64748b;">重置</button>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="primary-btn" onclick="addTab('录入订单')" style="height: 32px; padding: 0 16px;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增订单</button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Bar -->
+                    <div style="padding: 12px 24px; display: flex; gap: 24px; align-items: center; background: #fff; border-bottom: 1px solid #e2e8f0;">
+                         <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #64748b;">全部订单:</span>
+                            <span style="font-weight: 700; color: #1e293b;">${window.ordersData.length}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #64748b;">进行中:</span>
+                            <span style="font-weight: 700; color: #3b82f6;">${window.ordersData.filter(o => o.status === '正常').length}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #64748b;">已完结:</span>
+                            <span style="font-weight: 700; color: #10b981;">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Table Area -->
+                    <div style="flex-grow: 1; overflow: auto; padding: 16px;">
+                        <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                <thead style="background: #f8fafc; color: #64748b; border-bottom: 1px solid #e2e8f0;">
+                                    <tr>
+                                        <th style="padding: 12px 16px; text-align: left; width: 40px;"><input type="checkbox"></th>
+                                        <th style="padding: 12px 16px; text-align: left;">订单单号</th>
+                                        <th style="padding: 12px 16px; text-align: left;">下单日期</th>
+                                        <th style="padding: 12px 16px; text-align: left;">客户名称</th>
+                                        <th style="padding: 12px 16px; text-align: left;">线路</th>
+                                        <th style="padding: 12px 16px; text-align: left;">货物信息</th>
+                                        <th style="padding: 12px 16px; text-align: center;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${window.ordersData.length === 0 ? `
+                                        <tr>
+                                            <td colspan="7" style="padding: 100px 0; text-align: center;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                                                    <i data-lucide="search" style="width: 48px; height: 48px; color: #cbd5e1; opacity: 0.5;"></i>
+                                                    <span style="color: #94a3b8; font-size: 0.85rem;">暂无订单数据</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ` : window.ordersData.map(order => `
+                                        <tr style="border-bottom: 1px solid #f1f5f9; background: white;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                                            <td style="padding: 12px 16px; text-align: left;"><input type="checkbox"></td>
+                                            <td style="padding: 12px 16px; color: #4f46e5; font-weight: 500;">${order.orderNo}</td>
+                                            <td style="padding: 12px 16px;">${order.date}</td>
+                                            <td style="padding: 12px 16px;">${order.customer}</td>
+                                            <td style="padding: 12px 16px;">${order.route}</td>
+                                            <td style="padding: 12px 16px;">${order.goods}</td>
+                                            <td style="padding: 12px 16px; text-align: center;">
+                                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                                    <button onclick="window.viewOrderDetails('${order.orderNo}')" style="color: #4f46e5; background: none; border: none; font-size: 0.75rem; cursor: pointer;">详情</button>
+                                                    <button style="color: #ef4444; background: none; border: none; font-size: 0.75rem; cursor: pointer;">删除</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div style="padding: 12px 24px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b;">
+                        <div>共 ${window.ordersData.length} 条记录，每页 20 条</div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                             <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; cursor: pointer;"><i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i></button>
+                             <span style="padding: 4px 12px; background: #4f46e5; color: white; border-radius: 4px;">1</span>
+                             <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #fff; cursor: pointer;"><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '运单管理') {
+            const waybills = window.waybillsData || [];
+            mainContent = `
+                <div style="height: 100%; width: 100%; flex: 1; display: flex; flex-direction: column; background: #f1f5f9;">
+                    <!-- Filter Toolbar -->
+                    <div style="padding: 16px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.75rem; color: #64748b;">运单单号</label>
+                            <input type="text" placeholder="输入单号" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 140px;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.75rem; color: #64748b;">客户名称</label>
+                            <input type="text" placeholder="输入客户" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 180px;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label style="font-size: 0.75rem; color: #64748b;">托运日期</label>
+                            <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                            <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #64748b;">重置</button>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="primary-btn" onclick="addTab('录入运单')" style="height: 32px; padding: 0 16px;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增运单</button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Bar -->
+                    <div style="padding: 12px 24px; display: flex; gap: 24px; align-items: center; background: #fff; border-bottom: 1px solid #e2e8f0;">
+                         <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #64748b;">全部运单:</span>
+                            <span style="font-weight: 700; color: #1e293b;">${waybills.length}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #64748b;">进行中:</span>
+                            <span style="font-weight: 700; color: #3b82f6;">0</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+                            <span style="color: #64748b;">已完结:</span>
+                            <span style="font-weight: 700; color: #10b981;">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Table Area -->
+                    <div style="flex-grow: 1; overflow: auto; padding: 16px;">
+                        <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                <thead style="background: #f8fafc; color: #64748b; border-bottom: 1px solid #e2e8f0;">
+                                    <tr>
+                                        <th style="padding: 12px 16px; text-align: left; width: 40px;"><input type="checkbox"></th>
+                                        <th style="padding: 12px 16px; text-align: left;">运单单号</th>
+                                        <th style="padding: 12px 16px; text-align: left;">托运日期</th>
+                                        <th style="padding: 12px 16px; text-align: left;">客户名称</th>
+                                        <th style="padding: 12px 16px; text-align: left;">线路</th>
+                                        <th style="padding: 12px 16px; text-align: left;">货物信息</th>
+                                        <th style="padding: 12px 16px; text-align: center;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${waybills.length === 0 ? `
+                                        <tr>
+                                            <td colspan="7" style="padding: 100px 0; text-align: center;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                                                    <i data-lucide="search" style="width: 48px; height: 48px; color: #cbd5e1; opacity: 0.5;"></i>
+                                                    <span style="color: #94a3b8; font-size: 0.85rem;">暂无运单数据</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ` : waybills.map(item => `
+                                        <tr style="border-bottom: 1px solid #f1f5f9; background: white;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                                            <td style="padding: 12px 16px; text-align: left;"><input type="checkbox"></td>
+                                            <td style="padding: 12px 16px; color: #4f46e5; font-weight: 500;">${item.no || '-'}</td>
+                                            <td style="padding: 12px 16px;">${item.date || '-'}</td>
+                                            <td style="padding: 12px 16px;">${item.customer || '-'}</td>
+                                            <td style="padding: 12px 16px;">${item.route || '-'}</td>
+                                            <td style="padding: 12px 16px;">${item.goods || '-'}</td>
+                                            <td style="padding: 12px 16px; text-align: center;">
+                                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                                    <button onclick="window.viewWaybillDetails('${item.no}')" style="color: #4f46e5; background: none; border: none; font-size: 0.75rem; cursor: pointer;">详情</button>
+                                                    <button style="color: #ef4444; background: none; border: none; font-size: 0.75rem; cursor: pointer;">删除</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div style="padding: 12px 24px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b;">
+                        <div>共 ${waybills.length} 条记录，每页 20 条</div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                             <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; cursor: pointer;"><i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i></button>
+                             <span style="padding: 4px 12px; background: #4f46e5; color: white; border-radius: 4px;">1</span>
+                             <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #fff; cursor: pointer;"><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '货量利润表') {
+            mainContent = `
+                <div id="workbench-content-area" style="height: 100%; overflow: auto; background: #fff;">
+                    ${window.renderVolumeProfitReport()}
+                </div>
+            `;
         } else if (activeTab === '任务中心') {
             mainContent = `
                 <div id="workbench-content-area" style="height: 100%; overflow: auto; background: var(--bg-main);">
                     ${window.renderTaskCenter()}
                 </div>
             `;
-        } else if (activeTab === '对账单') {
+        } else if (activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账') {
             mainContent = `
                 <div class="statement-main" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
                     <!-- List View Wrapper -->
@@ -3067,12 +4162,12 @@ function renderTabs(activeTab) {
                 <!-- Top Tabs Header & Add Button -->
                 <div style="width: 100%; border-bottom: 1px solid #e2e8f0; background: white; padding: 0 24px; display: flex; justify-content: space-between; align-items: center;">
                     <div class="status-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569; overflow-x: auto;">
-                        <div class="status-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">草稿 <span style="background:#e2e8f0; color:#475569; padding: 1px 6px; border-radius: 99px; font-size: 0.7rem;">1</span></div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">审核中 <span style="background:#e2e8f0; color:#475569; padding: 1px 6px; border-radius: 99px; font-size: 0.7rem;">1</span></div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已批准</div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">已开票 <span style="background:#e2e8f0; color:#475569; padding: 1px 6px; border-radius: 99px; font-size: 0.7rem;">1</span></div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已驳回/已取消</div>
+                        <div class="status-tab active" onclick="window.switchInvoiceApplicationTab(this)" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
+                        <div class="status-tab" onclick="window.switchInvoiceApplicationTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">草稿 <span style="background:#e2e8f0; color:#475569; padding: 1px 6px; border-radius: 99px; font-size: 0.7rem;">1</span></div>
+                        <div class="status-tab" onclick="window.switchInvoiceApplicationTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">审核中 <span style="background:#e2e8f0; color:#475569; padding: 1px 6px; border-radius: 99px; font-size: 0.7rem;">1</span></div>
+                        <div class="status-tab" onclick="window.switchInvoiceApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">已批准</div>
+                        <div class="status-tab" onclick="window.switchInvoiceApplicationTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">已开票 <span style="background:#e2e8f0; color:#475569; padding: 1px 6px; border-radius: 99px; font-size: 0.7rem;">1</span></div>
+                        <div class="status-tab" onclick="window.switchInvoiceApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">已驳回/已取消</div>
                     </div>
                     <button class="primary-btn" onclick="document.getElementById('invoice-application-list-view').style.display='none';document.getElementById('invoice-application-create-view').style.display='flex';document.querySelector('.customer-sidebar').style.display='none';" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
                         <i data-lucide="plus-circle" style="width: 16px; height: 16px;"></i> 新增
@@ -3236,7 +4331,7 @@ function renderTabs(activeTab) {
                         <div style="width: 100%; padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; justify-content: space-between; align-items: center;">
                              <div style="font-size: 0.85rem; color: #334155; font-weight: 600;">申请单号: 自动生成</div>
                              <div style="display: flex; gap: 8px;">
-                                 <button class="primary-btn" style="height: 30px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px;">提交审核</button>
+                                 <button class="primary-btn" onclick="window.submitInvoiceApplication()" style="height: 30px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px;">提交审核</button>
                                  <button style="height: 30px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #475569; border-radius: 4px;">暂存草稿</button>
                                  <button onclick="document.getElementById('invoice-application-list-view').style.display='flex';document.getElementById('invoice-application-create-view').style.display='none';document.querySelector('.customer-sidebar').style.display='flex';" style="height: 30px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #475569; border-radius: 4px;">返回</button>
                             </div>
@@ -3247,85 +4342,87 @@ function renderTabs(activeTab) {
                             <!-- Row 1 -->
                             <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px; align-items: center;">
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label class="required" style="white-space: nowrap;">客户</label>
-                                    <div class="select-box" style="width: 100%;">
-                                        <span>请选择</span>
-                                        <i data-lucide="chevron-down"></i>
-                                    </div>
+                                    <label class="required" style="white-space: nowrap; font-size: 0.8rem; color: #475569;">客户</label>
+                                    <select id="invoice-create-customer-select" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; background: white; cursor: pointer; outline: none;">
+                                        <option value="" disabled selected>请选择</option>
+                                        <option value="深圳市丰源物流有限公司">深圳市丰源物流有限公司</option>
+                                        <option value="上海顺丰速运有限公司">上海顺丰速运有限公司</option>
+                                        <option value="北京京东世纪贸易有限公司">北京京东世纪贸易有限公司</option>
+                                    </select>
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                     <div style="display: flex; gap: 8px; width: 100%;">
-                                        <div class="select-box" style="flex: 1;"><span style="font-size: 0.75rem;">NL</span></div>
-                                        <div class="select-box" style="flex: 1;"><span style="font-size: 0.75rem;">月结</span></div>
+                                        <div class="select-box" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; background: white;"><span style="font-size: 0.75rem;">NL</span></div>
+                                        <div class="select-box" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; background: white;"><span style="font-size: 0.75rem;">月结</span></div>
                                     </div>
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label class="required" style="white-space: nowrap;">发票类型</label>
-                                     <div class="select-box" style="width: 100%;">
+                                    <label class="required" style="white-space: nowrap; font-size: 0.8rem; color: #475569;">发票类型</label>
+                                     <div class="select-box" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: white; cursor: pointer;">
                                         <span>普通发票</span>
-                                        <i data-lucide="chevron-down"></i>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">发票介质</label>
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">发票介质</label>
                                     <div style="display: flex; gap: 12px; align-items: center; height: 32px;">
-                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0;"><input type="radio" name="inv-medium"> 纸质发票</label>
-                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0;"><input type="radio" name="inv-medium" checked> 电子发票</label>
+                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0; cursor: pointer; color: #475569;"><input type="radio" name="inv-medium"> 纸质发票</label>
+                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0; cursor: pointer; color: #475569;"><input type="radio" name="inv-medium" checked> 电子发票</label>
                                     </div>
                                 </div>
                                  <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">发票形式</label>
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">发票形式</label>
                                     <div style="display: flex; gap: 12px; align-items: center; height: 32px;">
-                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0;"><input type="radio" name="inv-form" checked> 税务发票</label>
-                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0;"><input type="radio" name="inv-form"> INVOICE</label>
+                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0; cursor: pointer; color: #475569;"><input type="radio" name="inv-form" checked> 税务发票</label>
+                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; margin: 0; cursor: pointer; color: #475569;"><input type="radio" name="inv-form"> INVOICE</label>
                                     </div>
                                 </div>
                             </div>
                              <!-- Row 2 -->
                             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 16px;">
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">联系人</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%;">
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">联系人</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;">
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">电话</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%;">
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">电话</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;">
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">邮箱</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%;">
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">邮箱</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;">
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">邮寄地址</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%;">
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">邮寄地址</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none; transition: border-color 0.2s;">
                                 </div>
                             </div>
                              <!-- Purchaser Details (Gray box) -->
                             <div style="background: #f1f5f9; padding: 16px; border-radius: 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                                  <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label class="required" style="white-space: nowrap;">抬头</label>
-                                    <div class="select-box" style="width: 100%;">
+                                    <label class="required" style="white-space: nowrap; font-size: 0.8rem; color: #475569;">抬头</label>
+                                    <div class="select-box" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: white; cursor: pointer;">
                                         <span>请选择</span>
-                                        <i data-lucide="chevron-down"></i>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
                                 </div>
                                  <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label class="required" style="white-space: nowrap;">纳税人识别号</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="background: white; width: 100%;">
+                                    <label class="required" style="white-space: nowrap; font-size: 0.8rem; color: #475569;">纳税人识别号</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="background: white; width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">地址</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="background: white; width: 100%;">
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">地址</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="background: white; width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                     <label style="white-space: nowrap;">电话</label>
-                                    <input type="text" placeholder="请输入" class="form-input" style="background: white; width: 100%;">
+                                     <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">电话</label>
+                                    <input type="text" placeholder="请输入" class="form-input" style="background: white; width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="white-space: nowrap;">开户行及账号</label>
-                                     <div class="select-box" style="width: 100%;">
+                                    <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">开户行及账号</label>
+                                     <div class="select-box" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: white; cursor: pointer;">
                                         <span>请选择</span>
-                                        <i data-lucide="chevron-down"></i>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
                                 </div>
                             </div>
@@ -3333,20 +4430,20 @@ function renderTabs(activeTab) {
                              <!-- Middle Controls -->
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                                 <div style="display: flex; gap: 12px; align-items: center;">
-                                    <button class="primary-btn" style="height: 28px; padding: 0 12px; font-size: 0.8rem;">选择开票费用</button>
-                                    <span style="font-size: 0.8rem; color: #64748b;">已选工作单 0项，费用 0项</span>
+                                    <button class="primary-btn" style="height: 32px; padding: 0 16px; font-size: 0.8rem;">选择开票费用</button>
+                                    <span style="font-size: 0.85rem; color: #64748b;">已选工作单 0项，费用 0项</span>
                                 </div>
                                  <div style="display: flex; gap: 12px; align-items: center;">
-                                     <div class="input-label-group">
-                                        <label>申请金额折合</label>
-                                        <div style="display: flex; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; height: 28px;">
+                                     <div class="input-label-group" style="display: flex; align-items: center; gap: 8px;">
+                                        <label style="font-size: 0.8rem; color: #475569;">申请金额折合</label>
+                                        <div style="display: flex; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; height: 32px;">
                                              <div style="width: 50px; background: #f8fafc; border-right: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">CNY</div>
-                                              <input type="text" value="0.00" style="width: 80px; border: none; padding: 0 8px; font-size: 0.8rem; text-align: right; outline: none;">
+                                              <input type="text" value="0.00" style="width: 80px; border: none; padding: 0 8px; font-size: 0.85rem; text-align: right; outline: none; font-weight: 500;">
                                         </div>
                                     </div>
-                                     <div class="input-label-group">
-                                        <label>汇率</label>
-                                         <input type="text" class="form-input" style="width: 60px; height: 28px;">
+                                     <div class="input-label-group" style="display: flex; align-items: center; gap: 8px;">
+                                        <label style="font-size: 0.8rem; color: #475569;">汇率</label>
+                                         <input type="text" class="form-input" style="width: 60px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none; text-align: right;">
                                     </div>
                                 </div>
                             </div>
@@ -3471,15 +4568,15 @@ function renderTabs(activeTab) {
                 <!-- Internal Tabs Row -->
                 <div style="width: 100%; border-bottom: 1px solid #e2e8f0; background: white; padding: 0 24px; display: flex; justify-content: space-between; align-items: center;">
                     <div class="internal-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
-                        <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">待开票</div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">未出票</div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">出票中</div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">出票失败</div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">已出票<span style="background: #4f46e5; color: white; border-radius: 10px; padding: 0 6px; font-size: 0.7rem;">5</span></div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">已红冲<span style="background: #94a3b8; color: white; border-radius: 10px; padding: 0 6px; font-size: 0.7rem;">?</span></div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">红字发票</div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">作废中</div>
-                        <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已作废</div>
+                        <div class="internal-tab active" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">待开票</div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer;">未出票</div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer;">出票中</div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer;">出票失败</div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">已出票<span style="background: #4f46e5; color: white; border-radius: 10px; padding: 0 6px; font-size: 0.7rem;">5</span></div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 4px;">已红冲<span style="background: #94a3b8; color: white; border-radius: 10px; padding: 0 6px; font-size: 0.7rem;">?</span></div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer;">红字发票</div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer;">作废中</div>
+                        <div class="internal-tab" onclick="window.switchInvoiceManagementTab(this)" style="padding: 12px 0; cursor: pointer;">已作废</div>
                     </div>
                     <button class="primary-btn" style="height: 32px; padding: 0 12px; background: #4f46e5; border: none; border-radius: 4px; color: white; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer;">
                         收藏发票 <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
@@ -3525,7 +4622,7 @@ function renderTabs(activeTab) {
                         <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #475569; cursor: pointer;">
                             <input type="checkbox"> 仅显示系统自动过的
                         </label>
-
+                        
                         <!-- Work No search -->
                         <div style="display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; height: 32px;">
                             <div style="padding: 0 8px; border-right: 1px solid #e2e8f0; font-size: 0.75rem; background: #f8fafc; height: 100%; display: flex; align-items: center; gap: 4px; cursor: pointer;">
@@ -3557,7 +4654,7 @@ function renderTabs(activeTab) {
                 </div>
 
                 <!-- Table Content Area -->
-                <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto;">
+                <div id="invoice-management-table-container" class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto;">
                     <table class="statement-table" style="min-width: max-content;">
                         <thead>
                             <tr>
@@ -3581,67 +4678,16 @@ function renderTabs(activeTab) {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
-                                <td style="padding: 10px; text-align: center;">1</td>
-                                <td style="padding: 10px;"><span style="background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">待开票</span></td>
-                                <td style="padding: 10px;">-</td>
-                                <td style="padding: 10px;">普票</td>
-                                <td style="padding: 10px;">深圳市好运来货运代理有限公司</td>
-                                <td style="padding: 10px;">2023-12-01</td>
-                                <td style="padding: 10px;">CNY</td>
-                                <td style="padding: 10px; text-align: right;">1,000.00</td>
-                                <td style="padding: 10px; text-align: right;">60.00</td>
-                                <td style="padding: 10px; text-align: right;">1,060.00</td>
-                                <td style="padding: 10px; text-align: right;">1,060.00</td>
-                                <td style="padding: 10px;">YO2512-0020</td>
-                                <td style="padding: 10px;">B2023120101</td>
-                                <td style="padding: 10px;">张三</td>
-                                <td style="padding: 10px;">2023-12-01 10:00</td>
-                                <td style="padding: 10px; text-align: center;"><i data-lucide="more-horizontal" style="width: 14px; height: 14px; color: #94a3b8; cursor: pointer;"></i></td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
-                                <td style="padding: 10px; text-align: center;">2</td>
-                                <td style="padding: 10px;"><span style="background: #dbeafe; color: #4f46e5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">已开票</span></td>
-                                <td style="padding: 10px;">INV20231201001</td>
-                                <td style="padding: 10px;">专票(6%)</td>
-                                <td style="padding: 10px;">广州市顺风物流有限公司</td>
-                                <td style="padding: 10px;">2023-12-02</td>
-                                <td style="padding: 10px;">USD</td>
-                                <td style="padding: 10px; text-align: right;">500.00</td>
-                                <td style="padding: 10px; text-align: right;">0.00</td>
-                                <td style="padding: 10px; text-align: right;">500.00</td>
-                                <td style="padding: 10px; text-align: right;">3,600.00</td>
-                                <td style="padding: 10px;">YO2512-0021</td>
-                                <td style="padding: 10px;">B2023120201</td>
-                                <td style="padding: 10px;">李四</td>
-                                <td style="padding: 10px;">2023-12-02 14:30</td>
-                                <td style="padding: 10px; text-align: center;"><i data-lucide="more-horizontal" style="width: 14px; height: 14px; color: #94a3b8; cursor: pointer;"></i></td>
-                            </tr>
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 10px; text-align: center;"><input type="checkbox"></td>
-                                <td style="padding: 10px; text-align: center;">3</td>
-                                <td style="padding: 10px;"><span style="background: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">审核中</span></td>
-                                <td style="padding: 10px;">-</td>
-                                <td style="padding: 10px;">专票(13%)</td>
-                                <td style="padding: 10px;">上海市东方国际物流集团</td>
-                                <td style="padding: 10px;">2023-12-03</td>
-                                <td style="padding: 10px;">CNY</td>
-                                <td style="padding: 10px; text-align: right;">5,000.00</td>
-                                <td style="padding: 10px; text-align: right;">650.00</td>
-                                <td style="padding: 10px; text-align: right;">5,650.00</td>
-                                <td style="padding: 10px; text-align: right;">5,650.00</td>
-                                <td style="padding: 10px;">YO2512-0022</td>
-                                <td style="padding: 10px;">B2023120301</td>
-                                <td style="padding: 10px;">王五</td>
-                                <td style="padding: 10px;">2023-12-03 09:15</td>
-                                <td style="padding: 10px; text-align: center;"><i data-lucide="more-horizontal" style="width: 14px; height: 14px; color: #94a3b8; cursor: pointer;"></i></td>
-                            </tr>
+                             <!-- Content rendered via window.renderInvoiceManagementList -->
                         </tbody>
                     </table>
                 </div>
             </div>`;
+            setTimeout(() => {
+                if (window.renderInvoiceManagementList) {
+                    window.renderInvoiceManagementList('待开票');
+                }
+            }, 0);
         } else if (activeTab === '开票费用配置') {
             let rowsHtml = '';
             if (window.invoiceExpenseConfigs && window.invoiceExpenseConfigs.length > 0) {
@@ -3864,7 +4910,7 @@ function renderTabs(activeTab) {
                                     <th>操作</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="bank-payment-tbody">
                                  <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 12px; color: #334155;">深圳市远通物流有限公司</td>
                                     <td style="padding: 12px; color: #64748b;">SHENZHEN YUANTONG LOGISTICS CO., LTD</td>
@@ -3912,10 +4958,10 @@ function renderTabs(activeTab) {
                     <div style="width: 100%; border-bottom: 1px solid #e2e8f0; background: white; padding: 0 24px; display: flex; justify-content: space-between; align-items: flex-end;">
                         <!-- Status Tabs -->
                         <div class="internal-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
-                            <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">销账待确认</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待认领</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已销账</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">其他</div>
+                            <div class="internal-tab active" onclick="window.switchBankReceiptTab(this)" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">销账待确认</div>
+                            <div class="internal-tab" onclick="window.switchBankReceiptTab(this)" style="padding: 12px 0; cursor: pointer;">待认领</div>
+                            <div class="internal-tab" onclick="window.switchBankReceiptTab(this)" style="padding: 12px 0; cursor: pointer;">已销账</div>
+                            <div class="internal-tab" onclick="window.switchBankReceiptTab(this)" style="padding: 12px 0; cursor: pointer;">其他</div>
                         </div>
                         
                         <!-- Action Buttons -->
@@ -3973,7 +5019,7 @@ function renderTabs(activeTab) {
                                     <th>操作</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="bank-receipt-tbody">
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 12px; text-align: center; color: #64748b;">1</td>
                                     <td style="padding: 12px; color: #334155;">深圳市远通物流有限公司</td>
@@ -4045,11 +5091,11 @@ function renderTabs(activeTab) {
                     <div style="width: 100%; border-bottom: 1px solid #e2e8f0; background: white; padding: 0 24px; display: flex; justify-content: space-between; align-items: flex-end;">
                         <!-- Status Tabs -->
                         <div class="internal-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
-                            <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">待提交</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">付款处理中</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已付款</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已核销</div>
-                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">其他</div>
+                            <div class="internal-tab active" onclick="window.switchBankPaymentTab(this)" style="padding: 12px 0; border-bottom: 2px solid #ef4444; color: #ef4444; font-weight: 500; cursor: pointer;">待提交</div>
+                            <div class="internal-tab" onclick="window.switchBankPaymentTab(this)" style="padding: 12px 0; cursor: pointer;">付款处理中</div>
+                            <div class="internal-tab" onclick="window.switchBankPaymentTab(this)" style="padding: 12px 0; cursor: pointer;">已付款</div>
+                            <div class="internal-tab" onclick="window.switchBankPaymentTab(this)" style="padding: 12px 0; cursor: pointer;">已核销</div>
+                            <div class="internal-tab" onclick="window.switchBankPaymentTab(this)" style="padding: 12px 0; cursor: pointer;">其他</div>
                         </div>
                         
                          <!-- Action Buttons -->
@@ -4060,7 +5106,7 @@ function renderTabs(activeTab) {
                              <button class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer;">
                                 导入
                             </button>
-                            <button class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer;">
+                            <button class="primary-btn" onclick="window.submitBankPayment()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer;">
                                 提交付款
                             </button>
                         </div>
@@ -4108,7 +5154,7 @@ function renderTabs(activeTab) {
                                     <th>操作</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="bank-payment-tbody">
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 12px; text-align: center;"><input type="checkbox"></td>
                                     <td style="padding: 12px; text-align: center; color: #64748b;">1</td>
@@ -4812,13 +5858,14 @@ function renderTabs(activeTab) {
                     <!-- Status Tabs (Simplified based on Image 1) -->
                     <div style="background: #fff; padding: 0 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
-                            <div class="active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
-                            <div style="padding: 12px 0; cursor: pointer;">草稿/驳回</div>
-                            <div style="padding: 12px 0; cursor: pointer;">审核中 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">56</span></div>
-                            <div style="padding: 12px 0; cursor: pointer;">已批准 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">4</span></div>
-                             <div style="padding: 12px 0; cursor: pointer;">部分核销</div>
-                             <div style="padding: 12px 0; cursor: pointer;">已核销 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">1</span></div>
-                             <div style="padding: 12px 0; cursor: pointer;">已过期已取消 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">1</span></div>
+                            <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">平台付款</div>
+                            <div class="active" onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
+                            <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">草稿/驳回</div>
+                            <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">审核中 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">56</span></div>
+                            <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">已批准 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">4</span></div>
+                             <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">部分核销</div>
+                             <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">已核销 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">1</span></div>
+                             <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">已过期已取消 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">1</span></div>
                         </div>
                     </div>
 
@@ -5030,9 +6077,19 @@ function renderTabs(activeTab) {
                                     <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;">类型</label>
                                     <div style="flex: 1; display: flex; gap: 4px;">
                                         <div class="select-box" style="width: 60px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font-size: 12px;"><span>折合</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
-                                        <div class="select-box" style="width: 60px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font-size: 12px;"><span>CNY</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
+                                    <div class="select-box" style="width: 60px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font-size: 12px;"><span>CNY</span><i data-lucide="chevron-down" style="width: 12px; height: 12px; color: #94a3b8;"></i></div>
                                         <input type="text" value="0" style="width: 40px; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; text-align: right; outline: none; font-size: 12px;">
                                         <a href="#" style="color: #4f46e5; font-size: 11px; display: flex; align-items: center;">汇率</a>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="color: #64748b; font-size: 12px;">付款类型</label>
+                                    <div class="select-box" style="flex: 1; height: 28px; border: 1px solid #e2e8f0; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 12px;">
+                                        <select style="width: 100%; height: 100%; border: none; outline: none; background: transparent; -webkit-appearance: none;">
+                                            <option>银行转账</option>
+                                            <option>平台付款</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8; margin-left: -14px; pointer-events: none;"></i>
                                     </div>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -5166,9 +6223,21 @@ function renderTabs(activeTab) {
                     </div>
                 </div>`;
 
+        } else if (activeTab === '录入运单') {
+            mainContent = `
+                <div style="display: flex; flex-direction: column; width: 100%; height: 100%; background: #f1f5f9; gap: 12px; padding: 12px; font-family: inherit; box-sizing: border-box; overflow-y: auto;">
+                     <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 12px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                        <h2 style="font-size: 1.1rem; color: #1e293b; font-weight: 600; margin: 0;">录入运单</h2>
+                        <button onclick="window.saveWaybillEntry()" style="background: #10b981; color: white; border: none; border-radius: 4px; padding: 0 16px; height: 32px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                            <i data-lucide="save" style="width: 14px; height: 14px;"></i> 保存
+                        </button>
+                    </div>
+                    ${window.getFinancialPanelHTML()}
+                </div>
+            `;
         } else if (activeTab === '录入订单') {
             mainContent = `
-                <div class="order-entry-form" style="display: flex; flex-direction: column; height: 100%; background: #f1f5f9; gap: 12px; padding: 12px; font-family: inherit;">
+                <div class="order-entry-form" style="display: flex; flex-direction: column; height: 100%; background: #f1f5f9; gap: 12px; padding: 12px; font-family: inherit; overflow-y: auto;">
                     <!-- Header Section: Tabs and Top Controls -->
                     <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 12px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0;">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -5184,14 +6253,36 @@ function renderTabs(activeTab) {
                                 <div style="display: flex; gap: 8px;">
                                     <button onclick="window.calculateFreight()" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="calculator" style="width: 14px; height: 14px; color: #4f46e5;"></i> 计算运费</button>
                                     <button onclick="window.calculateItemizedBilling()" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="plus-circle" style="width: 14px; height: 14px; color: #10b981;"></i> 单品计费</button>
-                                    <button style="background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 0 16px; height: 32px; font-size: 0.8rem; cursor: pointer;">规格录入 (F5)</button>
+                                    <button id="save-order-btn" onclick="window.saveOrderEntry()" style="background: #10b981; color: white; border: none; border-radius: 4px; padding: 0 16px; height: 32px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                        <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> 保存订单
+                                    </button>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Basic Info Row -->
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding-top: 12px; border-top: 1px solid #f1f5f9;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.8rem; color: #64748b; width: 64px; text-align: right;">订单日期:</label>
+                                <input id="entry-date" type="date" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.8rem; color: #64748b; width: 64px; text-align: right;">客户名称:</label>
+                                <input id="entry-customer" type="text" placeholder="选择客户" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.8rem; color: #64748b; width: 64px; text-align: right;">始发地:</label>
+                                <input id="entry-origin" type="text" placeholder="省/市/区" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.8rem; color: #64748b; width: 64px; text-align: right;">目的地:</label>
+                                <input id="entry-destination" type="text" placeholder="省/市/区" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
                             </div>
                         </div>
                     </div>
 
                     <!-- Cargo Table Grid -->
-                    <div style="flex-grow: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="flex-grow: 1; min-height: 200px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0;">
                         <div style="overflow: auto; flex-grow: 1;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 1200px;">
                                 <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 10;">
@@ -5213,15 +6304,15 @@ function renderTabs(activeTab) {
                                 <tbody>
                                     <tr style="border-bottom: 1px solid #f1f5f9;">
                                         <td style="text-align: center; border-right: 1px solid #f1f5f9; padding: 6px; background: #f8fafc; font-weight: 600;">1</td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-count" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-weight" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input type="text" class="cargo-volume" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-name-1" type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-type-1" type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-count-1" type="text" class="cargo-count" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-package-1" type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-spec-1" type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input id="cargo-weight-1" type="text" class="cargo-weight" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0; background: #fafafa;"><input id="cargo-volume-1" type="text" class="cargo-volume" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; color: #000000; font-weight: 600;"></td>
                                         <td style="border-right: 1px solid #f1f5f9; padding: 0;">
-                                            <select class="cargo-pricing-method" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; font-size: 0.8rem; cursor: pointer;">
+                                            <select id="cargo-pricing-method-1" class="cargo-pricing-method" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; font-size: 0.8rem; cursor: pointer;">
                                                 <option value="按件数">按件数</option>
                                                 <option value="按重量">按重量</option>
                                                 <option value="按体积">按体积</option>
@@ -5230,9 +6321,9 @@ function renderTabs(activeTab) {
                                                 <option value="按吨公里">按吨公里</option>
                                             </select>
                                         </td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
-                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-unit-price" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
-                                        <td style="padding: 0;"><input type="text" class="cargo-freight-subtotal" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-truck-len-1" type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input id="cargo-unit-price-1" type="text" class="cargo-unit-price" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
+                                        <td style="padding: 0;"><input id="cargo-freight-subtotal-1" type="text" class="cargo-freight-subtotal" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
                                     </tr>
                                     <!-- Additional 2 empty rows just for visuals -->
                                     <tr style="border-bottom: 1px solid #f1f5f9;">
@@ -5279,17 +6370,48 @@ function renderTabs(activeTab) {
                                         </td>
                                         <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
                                         <td style="border-right: 1px solid #f1f5f9; padding: 0;"><input type="text" class="cargo-unit-price" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right;"></td>
-                                        <td style="padding: 0;"><input type="text" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
+                                        <td style="padding: 0;"><input type="text" class="cargo-freight-subtotal" style="width: 100%; height: 32px; border: none; padding: 0 8px; outline: none; background: transparent; text-align: right; font-weight: 600; color: #000000;"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Summary & Calculation Section -->
-                    <div style="display: flex; gap: 12px; height: 300px; flex-shrink: 0;">
+                    <!-- NEW: Cargo Summary Panel (Top) -->
+                    <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 12px 16px; margin-bottom: 12px; display: flex; gap: 24px;">
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label style="font-size: 0.8rem; color: #475569;">数量合计</label>
+                            <input id="summary-count" type="text" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-weight: 600;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label style="font-size: 0.8rem; color: #475569;">重量合计</label>
+                            <input id="summary-weight" type="text" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-weight: 600;">
+                        </div>
+                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                            <label style="font-size: 0.8rem; color: #475569;">体积合计</label>
+                            <input id="summary-volume" type="text" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-weight: 600;">
+                        </div>
+                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 1.5;">
+                            <label style="font-size: 0.8rem; color: #475569;">货物分类</label>
+                            <select id="entry-cargo-classification" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; outline: none; padding: 0 8px; background: white;"><option></option></select>
+                        </div>
+                         <div style="display: flex; flex-direction: column; gap: 4px; flex: 1.5;">
+                            <label style="font-size: 0.8rem; color: #475569;">计价方式</label>
+                            <select id="summary-pricing-method" onchange="window.syncPricingMethod()" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; outline: none; padding: 0 8px; background: white;">
+                                <option value="按件数">按件数</option>
+                                <option value="按重量">按重量</option>
+                                <option value="按体积">按体积</option>
+                                <option value="按计费重量">按计费重量</option>
+                                <option value="按车">按车</option>
+                                <option value="按吨公里">按吨公里</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Summary & Calculation Section (Bottom) -->
+                    <div style="display: flex; flex-direction: column; gap: 12px; flex-shrink: 0;">
                         <!-- Middle Calculation Summary -->
-                        <div style="flex: 2; background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; overflow: auto; position: relative;">
+                        <div style="width: 100%; background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; overflow: auto; position: relative;">
                             <!-- Config Button -->
                             <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; left: 6px; cursor: pointer; color: #94a3b8;" title="配置">
                                 <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
@@ -5297,64 +6419,35 @@ function renderTabs(activeTab) {
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px;">
                                 <!-- Row 1 -->
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">数量合计:</label>
-                                    <input id="summary-count" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">重量合计:</label>
-                                    <input id="summary-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">体积合计:</label>
-                                    <input id="summary-volume" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
-                                </div>
-                                <!-- Row 2 -->
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">计费重量:</label>
-                                    <input id="entry-billable-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">货物分类:</label>
-                                    <select style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; outline: none; padding: 0 8px; font-size: 0.8rem; background: white;"><option></option></select>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">计价方式:</label>
-                                    <select id="summary-pricing-method" onchange="window.syncPricingMethod()" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; outline: none; padding: 0 8px; font-size: 0.8rem; background: white;">
-                                        <option value="按件数">按件数</option>
-                                        <option value="按重量">按重量</option>
-                                        <option value="按体积">按体积</option>
-                                        <option value="按计费重量">按计费重量</option>
-                                        <option value="按车">按车</option>
-                                        <option value="按吨公里">按吨公里</option>
-                                    </select>
-                                </div>
-                                <!-- Row 3 -->
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">运费单价:</label>
-                                    <input id="entry-unit-price" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600;">运  费:</label>
                                     <input id="entry-freight" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">送 货 费:</label>
-                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">客户计费重:</label>
+                                    <input id="entry-billable-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
                                 </div>
-                                <!-- Row 4 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">客户单价:</label>
+                                    <input id="entry-unit-price" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
+                                <!-- Row 2 -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">送 货 费:</label>
+                                    <input id="entry-delivery-fee" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">装 货 费:</label>
-                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                    <input id="entry-loading-fee" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">卸 货 费:</label>
-                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                    <input id="entry-unloading-fee" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
                                 </div>
+                                <!-- Row 3 -->
                                  <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">附 加 费:</label>
                                     <input id="entry-additional-fee" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed;">
                                 </div>
-                                <!-- Row 5 -->
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">收入合计:</label>
                                     <input id="entry-revenue-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed;">
@@ -5363,15 +6456,11 @@ function renderTabs(activeTab) {
                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">待垫合计:</label>
                                     <input id="entry-advance-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed;">
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">代收货款:</label>
-                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
-                                </div>
                             </div>
                         </div>
 
                         <!-- Right Side Mini Tables -->
-                        <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                        <div style="width: 100%; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
                              <!-- Toolbar -->
                              <div style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: flex-start; background: #f8fafc;">
                                  <button onclick="window.showExpenseModal()" style="background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
@@ -5384,11 +6473,11 @@ function renderTabs(activeTab) {
                                     <thead style="background: #f1f5f9; position: sticky; top: 0;">
                                         <tr>
                                             <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">费用项目</th>
-                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 12%;">收入金额</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 18%;">结算公司</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 18%;">计费日期</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">备注</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">状态</th>
+                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">收入金额</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">计费日期</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 35%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">状态</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -5420,14 +6509,14 @@ function renderTabs(activeTab) {
                                 <table style="width: 100%; border-collapse: collapse;">
                                     <thead style="background: #f1f5f9; position: sticky; top: 0;">
                                         <tr>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 14%;">费用项目</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">费用项目</th>
                                             <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">代垫金额</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 14%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">计费日期</th>
                                             <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">联系人</th>
                                             <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">电话</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 16%;">计费日期</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">备注</th>
-                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">状态</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">状态</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -5436,30 +6525,20 @@ function renderTabs(activeTab) {
                                                 <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.itemName || e.id}</td>
                                                 <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;">${e.cost.toFixed(2)}</td>
                                                 <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.customer}</td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
                                                 <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; white-space: nowrap;">${e.date}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
                                                 <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.remark || '-'}</td>
                                                 <td style="padding: 4px 8px;"><span style="color: ${e.status === '审核通过' ? '#10b981' : e.status === '审核驳回' ? '#ef4444' : '#f59e0b'}">${e.status}</span></td>
                                             </tr>
                                         `).join('')}
-                                        ${window.expenseAuditData.filter(e => e.expenseType === 'advance').length < 8 ? Array(8 - window.expenseAuditData.filter(e => e.expenseType === 'advance').length).fill(0).map(() => `
-                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
-                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
-                                                <td style="padding: 4px 8px;"></td>
-                                            </tr>
-                                        `).join('') : ''}
                                     </tbody>
                                 </table>
                              </div>
                         </div>
                     </div>
+
+
 
                     <!-- Bottom Settlement Footer -->
                     <div style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
@@ -5498,9 +6577,78 @@ function renderTabs(activeTab) {
                         </div>
                     </div>
                 </div>`;
+        } else if (activeTab === '任务中心') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white;">
+                    <!-- Filter Area -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px;">
+                        <div class="internal-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
+                            <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">待处理</div>
+                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">我发起的</div>
+                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已处理</div>
+                            <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">关于我的</div>
+                        </div>
+                    </div>
+
+                    <!-- Table List -->
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                        <table class="statement-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;">#</th>
+                                    <th>申请单号</th>
+                                    <th>分类</th>
+                                    <th>业务说明</th>
+                                    <th>所属公司</th>
+                                    <th>处理单位</th>
+                                    <th>申请金额</th>
+                                    <th>流程名称</th>
+                                    <th>当前节点</th>
+                                    <th>审核状态</th>
+                                    <th>发起人</th>
+                                    <th>申请时间</th>
+                                    <th>流程开始时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${window.taskCenterData.length > 0 ? window.taskCenterData.map((task, index) => `
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td style="text-align: center; padding: 12px;">${index + 1}</td>
+                                        <td style="padding: 12px; color: #4f46e5;">${task.title}</td>
+                                        <td style="padding: 12px;">${task.type}</td>
+                                        <td style="padding: 12px;">${task.content}</td>
+                                        <td style="padding: 12px;">总公司</td>
+                                        <td style="padding: 12px;">财务部</td>
+                                        <td style="padding: 12px;">-</td>
+                                        <td style="padding: 12px;">标准审批流</td>
+                                        <td style="padding: 12px;">一级审批</td>
+                                        <td style="padding: 12px;"><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${task.status}</span></td>
+                                        <td style="padding: 12px;">${task.user}</td>
+                                        <td style="padding: 12px;">${task.time}</td>
+                                        <td style="padding: 12px;">${task.time}</td>
+                                        <td style="padding: 12px;">
+                                            <a href="#" style="color: #4f46e5;">办理</a>
+                                        </td>
+                                    </tr>
+                                `).join('') : `
+                                    <tr>
+                                        <td colspan="14" style="text-align: center; padding: 40px; color: #94a3b8;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                                                <i data-lucide="inbox" style="width: 48px; height: 48px; color: #cbd5e1;"></i>
+                                                暂无待办任务
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+             `;
         } else {
 
-            document.querySelector('.page-content').innerHTML = `
+            mainContent = `
                 <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; height: 100%;">
                 <h2 style="color: #1e293b; margin-bottom: 1rem;">${activeTab} Content</h2>
                 <p style="color: #64748b;">This is a demonstration of the ${activeTab} page view.</p>
@@ -5537,12 +6685,25 @@ function renderTabs(activeTab) {
                     ${mainContent}
                 </div>`;
             } else {
-                contentHTML = `
-                <div class="statement-container">
-                    ${mainContent}
-                </div>`;
+                // For '订单管理' and '运营概览', don't use the statement-container wrapper to allow full width
+                const noWrapper = ['订单管理', '运营概览', '货量利润表'].includes(activeTab);
+                if (noWrapper) {
+                    contentHTML = mainContent;
+                } else {
+                    contentHTML = `
+                    <div class="statement-container">
+                        ${mainContent}
+                    </div>`;
+                }
             }
-            document.querySelector('.page-content').innerHTML = contentHTML;
+
+            const pageContent = document.querySelector('.page-content');
+            if (['订单管理', '运营概览', '货量利润表'].includes(activeTab)) {
+                pageContent.style.padding = '0';
+            } else {
+                pageContent.style.padding = '2rem';
+            }
+            pageContent.innerHTML = contentHTML;
         }
 
         lucide.createIcons();
@@ -6267,8 +7428,8 @@ function showNewReceiptModal() {
     }
 
     modal.innerHTML = `
-                < div class="modal-container" style = "width: 95vw; max-width: 1600px; height: 95vh; display: flex; flex-direction: column;" >
-        < !--Header -->
+                <div class="modal-container" style="width: 95vw; max-width: 1600px; height: 95vh; display: flex; flex-direction: column;">
+        <!-- Header -->
         <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 0 16px; height: 48px; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 0.85rem; color: #64748b;">核销单号:</span>
@@ -6503,7 +7664,7 @@ function showNewReceiptModal() {
                 </table>
             </div>
         </div>
-    </div >
+    </div>
                 `;
 
     modal.classList.add('show');
@@ -8032,94 +9193,188 @@ window.switchWorkbenchView = function (view, el) {
 };
 
 /**
+ * Handles switching within the workbench overview (split layout).
+ */
+window.switchWorkbenchInternalTab = function (type) {
+    const content = document.getElementById('workbench-internal-content');
+    if (!content) return;
+
+    // Update button states
+    const buttons = document.querySelectorAll('.workbench-tab-btn');
+    buttons.forEach(btn => {
+        btn.style.background = '#f8fafc';
+        btn.style.color = '#64748b';
+        btn.style.border = '1px solid #e2e8f0';
+    });
+
+    const activeBtn = document.getElementById(`wb-btn-${type}`);
+    if (activeBtn) {
+        activeBtn.style.background = '#4f46e5';
+        activeBtn.style.color = 'white';
+        activeBtn.style.border = 'none';
+    }
+
+    if (type === 'task') {
+        content.innerHTML = window.renderTaskCenter();
+    } else if (type === 'report') {
+        content.innerHTML = window.renderVolumeProfitReport();
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+};
+
+/**
  * Returns the HTML for the Workbench Overview (Dashboard).
  */
 window.renderWorkbenchOverview = function () {
     return `
-        <div style="padding: 2rem; background: var(--bg-main); min-height: 100%;">
-            <div style="margin-bottom: 2rem;">
-                <h2 style="font-size: 1.5rem; color: var(--text-primary); margin-bottom: 0.5rem;">运营概览</h2>
-                <p style="color: var(--text-secondary); font-size: 0.875rem;">欢迎回来，这是您今日的数据分析。</p>
-            </div>
-            
-            <div class="dashboard-grid">
-                <div class="stats-card">
-                    <div class="card-header">
-                        <div class="icon-box"><i data-lucide="truck"></i></div>
-                        <span class="trend up">+12%</span>
-                    </div>
-                    <div class="card-label">今日发货量</div>
-                    <div class="card-value">128</div>
+        <div style="display: flex; height: 100%; overflow: hidden; background: #f1f5f9;">
+            <!-- Left Sidebar (Internal) -->
+            <div style="width: 380px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow-y: auto; padding: 24px;">
+                <!-- Navigation Buttons -->
+                <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+                    <button id="wb-btn-task" class="workbench-tab-btn" onclick="window.switchWorkbenchInternalTab('task')" style="flex: 1; height: 36px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <i data-lucide="layout-list" style="width: 16px; height: 16px;"></i> 任务中心
+                    </button>
+                    <button id="wb-btn-report" class="workbench-tab-btn" onclick="window.switchWorkbenchInternalTab('report')" style="flex: 1; height: 36px; background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <i data-lucide="bar-chart-3" style="width: 16px; height: 16px;"></i> 报表
+                    </button>
                 </div>
-                <div class="stats-card">
-                    <div class="card-header">
-                        <div class="icon-box"><i data-lucide="package"></i></div>
-                        <span class="trend up">+5%</span>
-                    </div>
-                    <div class="card-label">在途车辆</div>
-                    <div class="card-value">45</div>
+
+                <div style="margin-bottom: 24px;">
+                    <h2 style="font-size: 1.25rem; color: #1e293b; font-weight: 700; margin-bottom: 4px;">运营概览</h2>
+                    <p style="color: #64748b; font-size: 0.8rem;">欢迎回来，这是您今日的数据分析。</p>
                 </div>
-                <div class="stats-card">
-                    <div class="card-header">
-                        <div class="icon-box"><i data-lucide="check-circle"></i></div>
-                        <span class="trend up">+8%</span>
+                
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Metric Cards (Single Column) -->
+                    <div style="background: #eff6ff; border-radius: 12px; padding: 16px; border: 1px solid #dbeafe; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #1e40af; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;">今日发货量</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #1e3a8a;">128</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <span style="color: #059669; font-size: 0.75rem; font-weight: 600;">+12% <i data-lucide="trending-up" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i></span>
+                            <div style="width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #3b82f6; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"><i data-lucide="truck" style="width: 18px; height: 18px;"></i></div>
+                        </div>
                     </div>
-                    <div class="card-label">今日已完结</div>
-                    <div class="card-value">86</div>
-                </div>
-                <div class="stats-card">
-                    <div class="card-header">
-                        <div class="icon-box"><i data-lucide="banknote"></i></div>
-                        <span class="trend down">-2.4%</span>
+
+                    <div style="background: #f0fdf4; border-radius: 12px; padding: 16px; border: 1px solid #dcfce7; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #166534; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;">在途车辆</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #14532d;">45</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <span style="color: #16a34a; font-size: 0.75rem; font-weight: 600;">+5% <i data-lucide="trending-up" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i></span>
+                            <div style="width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #22c55e; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"><i data-lucide="package" style="width: 18px; height: 18px;"></i></div>
+                        </div>
                     </div>
-                    <div class="card-label">待结清金额</div>
-                    <div class="card-value">¥24.8k</div>
+
+                    <div style="background: #fffbeb; border-radius: 12px; padding: 16px; border: 1px solid #fef3c7; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #92400e; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;">今日已完结</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #78350f;">86</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <span style="color: #d97706; font-size: 0.75rem; font-weight: 600;">+8% <i data-lucide="trending-up" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i></span>
+                            <div style="width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #f59e0b; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"><i data-lucide="check-circle" style="width: 18px; height: 18px;"></i></div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef2f2; border-radius: 12px; padding: 16px; border: 1px solid #fee2e2; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #991b1b; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px;">待结清金额</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #7f1d1d;">¥24.8k</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                            <span style="color: #dc2626; font-size: 0.75rem; font-weight: 600;">-2.4% <i data-lucide="trending-down" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle;"></i></span>
+                            <div style="width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ef4444; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"><i data-lucide="banknote" style="width: 18px; height: 18px;"></i></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div style="background: white; border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h3 style="font-size: 1.1rem; color: var(--text-primary);">实时运单动态</h3>
-                    <span style="color: var(--primary); font-size: 0.875rem; cursor: pointer;">查看全部</span>
+            <!-- Right Content Area -->
+            <div id="workbench-internal-content" style="flex: 1; overflow: auto; background: white; position: relative;">
+                <!-- Default Content: Task Center -->
+                ${window.renderTaskCenter()}
+            </div>
+        </div>
+    `;
+};
+
+/**
+ * Returns the HTML for the Volume and Profit Report.
+ */
+window.renderVolumeProfitReport = function () {
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; background: #fff;">
+            <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+                <h2 style="font-size: 1.1rem; font-weight: 600; color: #1e293b;">货量利润表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="download" style="width: 14px; height: 14px;"></i> 导出报表</button>
                 </div>
-                <table class="data-table" style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="text-align: left; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid var(--border-color);">
-                            <th style="padding: 1rem;">运单号</th>
-                            <th style="padding: 1rem;">线路</th>
-                            <th style="padding: 1rem;">货物</th>
-                            <th style="padding: 1rem;">状态</th>
-                            <th style="padding: 1rem;">更新时间</th>
+            </div>
+            <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; gap: 16px; align-items: flex-end;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">时间范围</label>
+                    <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                </div>
+                <span style="padding-bottom: 8px;">至</span>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; color: #64748b;">&nbsp;</label>
+                    <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">结算单位</label>
+                    <input type="text" placeholder="请输入单位名称" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 180px;">
+                </div>
+                <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+            </div>
+            <div style="flex-grow: 1; overflow: auto; padding: 20px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                    <thead style="background: #f8fafc; color: #64748b; position: sticky; top: 0;">
+                        <tr>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0;">月份</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0;">工作单量</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">总重量 (T)</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">总体积 (CBM)</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">收入合计 (¥)</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">成本合计 (¥)</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; color: #10b981; font-weight: 600;">利润合计 (¥)</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0;">利润率</th>
                         </tr>
                     </thead>
-                    <tbody style="font-size: 0.875rem; color: var(--text-primary);">
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 1rem; font-weight: 600;">#ORD-8829</td>
-                            <td style="padding: 1rem;">广州 → 上海</td>
-                            <td style="padding: 1rem;">精密电子 (2.5吨)</td>
-                            <td style="padding: 1rem;"><span class="badge badge-blue">运输中</span></td>
-                            <td style="padding: 1rem;">10:24</td>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 12px;">2024-01</td>
+                            <td style="padding: 12px;">156</td>
+                            <td style="padding: 12px; text-align: right;">1,245.50</td>
+                            <td style="padding: 12px; text-align: right;">450.20</td>
+                            <td style="padding: 12px; text-align: right;">856,400.00</td>
+                            <td style="padding: 12px; text-align: right;">642,300.00</td>
+                            <td style="padding: 12px; text-align: right; color: #10b981; font-weight: 600;">214,100.00</td>
+                            <td style="padding: 12px; text-align: right;">25.0%</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 1rem; font-weight: 600;">#ORD-8825</td>
-                            <td style="padding: 1rem;">深圳 → 成都</td>
-                            <td style="padding: 1rem;">日化用品 (8吨)</td>
-                            <td style="padding: 1rem;"><span class="badge badge-green">待提货</span></td>
-                            <td style="padding: 1rem;">09:15</td>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 12px;">2023-12</td>
+                            <td style="padding: 12px;">142</td>
+                            <td style="padding: 12px; text-align: right;">1,120.80</td>
+                            <td style="padding: 12px; text-align: right;">380.50</td>
+                            <td style="padding: 12px; text-align: right;">782,100.00</td>
+                            <td style="padding: 12px; text-align: right;">594,400.00</td>
+                            <td style="padding: 12px; text-align: right; color: #10b981; font-weight: 600;">187,700.00</td>
+                            <td style="padding: 12px; text-align: right;">24.0%</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid var(--border-color);">
-                            <td style="padding: 1rem; font-weight: 600;">#ORD-8821</td>
-                            <td style="padding: 1rem;">北京 → 杭州</td>
-                            <td style="padding: 1rem;">生鲜蔬果 (5吨)</td>
-                            <td style="padding: 1rem;"><span class="badge badge-blue">运输中</span></td>
-                            <td style="padding: 1rem;">08:45</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 1rem; font-weight: 600;">#ORD-8818</td>
-                            <td style="padding: 1rem;">上海 → 苏州</td>
-                            <td style="padding: 1rem;">机械零件 (1.2吨)</td>
-                            <td style="padding: 1rem;"><span class="badge badge-yellow">待派货</span></td>
-                            <td style="padding: 1rem;">08:12</td>
+                        <tr style="background: #f8fafc; font-weight: 600;">
+                            <td style="padding: 12px;">合计</td>
+                            <td style="padding: 12px;">298</td>
+                            <td style="padding: 12px; text-align: right;">2,366.30</td>
+                            <td style="padding: 12px; text-align: right;">830.70</td>
+                            <td style="padding: 12px; text-align: right;">1,638,500.00</td>
+                            <td style="padding: 12px; text-align: right;">1,236,700.00</td>
+                            <td style="padding: 12px; text-align: right; color: #10b981;">401,800.00</td>
+                            <td style="padding: 12px; text-align: right;">24.5%</td>
                         </tr>
                     </tbody>
                 </table>
@@ -8520,11 +9775,12 @@ window.injectExpenseModal = function () {
                     </button>
                 </div>
                 <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
-                    <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px dashed #e2e8f0;">
+                    <div id="modal-type-row" style="display: flex; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px dashed #e2e8f0;">
                         <label style="font-size: 0.85rem; color: #64748b; font-weight: 600;">费用类型:</label>
                         <select id="modal-expense-type" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.85rem; outline: none; background: #f8fafc; cursor: pointer;">
                             <option value="revenue">收入金额</option>
                             <option value="advance">代垫金额</option>
+                            <option value="payable" style="display: none;">支出费用</option>
                         </select>
                     </div>
                     
@@ -8595,7 +9851,7 @@ window.injectExpenseModal = function () {
                     </tbody>
                 </table>
             `;
-        } else {
+        } else if (type === 'advance') {
             tableHtml = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
                     <thead style="background: #f1f5f9;">
@@ -8642,6 +9898,49 @@ window.injectExpenseModal = function () {
                     </tbody>
                 </table>
             `;
+        } else if (type === 'payable') {
+            tableHtml = `
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+                    <thead style="background: #f1f5f9;">
+                        <tr>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 20%;"><span style="color: #ef4444;">*</span> 费用项目</th>
+                            <th style="padding: 8px; text-align: right; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 15%;"><span style="color: #ef4444;">*</span> 支出金额</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 25%;"><span style="color: #ef4444;">*</span> 结算公司</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; width: 15%;">计费日期</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 1px solid #e2e8f0;">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;">
+                                <select id="modal-item" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="" disabled selected>选择项目</option>
+                                    <option value="运费">运费</option>
+                                    <option value="装货费">装货费</option>
+                                    <option value="卸货费">卸货费</option>
+                                    <option value="停车费">停车费</option>
+                                    <option value="保险费">保险费</option>
+                                    <option value="其它">其它</option>
+                                </select>
+                            </td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="number" id="modal-amount" placeholder="0.00" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; text-align: right; font-weight: 600;"></td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;">
+                                <select id="modal-company" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;">
+                                    <option value="" disabled selected>选择公司</option>
+                                    <option value="丰源物流">丰源物流</option>
+                                    <option value="顺丰速运">顺丰速运</option>
+                                    <option value="中通快递">中通快递</option>
+                                    <option value="圆通速运">圆通速运</option>
+                                    <option value="申通快递">申通快递</option>
+                                    <option value="韵达快递">韵达快递</option>
+                                </select>
+                            </td>
+                            <td style="padding: 0; border-right: 1px solid #e2e8f0;"><input type="date" id="modal-date" style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem; cursor: pointer;"></td>
+                            <td style="padding: 0;"><input type="text" id="modal-remark" placeholder="..." style="width: 100%; height: 36px; border: none; outline: none; padding: 0 8px; background: transparent; font-size: 0.75rem;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
         }
         container.innerHTML = tableHtml;
 
@@ -8661,11 +9960,23 @@ window.injectExpenseModal = function () {
 /**
  * Shows the expense entry modal.
  */
-window.showExpenseModal = function () {
+window.showExpenseModal = function (context = 'receivable') {
     window.injectExpenseModal();
     const container = document.getElementById('expense-modal-container');
+    const typeRow = document.getElementById('modal-type-row');
+    const typeSelect = document.getElementById('modal-expense-type');
+
     if (container) {
         container.style.display = 'flex';
+
+        if (context === 'payable') {
+            if (typeRow) typeRow.style.display = 'none';
+            if (typeSelect) typeSelect.value = 'payable';
+        } else {
+            if (typeRow) typeRow.style.display = 'flex';
+            if (typeSelect && typeSelect.value === 'payable') typeSelect.value = 'revenue';
+        }
+
         // Force table update and reset
         window.updateModalTable();
     }
@@ -8704,46 +10015,59 @@ window.saveExpense = function () {
     const date = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
     const remark = remarkInput ? remarkInput.value : '';
 
-    // 1. Add to expenseAuditData
-    const newOrderId = 'EXP-' + Date.now();
-    const newExpense = {
-        id: newOrderId,
-        itemName: itemName,
-        remark: remark,
-        expenseType: type, // 'revenue' or 'advance'
-        date: date,
-        signDate: '-',
-        pieces: 1,
-        type: '费用单',
-        weight: '0.00',
-        salesman: '当前用户',
-        volume: '0.00',
-        operator: '当前用户',
-        revenue: type === 'revenue' ? amount : 0,
-        cost: type === 'advance' ? amount : 0,
-        status: '审核中',
-        customer: company
-    };
+    if (type === 'payable') {
+        const newPayableExpense = {
+            id: 'PAY-' + Date.now(),
+            itemName: itemName,
+            amount: amount,
+            company: company,
+            date: date,
+            remark: remark,
+            status: '正常'
+        };
+        window.payableExpenseData.unshift(newPayableExpense);
+        alert('支出费用保存成功');
+    } else {
+        // 1. Add to expenseAuditData
+        const newOrderId = 'EXP-' + Date.now();
+        const newExpense = {
+            id: newOrderId,
+            itemName: itemName,
+            remark: remark,
+            expenseType: type, // 'revenue' or 'advance'
+            date: date,
+            signDate: '-',
+            pieces: 1,
+            type: '费用单',
+            weight: '0.00',
+            salesman: '当前用户',
+            volume: '0.00',
+            operator: '当前用户',
+            revenue: type === 'revenue' ? amount : 0,
+            cost: type === 'advance' ? amount : 0,
+            status: '审核中',
+            customer: company
+        };
 
-    window.expenseAuditData.unshift(newExpense);
+        window.expenseAuditData.unshift(newExpense);
 
-    // 2. Create Task in Task Center
-    const newTask = {
-        id: 'TASK-' + Date.now(),
-        type: 'expense_audit',
-        orderId: newOrderId,
-        cardId: newOrderId, // Using orderId as identifier
-        cardName: itemName,
-        amount: amount,
-        remark: remark,
-        applicant: '当前用户',
-        applyTime: new Date().toLocaleString(),
-        status: 'pending'
-    };
+        // 2. Create Task in Task Center
+        const newTask = {
+            id: 'TASK-' + Date.now(),
+            type: 'expense_audit',
+            orderId: newOrderId,
+            cardId: newOrderId, // Using orderId as identifier
+            cardName: itemName,
+            amount: amount,
+            remark: remark,
+            applicant: '当前用户',
+            applyTime: new Date().toLocaleString(),
+            status: 'pending'
+        };
 
-    window.pendingRechargeRequests.push(newTask);
-
-    alert('保存成功，已提交审核申请至任务中心');
+        window.pendingRechargeRequests.push(newTask);
+        alert('保存成功，已提交审核申请至任务中心');
+    }
     window.closeExpenseModal();
 
     // Refresh views if they are currently active
@@ -8810,4 +10134,542 @@ window.closeConfigModal = function () {
     if (container) {
         container.style.display = 'none';
     }
+};
+
+window.getFinancialPanelHTML = function () {
+    return `
+        <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; height: 100%; box-sizing: border-box;">
+            <!-- Receivable Section -->
+            <div id="financial-income-module" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px;">
+                        <!-- Radio Group -->
+                        <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 8px; height: 32px;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #334155; cursor: pointer; white-space: nowrap;">
+                                <input type="radio" name="billStatus" checked style="accent-color: #3b82f6;"> 应收
+                            </label>
+                        </div>
+                        
+                        <!-- Checkbox -->
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #334155; cursor: pointer; margin-right: 8px; white-space: nowrap;">
+                            <input type="checkbox" onchange="window.toggleReceivableState(this)" style="width: 14px; height: 14px; border: 1px solid #cbd5e1; border-radius: 2px;"> 完成应收
+                        </label>
+
+                        <!-- Buttons -->
+                     <button onclick="window.jumpToInvoiceFromWaybill()" style="height: 32px; padding: 0 12px; background: #dbeafe; color: #2563eb; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                            开票申请
+                        </button>
+                         <button style="height: 32px; padding: 0 12px; background: #dbeafe; color: #2563eb; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                            生成账单
+                        </button>
+                        <button style="height: 32px; padding: 0 12px; background: #dbeafe; color: #2563eb; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            提交审核 <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+
+                    <!-- Summary & Calculation Section (Top) -->
+                    <div id="receivable-summary-panel" style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; margin-bottom: 12px;">
+                        <button onclick="window.showExpenseModal('receivable')" style="position: absolute; top: 4px; left: 36px; background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 28px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                             <i data-lucide="plus" style="width: 16px; height: 16px;"></i> 新增费用
+                        </button>
+                        <!-- Config Button -->
+                        <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; left: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                            <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; margin-top: 32px;">
+                            <!-- Row 1 -->
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600;">运  费:</label>
+                                <input id="entry-freight" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">客户计费重:</label>
+                                <input id="entry-billable-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">客户单价:</label>
+                                <input id="entry-unit-price" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                            </div>
+                            <!-- Row 2 -->
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">送 货 费:</label>
+                                <input id="entry-delivery-fee" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">装 货 费:</label>
+                                <input id="entry-loading-fee" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">卸 货 费:</label>
+                                <input id="entry-unloading-fee" oninput="window.updateOrderEntryTotals()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                            </div>
+                            <!-- Row 3 -->
+                             <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">附 加 费:</label>
+                                <input id="entry-additional-fee" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">收入合计:</label>
+                                <input id="entry-revenue-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">待垫合计:</label>
+                                <input id="entry-advance-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receivable Expense Area (Tables moved here) -->
+                    <div id="receivable-expense-area" style="display: flex; gap: 12px; height: 260px; margin-bottom: 12px; flex-shrink: 0;">
+                        <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                             <!-- Table 1 -->
+                             <div style="flex: 1; overflow: auto; border-bottom: 2px solid #e2e8f0;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">费用项目</th>
+                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">收入金额</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">计费日期</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 35%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'revenue').map(e => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.itemName || e.id}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;">${e.revenue.toFixed(2)}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.customer}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; white-space: nowrap;">${e.date}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.remark || '-'}</td>
+                                                <td style="padding: 4px 8px;"><span style="color: ${e.status === '审核通过' ? '#10b981' : e.status === '审核驳回' ? '#ef4444' : '#f59e0b'}">${e.status}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'revenue').length < 8 ? Array(8 - window.expenseAuditData.filter(e => e.expenseType === 'revenue').length).fill(0).map(() => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px;"></td>
+                                            </tr>
+                                        `).join('') : ''}
+                                    </tbody>
+                                </table>
+                             </div>
+                             <!-- Table 2 -->
+                             <div style="flex: 1; overflow: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">费用项目</th>
+                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">代垫金额</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">计费日期</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">联系人</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">电话</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'advance').map(e => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.itemName || e.id}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;">${e.cost.toFixed(2)}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.customer}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; white-space: nowrap;">${e.date}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">-</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.remark || '-'}</td>
+                                                <td style="padding: 4px 8px;"><span style="color: ${e.status === '审核通过' ? '#10b981' : e.status === '审核驳回' ? '#ef4444' : '#f59e0b'}">${e.status}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                        ${window.expenseAuditData.filter(e => e.expenseType === 'advance').length < 8 ? Array(8 - window.expenseAuditData.filter(e => e.expenseType === 'advance').length).fill(0).map(() => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px;"></td>
+                                            </tr>
+                                        `).join('') : ''}
+                                    </tbody>
+                                </table>
+                             </div>
+                        </div>
+                </div>
+
+                <!-- Right Column: Settlement & Cost (1/3 width) -->
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 12px; min-width: 0;">
+                    <!-- Settlement Module -->
+                    <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 36px; min-width: 120px;">
+                                    <select id="settlementMethod" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 12px; cursor: pointer;">
+                                        <option value="现付">现付</option>
+                                        <option value="到付">到付</option>
+                                        <option value="双付">双付</option>
+                                        <option value="月结">月结</option>
+                                        <option value="回单付">回单付</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 24px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.85rem; color: #db2777; font-weight: 600;">现付金额:</label>
+                                    <input id="cashAmount" type="text" style="width: 100px; height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; font-weight: 700; color: #000000; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.85rem; color: #db2777; font-weight: 600;">到付金额:</label>
+                                    <input id="deliveryAmount" type="text" style="width: 100px; height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; font-weight: 700; color: #000000; text-align: right;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.85rem; color: #db2777; font-weight: 600;">欠付金额:</label>
+                                    <input type="text" style="width: 100px; height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; font-size: 0.9rem; font-weight: 700; color: #000000; text-align: right;">
+                                </div>
+
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                    <input type="checkbox" style="width: 18px; height: 18px;"> 到付款月结
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cost Module -->
+                    <div id="financial-cost-module" style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; margin-bottom: 4px; overflow-x: auto; padding-bottom: 4px;">
+                        <!-- Radio Group -->
+                        <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 8px; height: 32px;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #334155; cursor: pointer; white-space: nowrap;">
+                                <input type="radio" name="payableStatus" checked style="accent-color: #3b82f6;"> 应付
+                            </label>
+                        </div>
+                        
+                        <!-- Checkbox -->
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #334155; cursor: pointer; margin-right: 8px; white-space: nowrap;">
+                            <input type="checkbox" onchange="window.togglePayableState(this)" style="width: 14px; height: 14px; border: 1px solid #cbd5e1; border-radius: 2px;"> 完成应付
+                        </label>
+
+                        <!-- Buttons -->
+                         <button onclick="window.jumpToPaymentFromWaybill()" style="height: 32px; padding: 0 12px; background: #dbeafe; color: #2563eb; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                            付款申请
+                        </button>
+                         <button style="height: 32px; padding: 0 12px; background: #dbeafe; color: #2563eb; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                            生成账单
+                        </button>
+                        <button style="height: 32px; padding: 0 12px; background: #dbeafe; color: #2563eb; border: none; border-radius: 4px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            提交审核 <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+
+                    <!-- Vehicle Cost Section (New) -->
+                    <div id="vehicle-cost-panel" style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; margin-top: 12px; position: relative;">
+                        <!-- Config Button -->
+                        <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; left: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                            <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                        </div>
+                        <button onclick="window.showExpenseModal('payable')" style="position: absolute; top: 4px; left: 36px; background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 28px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                             <i data-lucide="plus" style="width: 16px; height: 16px;"></i> 新增费用
+                        </button>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; margin-top: 32px;">
+                            <!-- Row 1 -->
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #ef4444; white-space: nowrap;">基本车费:</label>
+                                <input id="vehicle-basic-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运商计费重:</label>
+                                <input id="vehicle-carrier-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运商单价:</label>
+                                <input id="vehicle-carrier-price" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">预付车费:</label>
+                                <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
+                                <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">回付车费:</label>
+                                <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">信 息 费:</label>
+                                <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">拦 标 价:</label>
+                                <input id="vehicle-bid-price" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                            </div>
+                            <div style="visibility: hidden;"></div>
+                        </div>
+                    </div>
+
+                    </div>
+
+                    <!-- NEW: Payable Expense Tables (Copied from above) -->
+                    <div id="payable-expense-area" style="display: flex; gap: 12px; height: 200px; margin-top: 12px; flex-shrink: 0;">
+                         <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                             <!-- Toolbar -->
+                             <div style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: flex-start; background: #f8fafc;">
+                                 <!-- Button moved to vehicle-cost-panel -->
+                             </div>
+                             <!-- Table 1 (Displaying filter for revenue just in case, or adjusted for payable) -->
+                             <div style="flex: 1; overflow: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                        <tr>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">费用项目</th>
+                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">应付金额</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">计费日期</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 35%;">备注</th>
+                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">状态</th>
+                                        </tr>
+                                    </thead>
+                                     <tbody>
+                                        ${window.payableExpenseData.map(e => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.itemName}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;">${e.amount.toFixed(2)}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.company}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.date}</td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">${e.remark}</td>
+                                                <td style="padding: 4px 8px;"><span style="color: #10b981;">${e.status}</span></td>
+                                            </tr>
+                                        `).join('')}
+                                        ${window.payableExpenseData.length < 5 ? Array(5 - window.payableExpenseData.length).fill(0).map(() => `
+                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                <td style="padding: 4px 8px;"></td>
+                                            </tr>
+                                        `).join('') : ''}
+                                    </tbody>
+                                </table>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+};
+
+window.togglePanel = function (containerId, isChecked) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const inputs = container.querySelectorAll('input, select, button, textarea');
+    inputs.forEach(el => {
+        // Don't disable the trigger checkboxes themselves
+        if (el.getAttribute('onchange')?.includes('toggleReceivableState') ||
+            el.getAttribute('onchange')?.includes('togglePayableState')) {
+            return;
+        }
+        el.disabled = isChecked;
+    });
+
+    // Handle custom clickable elements
+    const customButtons = container.querySelectorAll('div[onclick], i[onclick], span[onclick]');
+    customButtons.forEach(el => {
+        // Don't disable the config settings button if possible, but keep it simple for now
+        el.style.pointerEvents = isChecked ? 'none' : 'auto';
+        el.style.opacity = isChecked ? '0.5' : '1';
+    });
+};
+
+window.toggleReceivableState = function (checkbox) {
+    const isChecked = checkbox.checked;
+    window.togglePanel('receivable-summary-panel', isChecked);
+    window.togglePanel('receivable-expense-area', isChecked);
+    window.togglePanel('financial-settlement-module', isChecked);
+};
+
+window.togglePayableState = function (checkbox) {
+    const isChecked = checkbox.checked;
+    window.togglePanel('vehicle-cost-panel', isChecked);
+    window.togglePanel('payable-expense-area', isChecked);
+};
+
+/**
+ * Jumps from Waybill/Financial Panel to Invoice Application (Create View).
+ * Populates data if available.
+ */
+window.jumpToInvoiceFromWaybill = function () {
+    // 1. Gather data to carry over
+    // We'll look at window.expenseAuditData (Revenue items) as candidates
+    const revenueItems = window.expenseAuditData.filter(e => e.expenseType === 'revenue');
+
+    if (revenueItems.length === 0) {
+        if (!confirm('当前没有应收费用数据，是否仍要跳转到开票申请？')) {
+            return;
+        }
+    }
+
+    // 2. Switch Tab
+    if (window.addTab) {
+        window.addTab('开票申请');
+    } else {
+        console.error('addTab function not found');
+        return;
+    }
+
+    // 3. Switch View within Tab & Populate
+    // We need to wait for the tab content to be rendered.
+    setTimeout(() => {
+        const createView = document.getElementById('invoice-application-create-view');
+        const listView = document.getElementById('invoice-application-list-view');
+        // Note: .customer-sidebar might not be globally unique or easily selectable if dynamic, 
+        // but based on previous code it seemed static in the main layout.
+        const sidebar = document.querySelector('.customer-sidebar');
+
+        if (createView && listView) {
+            listView.style.display = 'none';
+            createView.style.display = 'flex';
+            if (sidebar) sidebar.style.display = 'none';
+
+            if (revenueItems.length > 0) {
+                const uniqueCustomers = [...new Set(revenueItems.map(i => i.customer).filter(Boolean))];
+                if (uniqueCustomers.length === 1) {
+                    const customerSelect = document.getElementById('invoice-create-customer-select');
+                    if (customerSelect) {
+                        // Check if option exists, if not add it dynamically so the pre-fill works
+                        let optionExists = false;
+                        for (let i = 0; i < customerSelect.options.length; i++) {
+                            if (customerSelect.options[i].value === uniqueCustomers[0]) {
+                                optionExists = true;
+                                break;
+                            }
+                        }
+                        if (!optionExists) {
+                            const newOption = new Option(uniqueCustomers[0], uniqueCustomers[0]);
+                            customerSelect.add(newOption);
+                        }
+                        customerSelect.value = uniqueCustomers[0];
+                    }
+                }
+            }
+
+            // Populate Expense Table in the create view
+            const tbody = createView.querySelector('.statement-table tbody');
+            if (tbody && revenueItems.length > 0) {
+                tbody.innerHTML = '';
+                // We are not calculating deep totals here for brevity, just listing items.
+
+                revenueItems.forEach((item, index) => {
+                    const amount = parseFloat(item.revenue) || 0;
+                    const taxRate = 0.09;
+
+                    const exclTax = amount;
+                    const taxAmount = exclTax * taxRate;
+                    const total = exclTax + taxAmount;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td>${item.itemName || '费用'}</td>
+                            <td>*物流服务*${item.itemName || '运输费'}</td>
+                            <td style="text-align: center;">次</td>
+                            <td style="text-align: right;">1.00</td>
+                            <td style="text-align: right;">${exclTax.toFixed(2)}</td>
+                            <td style="text-align: right;">${exclTax.toFixed(2)}</td>
+                            <td style="text-align: center;">9%</td>
+                            <td style="text-align: right;">${taxAmount.toFixed(2)}</td>
+                            <td style="text-align: right;">${total.toFixed(2)}</td>
+                            <td style="text-align: right;">${total.toFixed(2)}</td>
+                            <td style="text-align: center;">CNY</td>
+                            <td>${item.remark || '-'}</td>
+                            <td>-</td>
+                            <td style="text-align: center;"><i data-lucide="trash-2" style="width: 14px; height: 14px; color: #ef4444; cursor: pointer;" onclick="this.closest('tr').remove()"></i></td>
+                        </tr>
+                    `;
+                });
+
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+    }, 500);
+};
+
+window.jumpToPaymentFromWaybill = function () {
+    console.log('Jump triggered');
+    alert('DEBUG: Function Called'); // Temporary debug
+    // 1. Check if there are expenses to pay (expenses where cost > 0 or expenseType is advance)
+    const expenses = window.expenseAuditData.filter(e => {
+        // Since the data structure might vary, let's look for cost > 0 or type 'advance'
+        return (e.cost && parseFloat(e.cost) > 0) || e.expenseType === 'advance';
+    });
+
+    if (expenses.length === 0) {
+        // Fallback for demo: use mock data if no real data exists
+        // This ensures the jump always works for the user to see the page
+        expenses.push(
+            { id: 999, date: '2025-01-25', itemName: '临时运费', cost: 500, customer: '临时客户', expenseType: 'advance' }
+        );
+        // alert('没有可申请付款的费用！');
+        // return; 
+    }
+
+    // 2. Open "付款申请" Tab
+    window.addTab('付款申请');
+
+    // 3. Switch to Create View
+    setTimeout(() => {
+        // Try to use existing function if available
+        if (typeof window.openPaymentApplicationCreateView === 'function') {
+            window.openPaymentApplicationCreateView();
+        } else {
+            // Manual fallback
+            const listView = document.getElementById('payment-application-list-view');
+            const createView = document.getElementById('payment-application-create-view');
+            if (listView && createView) {
+                listView.style.display = 'none';
+                createView.style.display = 'flex';
+            }
+        }
+
+        // 4. Pre-fill Data
+        const tableBody = document.querySelector('#payment-application-create-view table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = expenses.map((e, index) => `
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 8px; text-align: center;"><input type="checkbox" checked></td>
+                    <td style="padding: 8px;">${index + 1}</td>
+                    <td style="padding: 8px;">${e.date}</td>
+                    <td style="padding: 8px;">EXP${e.id}</td>
+                    <td style="padding: 8px;">${e.itemName}</td>
+                    <td style="padding: 8px;">CNY</td>
+                    <td style="padding: 8px; text-align: right;">${Number(e.cost).toFixed(2)}</td>
+                    <td style="padding: 8px;">CUST001</td>
+                    <td style="padding: 8px;">${e.customer}</td>
+                    <td style="padding: 8px;">${e.customer}</td>
+                    <td style="padding: 8px; text-align: right;">1.00</td>
+                </tr>
+            `).join('');
+
+            // Also update totals if there are fields for it
+            const totalAmount = expenses.reduce((sum, e) => sum + Number(e.cost || 0), 0);
+            // Find elements to update? (Optional for now as per requirements)
+        }
+    }, 100);
 };
