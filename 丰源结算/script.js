@@ -10398,7 +10398,7 @@ window.getFinancialPanelHTML = function () {
                             <!-- Row 2 -->
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">预付车费:</label>
-                                <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
+                                <input id="vehicle-prepaid-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <label style="width: 100px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
@@ -10672,4 +10672,54 @@ window.jumpToPaymentFromWaybill = function () {
             // Find elements to update? (Optional for now as per requirements)
         }
     }, 100);
+};
+
+/**
+ * Saves the Waybill Entry.
+ * Checks if "Prepaid Vehicle Fee" is entered and syncs to Fuel Card Management -> Pending Distribution.
+ */
+window.saveWaybillEntry = function () {
+    // 1. Get Prepaid Vehicle Fee
+    const prepaidFeeInput = document.getElementById('vehicle-prepaid-fee');
+    const prepaidFee = prepaidFeeInput ? parseFloat(prepaidFeeInput.value) : 0;
+
+    // Generate Waybill No
+    const waybillNo = 'YD' + new Date().toISOString().replace(/\D/g, '').slice(0, 8) + Math.floor(Math.random() * 1000);
+
+    // 2. If Fee > 0, Add to Fuel Card Management (Pending Distribution)
+    if (prepaidFee > 0) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('zh-CN').replace(/\//g, '-');
+
+        const newRecord = {
+            id: 'AUTO-' + Date.now(),
+            sysId: 'SY-AUTO-' + Date.now(),
+            waybillNo: waybillNo,
+            waybillDate: dateStr,
+            fuelCost: prepaidFee.toFixed(2),
+            plateNo: '鄂A-88888', // Placeholder as not provided in this specific panel
+            contactPhone: '13800000000', // Placeholder
+            remarks: '由录入运单-预付车费自动生成',
+            status: '待发放'
+        };
+
+        if (window.fuelCardData) {
+            window.fuelCardData.unshift(newRecord);
+
+            // Proactively refresh table if the View is active or render function exists
+            if (typeof window.renderFuelCardTableBody === 'function') {
+                // Check if current tab is Fuel Card Management
+                // We just try to re-render "待发放" if it doesn't cause error
+                try {
+                    // Find active fuel card tab if any
+                    const activeTab = document.querySelector('.status-tab.active');
+                    if (activeTab && activeTab.textContent.trim() === '待发放') {
+                        window.renderFuelCardTableBody('待发放');
+                    }
+                } catch (e) { console.log('Auto-refresh fuel card table skipped'); }
+            }
+        }
+    }
+
+    alert('运单保存成功！' + (prepaidFee > 0 ? '\n已自动生成油卡待发放记录。\n运单号: ' + waybillNo : '\n运单号: ' + waybillNo));
 };
