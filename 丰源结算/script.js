@@ -6,7 +6,7 @@ const menuData = [
     {
         title: "应收应付",
         icon: "file-text",
-        items: ["对账单", "客户账单", "应收对账", "应付对账", "费用审核", "费用明细", "应收明细", "应付明细", "业务员成本明细", "代收代付明细"]
+        items: ["应收对账", "应收明细", "应付对账", "应付明细", "客户账单", "费用明细", "代收代付明细"]
     },
     {
         title: "收付",
@@ -35,9 +35,9 @@ const menuData = [
         items: ["银行收款流水", "银行付款流水", "银企直连配置"]
     },
     {
-        title: "充值管理",
+        title: "卡片管理",
         icon: "wallet",
-        items: ["油卡管理", "后台管理"]
+        items: ["油卡管理", "储值卡管理"]
     },
     {
         title: "设置",
@@ -50,7 +50,7 @@ const businessMenuData = [
     {
         title: "业务管理",
         icon: "briefcase",
-        items: ["录入订单", "订单管理", "录入运单", "运单管理"]
+        items: ["录入订单", "订单管理", "录入运单", "运单管理", "运单录入(新)"]
     }
 ];
 
@@ -1306,7 +1306,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '后台管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值卡管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)') {
 
 
         let mainContent = '';
@@ -2292,14 +2292,14 @@ function renderTabs(activeTab) {
                 </div>
                 </div>
             </div>`;
-        } else if (activeTab === '后台管理') {
+        } else if (activeTab === '储值卡管理') {
             mainContent = `
             <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #f8fafc; padding: 24px;">
                 <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <i data-lucide="users" style="width: 24px; height: 24px; color: var(--text-primary);"></i>
-                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">后台充值管理</h2>
+                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">储值卡管理</h2>
                     </div>
                     <div style="display: flex; align-items: center; gap: 12px; background: white; padding: 6px 16px 6px 6px; border-radius: 50px; box-shadow: var(--shadow-sm);">
                         <div style="width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.8rem;">管</div>
@@ -2430,10 +2430,10 @@ function renderTabs(activeTab) {
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-15</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button class="btn-recharge" data-id="ERP-2023-0582" data-name="张三" data-company="创新科技有限公司" data-balance="8,450" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button class="btn-recharge" onclick="window.openBackendRechargeModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button class="btn-view-details" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button class="btn-view-details" onclick="window.openBackendDetailsModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2462,10 +2462,10 @@ function renderTabs(activeTab) {
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-14</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button class="btn-recharge" data-id="ERP-2023-0421" data-name="李四" data-company="未来科技有限公司" data-balance="15,200" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button class="btn-recharge" onclick="window.openBackendRechargeModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2494,10 +2494,10 @@ function renderTabs(activeTab) {
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-12</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2526,10 +2526,10 @@ function renderTabs(activeTab) {
                                     <td style="padding: 16px 24px; color: #64748b;">2023-09-28</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0198', '赵六', '星辰信息技术', '120')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0198', '赵六', '星辰信息技术', '120')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2558,10 +2558,10 @@ function renderTabs(activeTab) {
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-16</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0789', '刘七', '华通集团', '25,600')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0789', '刘七', '华通集团', '25,600')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2590,10 +2590,10 @@ function renderTabs(activeTab) {
                                     <td style="padding: 16px 24px; color: #64748b;">2023-08-15</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -6577,6 +6577,451 @@ function renderTabs(activeTab) {
                         </div>
                     </div>
                 </div>`;
+        } else if (activeTab === '运单录入(新)') {
+            mainContent = `
+                <div style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #f1f5f9;">
+                    <!-- Top Tab Bar -->
+                    <div style="padding: 0 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 32px;">
+                        <div class="waybill-new-tab active" onclick="window.switchWaybillNewTab(this, 'basic')" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer; font-size: 0.9rem;">基本信息</div>
+                        <div class="waybill-new-tab" onclick="window.switchWaybillNewTab(this, 'expense')" style="padding: 12px 0; border-bottom: 2px solid transparent; color: #64748b; font-weight: 500; cursor: pointer; font-size: 0.9rem;">费用详情</div>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div id="waybill-new-content" style="flex: 1; overflow: auto; padding: 16px;">
+                        <!-- Default Basic Info Content -->
+                        <div id="waybill-new-basic" style="display: block;">
+                             <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Flex Container for Fees and Expenses -->
+                                <!-- Main Container with Vertical Layout -->
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    
+                                    <!-- Row 1: Receivable + Expense Table -->
+                                    <div style="display: flex; gap: 12px; align-items: stretch;">
+                                        <!-- Left: Receivable Panel (35%) -->
+                                        <div style="flex: 0 0 35%; display: flex; flex-direction: column;">
+                                            <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; height: 100%;">
+                                                <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                                                    <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                                                </div>
+                                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 0;">
+                                                    <!-- Grid Items -->
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">附 加 费:</label>
+                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">收入合计:</label>
+                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">待垫合计:</label>
+                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right: Expense Table 1 (Flex 1) -->
+                                        <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                                            <div style="flex: 1; overflow: auto; min-height: 140px;">
+                                                <table style="width: 100%; border-collapse: collapse;">
+                                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                                        <tr>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">费用项目</th>
+                                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">费用金额</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">费用类型</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">计费日期</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">联系人</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">电话</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">备注</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 7%;">状态</th>
+                                                            <th style="padding: 6px 8px; text-align: center; border-bottom: 1px solid #e2e8f0; width: 8%;">操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                         ${Array(4).fill(0).map(() => `
+                                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; text-align: center;">
+                                                                    <button style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
+                                                                        <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <!-- Settlement Module (Bottom) -->
+                                <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                            <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
+                                                <select style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
+                                                    <option value="现付">现付</option>
+                                                    <option value="到付">到付</option>
+                                                    <option value="双付">双付</option>
+                                                    <option value="月结">月结</option>
+                                                    <option value="回单付">回单付</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="display: flex; align-items: center; gap: 16px;">
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.8rem; color: #db2777; font-weight: 600;">现付金额:</label>
+                                                <input type="text" style="width: 80px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; font-weight: 700; color: #000000; text-align: right;">
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.8rem; color: #db2777; font-weight: 600;">到付金额:</label>
+                                                <input type="text" style="width: 80px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; font-weight: 700; color: #000000; text-align: right;">
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.8rem; color: #db2777; font-weight: 600;">欠付金额:</label>
+                                                <input type="text" style="width: 80px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; font-weight: 700; color: #000000; text-align: right;">
+                                            </div>
+
+                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                                <input type="checkbox" style="width: 16px; height: 16px;"> 到付款月结
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2: Payable + Expense Table 2 (Moved down) -->
+                                <div style="display: flex; gap: 12px; align-items: stretch;">
+                                    <!-- Left: Payable Panel (35%) -->
+                                    <div style="flex: 0 0 35%; display: flex; flex-direction: column;">
+                                        <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; height: 100%;">
+                                            <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                                                <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 0;">
+                                                <!-- Row 1 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应付运费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <!-- Row 2 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">预付车费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">回付车费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                 <!-- Row 3 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">信 息 费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">拦 标 价:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right: Expense Table 2 (Duplicate, Flex 1) -->
+                                    <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                                        <div style="flex: 1; overflow: auto; min-height: 140px;">
+                                            <table style="width: 100%; border-collapse: collapse;">
+                                                <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                                    <tr>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">费用项目</th>
+                                                        <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">费用金额</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">费用类型</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">计费日期</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">联系人</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">电话</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">备注</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 7%;">状态</th>
+                                                        <th style="padding: 6px 8px; text-align: center; border-bottom: 1px solid #e2e8f0; width: 8%;">操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                     ${Array(4).fill(0).map(() => `
+                                                        <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; text-align: center;">
+                                                                <button style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
+                                                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                        <!-- Expense Content (Hidden by default) -->
+                         <div id="waybill-new-expense" style="display: none;">
+                            <div style="display: flex; flex-direction: column; gap: 16px; height: 100%;">
+                                <!-- Receivable Section -->
+                                <div style="display: flex; flex-direction: column; background: white; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                    <!-- Toolbar -->
+                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f0f9ff; border-bottom: 1px solid #e2e8f0;">
+                                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: #0284c7; cursor: pointer;">
+                                                <input type="radio" name="expense-tab-type" checked style="accent-color: #0284c7;"> 应收
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #475569; cursor: pointer;">
+                                                <input type="checkbox" style="border-radius: 2px;"> 完成收款
+                                            </label>
+                                            
+                                            <!-- Buttons -->
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                                    新增 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                                </button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">
+                                                    复制到应收 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                                </button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">自动计算</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">参考费用</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">费用模板</button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                                    提交审核 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
+                                            <span>客户报价: 0.00/KG</span>
+                                            <span>结算单计费重量: 0.000</span>
+                                        </div>
+                                    </div>
+                                    <!-- Table -->
+                                    <div style="overflow-x: auto; min-height: 150px;">
+                                        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
+                                            <thead style="background: #f8fafc;">
+                                                <tr>
+                                                    <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">费用</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">金额</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">单价</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">数量</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">计费日期</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">币别</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">备注</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">汇率</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">对账单号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">形单号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">核销状态</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销单号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Empty State -->
+                                                <tr>
+                                                    <td colspan="25" style="padding: 40px 0; text-align: center; color: #94a3b8;">
+                                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                                            <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                                            <span>暂无数据</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Payable Section -->
+                                <div style="display: flex; flex-direction: column; background: white; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
+                                    <!-- Toolbar -->
+                                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f0f9ff; border-bottom: 1px solid #e2e8f0;">
+                                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: #0284c7; cursor: pointer;">
+                                                <input type="radio" name="expense-tab-type-pay" checked style="accent-color: #0284c7;"> 应付
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #475569; cursor: pointer;">
+                                                <input type="checkbox" style="border-radius: 2px;"> 完成付款
+                                            </label>
+                                            
+                                            <!-- Buttons -->
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                                    新增 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                                </button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">
+                                                    复制到应付 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                                </button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">付款申请</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">自动计算</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">参考费用</button>
+                                                <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">费用模板</button>
+                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                                    提交审核 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
+                                            <span>承运商报价: 0.00/KG</span>
+                                            <span>订单计费重量: 0.000</span>
+                                        </div>
+                                    </div>
+                                    <!-- Table -->
+                                    <div style="overflow-x: auto; min-height: 150px;">
+                                        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
+                                            <thead style="background: #f8fafc;">
+                                                <tr>
+                                                    <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">费用</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">金额</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">单价</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">数量</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">计费日期</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">币别</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">备注</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">汇率</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">对账单号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">形单号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">核销状态</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销单号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
+                                                    <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Empty State -->
+                                                <tr>
+                                                    <td colspan="25" style="padding: 40px 0; text-align: center; color: #94a3b8;">
+                                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                                            <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                                            <span>暂无数据</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Helper function for switching tabs within this page
+            if (!window.switchWaybillNewTab) {
+                window.switchWaybillNewTab = function (el, type) {
+                    // Update tab styles
+                    document.querySelectorAll('.waybill-new-tab').forEach(t => {
+                        t.classList.remove('active');
+                        t.style.borderBottomColor = 'transparent';
+                        t.style.color = '#64748b';
+                    });
+                    el.classList.add('active');
+                    el.style.borderBottomColor = '#4f46e5';
+                    el.style.color = '#4f46e5';
+
+                    // Toggle content
+                    const basicContent = document.getElementById('waybill-new-basic');
+                    const expenseContent = document.getElementById('waybill-new-expense');
+
+                    if (basicContent && expenseContent) {
+                        if (type === 'basic') {
+                            basicContent.style.display = 'block';
+                            expenseContent.style.display = 'none';
+                        } else {
+                            basicContent.style.display = 'none';
+                            expenseContent.style.display = 'block';
+                        }
+                    }
+                };
+            }
         } else if (activeTab === '任务中心') {
             mainContent = `
                 <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white;">
@@ -10168,9 +10613,7 @@ window.getFinancialPanelHTML = function () {
 
                     <!-- Summary & Calculation Section (Top) -->
                     <div id="receivable-summary-panel" style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; margin-bottom: 12px;">
-                        <button onclick="window.showExpenseModal('receivable')" style="position: absolute; top: 4px; left: 36px; background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 28px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                             <i data-lucide="plus" style="width: 16px; height: 16px;"></i> 新增费用
-                        </button>
+
                         <!-- Config Button -->
                         <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; left: 6px; cursor: pointer; color: #94a3b8;" title="配置">
                             <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
@@ -10221,6 +10664,12 @@ window.getFinancialPanelHTML = function () {
                     <!-- Receivable Expense Area (Tables moved here) -->
                     <div id="receivable-expense-area" style="display: flex; gap: 12px; height: 260px; margin-bottom: 12px; flex-shrink: 0;">
                         <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                             <!-- Toolbar -->
+                             <div style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: flex-start; background: #f8fafc;">
+                                 <button onclick="window.showExpenseModal('receivable')" style="background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 28px;">
+                                     <i data-lucide="plus" style="width: 16px; height: 16px;"></i> 新增费用
+                                 </button>
+                             </div>
                              <!-- Table 1 -->
                              <div style="flex: 1; overflow: auto; border-bottom: 2px solid #e2e8f0;">
                                 <table style="width: 100%; border-collapse: collapse;">
@@ -10376,9 +10825,7 @@ window.getFinancialPanelHTML = function () {
                         <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; left: 6px; cursor: pointer; color: #94a3b8;" title="配置">
                             <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
                         </div>
-                        <button onclick="window.showExpenseModal('payable')" style="position: absolute; top: 4px; left: 36px; background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 28px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
-                             <i data-lucide="plus" style="width: 16px; height: 16px;"></i> 新增费用
-                        </button>
+
                         
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; margin-top: 32px;">
                             <!-- Row 1 -->
@@ -10429,7 +10876,9 @@ window.getFinancialPanelHTML = function () {
                          <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
                              <!-- Toolbar -->
                              <div style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: flex-start; background: #f8fafc;">
-                                 <!-- Button moved to vehicle-cost-panel -->
+                                 <button onclick="window.showExpenseModal('payable')" style="background: #4f46e5; color: white; border: none; border-radius: 4px; padding: 4px 12px; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 28px;">
+                                     <i data-lucide="plus" style="width: 16px; height: 16px;"></i> 新增费用
+                                 </button>
                              </div>
                              <!-- Table 1 (Displaying filter for revenue just in case, or adjusted for payable) -->
                              <div style="flex: 1; overflow: auto;">
@@ -10722,4 +11171,106 @@ window.saveWaybillEntry = function () {
     }
 
     alert('运单保存成功！' + (prepaidFee > 0 ? '\n已自动生成油卡待发放记录。\n运单号: ' + waybillNo : '\n运单号: ' + waybillNo));
+};
+// --- Stored Value Card Management Functions ---
+
+/**
+ * Opens the Backend Recharge Modal (v2) for a specific user.
+ * @param {string} userId - The user ID.
+ * @param {string} userName - The user name.
+ * @param {string} company - The company name.
+ * @param {string} balance - The current balance (formatted string).
+ */
+window.openBackendRechargeModal = function (userId, userName, company, balance) {
+    const modal = document.getElementById('backend-recharge-modal-v2');
+    if (!modal) return;
+
+    // Populate fields
+    if (document.getElementById('modal-user-avatar')) document.getElementById('modal-user-avatar').textContent = userName.charAt(0);
+    if (document.getElementById('modal-user-name')) document.getElementById('modal-user-name').textContent = userName;
+    if (document.getElementById('modal-user-id')) document.getElementById('modal-user-id').textContent = userId;
+    if (document.getElementById('modal-user-company')) document.getElementById('modal-user-company').textContent = company;
+    if (document.getElementById('modal-user-balance')) document.getElementById('modal-user-balance').textContent = '¥' + balance;
+
+    // Reset inputs
+    if (document.getElementById('recharge-amount-input')) document.getElementById('recharge-amount-input').value = '1000';
+    if (document.getElementById('modal-payment-select')) document.getElementById('modal-payment-select').textContent = '支付宝';
+    const textarea = modal.querySelector('textarea');
+    if (textarea) textarea.value = '';
+
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+};
+
+/**
+ * Closes the Backend Recharge Modal.
+ */
+window.closeBackendRechargeModal = function () {
+    const modal = document.getElementById('backend-recharge-modal-v2');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+        const menu = document.getElementById('modal-payment-menu');
+        if (menu) menu.classList.add('hidden');
+    }
+};
+
+/**
+ * Confirms the backend recharge.
+ */
+window.confirmBackendRecharge = function () {
+    // Logic to save recharge would go here
+    alert('充值成功 (模拟)');
+    window.closeBackendRechargeModal();
+};
+
+/**
+ * Opens the Backend Details Modal for a specific user.
+ * @param {string} userId - The user ID.
+ *  * @param {string} userName - The user name.
+ * @param {string} company - The company name.
+ * @param {string} balance - The current balance.
+ */
+window.openBackendDetailsModal = function (userId, userName, company, balance) {
+    const modal = document.getElementById('backend-account-details-modal');
+    if (!modal) return;
+
+    // Populate fields
+    if (document.getElementById('details-user-avatar')) document.getElementById('details-user-avatar').textContent = userName ? userName.charAt(0) : 'User';
+    if (document.getElementById('details-user-name')) document.getElementById('details-user-name').textContent = userName || userId;
+    if (document.getElementById('details-user-id')) document.getElementById('details-user-id').textContent = userId;
+    if (document.getElementById('details-user-company')) document.getElementById('details-user-company').textContent = company || '-';
+    if (document.getElementById('details-user-balance')) document.getElementById('details-user-balance').textContent = '¥' + (balance || '0.00');
+
+    // Show modal
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+};
+
+/**
+ * Closes the Backend Details Modal.
+ */
+window.closeBackendDetailsModal = function () {
+    const modal = document.getElementById('backend-account-details-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+    }
+};
+
+/**
+ * Switches from Details modal to Recharge modal.
+ */
+window.switchToRechargeFromDetails = function () {
+    window.closeBackendDetailsModal();
+    // Simulate getting data from expected fields or passing them
+    const userId = document.getElementById('details-user-id')?.textContent;
+    const userName = document.getElementById('details-user-name')?.textContent;
+    const company = document.getElementById('details-user-company')?.textContent;
+    // Strip symbol
+    let balance = document.getElementById('details-user-balance')?.textContent || '';
+    balance = balance.replace('¥', '').replace(',', '');
+
+    window.openBackendRechargeModal(userId, userName, company, balance);
 };
