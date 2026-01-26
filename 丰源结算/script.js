@@ -6,7 +6,7 @@ const menuData = [
     {
         title: "应收应付",
         icon: "file-text",
-        items: ["应收对账", "应收明细", "应付对账", "应付明细", "客户账单", "费用明细", "代收代付明细"]
+        items: ["应收对账", "应付对账", "应收明细", "应付明细", "客户账单"]
     },
     {
         title: "收付",
@@ -50,7 +50,7 @@ const businessMenuData = [
     {
         title: "业务管理",
         icon: "briefcase",
-        items: ["录入订单", "订单管理", "录入运单", "运单管理", "运单录入(新)"]
+        items: ["费用录入", "费用面板", "运单管理"]
     }
 ];
 
@@ -1306,7 +1306,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值卡管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值卡管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板') {
 
 
         let mainContent = '';
@@ -1437,9 +1437,7 @@ function renderTabs(activeTab) {
                             <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
                             <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #64748b;">重置</button>
                         </div>
-                        <div style="margin-left: auto;">
-                            <button class="primary-btn" onclick="addTab('录入运单')" style="height: 32px; padding: 0 16px;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增运单</button>
-                        </div>
+
                     </div>
 
                     <!-- Statistics Bar -->
@@ -6589,7 +6587,7 @@ function renderTabs(activeTab) {
                     <!-- Content Area -->
                     <div id="waybill-new-content" style="flex: 1; overflow: auto; padding: 16px;">
                         <!-- Default Basic Info Content -->
-                        <div id="waybill-new-basic" style="display: block;">
+                        <div id="waybill-new-basic" style="display: block; height: 100%;">
                              <div style="display: flex; flex-direction: column; gap: 12px;">
                                 <!-- Flex Container for Fees and Expenses -->
                                 <!-- Main Container with Vertical Layout -->
@@ -6598,49 +6596,49 @@ function renderTabs(activeTab) {
                                     <!-- Row 1: Receivable + Expense Table -->
                                     <div style="display: flex; gap: 12px; align-items: stretch;">
                                         <!-- Left: Receivable Panel (35%) -->
-                                        <div style="flex: 0 0 35%; display: flex; flex-direction: column;">
+                                        <div style="width: 850px; min-width: 850px; max-width: 850px; flex: none; display: flex; flex-direction: column;">
                                             <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; height: 100%;">
                                                 <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
                                                     <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
                                                 </div>
-                                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 0;">
+                                                <div style="display: grid; grid-template-columns: repeat(3, 264px); gap: 12px; margin-top: 0;">
                                                     <!-- Grid Items -->
                                                     <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
                                                         <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
                                                         <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
-                                                    </div>
-                                                    
-                                                    <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
-                                                    </div>
-                                                    <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
-                                                    </div>
-                                                    <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
                                                         <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     
                                                     <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">附 加 费:</label>
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">附 加 费:</label>
                                                         <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">收入合计:</label>
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">收入合计:</label>
                                                         <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
-                                                        <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">待垫合计:</label>
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">待垫合计:</label>
                                                         <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
                                                     </div>
                                                 </div>
@@ -6730,45 +6728,45 @@ function renderTabs(activeTab) {
                                 <!-- Row 2: Payable + Expense Table 2 (Moved down) -->
                                 <div style="display: flex; gap: 12px; align-items: stretch;">
                                     <!-- Left: Payable Panel (35%) -->
-                                    <div style="flex: 0 0 35%; display: flex; flex-direction: column;">
+                                    <div style="width: 850px; min-width: 850px; max-width: 850px; flex: none; display: flex; flex-direction: column;">
                                         <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; height: 100%;">
                                             <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
                                                 <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
                                             </div>
-                                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 0;">
+                                            <div style="display: grid; grid-template-columns: repeat(3, 264px); gap: 12px; margin-top: 0;">
                                                 <!-- Row 1 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应付运费:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应付运费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <!-- Row 2 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">预付车费:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">预付车费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">回付车费:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">回付车费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                  <!-- Row 3 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">信 息 费:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">信 息 费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 70px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">拦 标 价:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">拦 标 价:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                             </div>
@@ -6820,8 +6818,7 @@ function renderTabs(activeTab) {
                              </div>
                         </div>
                         <!-- Expense Content (Hidden by default) -->
-                         <div id="waybill-new-expense" style="display: none;">
-                            <div style="display: flex; flex-direction: column; gap: 16px; height: 100%;">
+                         <div id="waybill-new-expense" style="display: none; height: 100%; flex-direction: column; gap: 16px;">
                                 <!-- Receivable Section -->
                                 <div style="display: flex; flex-direction: column; background: white; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
                                     <!-- Toolbar -->
@@ -6839,9 +6836,6 @@ function renderTabs(activeTab) {
                                                 <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
                                                     新增 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
                                                 </button>
-                                                <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">
-                                                    复制到应收 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
-                                                </button>
                                                 <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
                                                 <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
                                                 <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
@@ -6857,6 +6851,55 @@ function renderTabs(activeTab) {
                                         <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
                                             <span>客户报价: 0.00/KG</span>
                                             <span>结算单计费重量: 0.000</span>
+                                        </div>
+                                    </div>
+                                    <!-- Copied Receivable Panel from Basic Info (Image 1) -->
+                                    <div style="padding: 12px; background: white; border-bottom: 1px solid #e2e8f0;">
+                                        <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative;">
+                                            <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                                                <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 264px); gap: 12px; margin-top: 0;">
+                                                <!-- Grid Items -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                </div>
+                                                
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                </div>
+                                                
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">附 加 费:</label>
+                                                    <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">收入合计:</label>
+                                                    <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">待垫合计:</label>
+                                                    <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- Table -->
@@ -6988,7 +7031,6 @@ function renderTabs(activeTab) {
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -7017,11 +7059,395 @@ function renderTabs(activeTab) {
                             expenseContent.style.display = 'none';
                         } else {
                             basicContent.style.display = 'none';
-                            expenseContent.style.display = 'block';
+                            expenseContent.style.display = 'flex';
                         }
                     }
                 };
             }
+        } else if (activeTab === '费用录入') {
+            mainContent = `
+                <div style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #f1f5f9; overflow: auto; padding: 16px;">
+                        <div id="expense-entry-basic" style="display: block; height: 100%;">
+                             <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Flex Container for Fees and Expenses -->
+                                <!-- Main Container with Vertical Layout -->
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    
+                                    <!-- Row 1: Receivable + Expense Table -->
+                                    <div style="display: flex; gap: 12px; align-items: stretch;">
+                                        <!-- Left: Receivable Panel (35%) -->
+                                        <div style="width: 850px; min-width: 850px; max-width: 850px; flex: none; display: flex; flex-direction: column;">
+                                            <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; height: 100%;">
+                                                <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                                                    <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                                                </div>
+                                                <div style="display: grid; grid-template-columns: repeat(3, 264px); gap: 12px; margin-top: 0;">
+                                                    <!-- Grid Items -->
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
+                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                    </div>
+                                                    
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">附 加 费:</label>
+                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">收入合计:</label>
+                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed; min-width: 0;">
+                                                    </div>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">待垫合计:</label>
+                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right: Expense Table 1 (Flex 1) -->
+                                        <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                                            <div style="flex: 1; overflow: auto; min-height: 140px;">
+                                                <table style="width: 100%; border-collapse: collapse;">
+                                                    <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                                        <tr>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">费用项目</th>
+                                                            <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">费用金额</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">费用类型</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">计费日期</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">联系人</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">电话</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">备注</th>
+                                                            <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 7%;">状态</th>
+                                                            <th style="padding: 6px 8px; text-align: center; border-bottom: 1px solid #e2e8f0; width: 8%;">操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                         ${Array(4).fill(0).map(() => `
+                                                            <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                                <td style="padding: 4px 8px; text-align: center;">
+                                                                    <button style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
+                                                                        <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <!-- Settlement Module (Bottom) -->
+                                <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                            <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
+                                                <select style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
+                                                    <option value="现付">现付</option>
+                                                    <option value="到付">到付</option>
+                                                    <option value="双付">双付</option>
+                                                    <option value="月结">月结</option>
+                                                    <option value="回单付">回单付</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="display: flex; align-items: center; gap: 16px;">
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.8rem; color: #db2777; font-weight: 600;">现付金额:</label>
+                                                <input type="text" style="width: 80px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; font-weight: 700; color: #000000; text-align: right;">
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.8rem; color: #db2777; font-weight: 600;">到付金额:</label>
+                                                <input type="text" style="width: 80px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; font-weight: 700; color: #000000; text-align: right;">
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.8rem; color: #db2777; font-weight: 600;">欠付金额:</label>
+                                                <input type="text" style="width: 80px; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; font-weight: 700; color: #000000; text-align: right;">
+                                            </div>
+
+                                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                                <input type="checkbox" style="width: 16px; height: 16px;"> 到付款月结
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2: Payable + Expense Table 2 (Moved down) -->
+                                <div style="display: flex; gap: 12px; align-items: stretch;">
+                                    <!-- Left: Payable Panel (35%) -->
+                                    <div style="width: 850px; min-width: 850px; max-width: 850px; flex: none; display: flex; flex-direction: column;">
+                                        <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; position: relative; height: 100%;">
+                                            <div onclick="window.showConfigModal()" style="position: absolute; top: 6px; right: 6px; cursor: pointer; color: #94a3b8;" title="配置">
+                                                <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(3, 264px); gap: 12px; margin-top: 0;">
+                                                <!-- Row 1 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应付运费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <!-- Row 2 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">预付车费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">回付车费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                 <!-- Row 3 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">信 息 费:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">拦 标 价:</label>
+                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Right: Expense Table 2 (Duplicate, Flex 1) -->
+                                    <div style="flex: 1; background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; font-size: 0.75rem;">
+                                        <div style="flex: 1; overflow: auto; min-height: 140px;">
+                                            <table style="width: 100%; border-collapse: collapse;">
+                                                <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                                    <tr>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">费用项目</th>
+                                                        <th style="padding: 6px 8px; text-align: right; border-bottom: 1px solid #e2e8f0; width: 10%;">费用金额</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 15%;">结算公司</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">费用类型</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 12%;">计费日期</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">联系人</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 8%;">电话</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 10%;">备注</th>
+                                                        <th style="padding: 6px 8px; text-align: left; border-bottom: 1px solid #e2e8f0; width: 7%;">状态</th>
+                                                        <th style="padding: 6px 8px; text-align: center; border-bottom: 1px solid #e2e8f0; width: 8%;">操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                     ${Array(4).fill(0).map(() => `
+                                                        <tr style="border-bottom: 1px solid #f8fafc; height: 30px;">
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td>
+                                                            <td style="padding: 4px 8px; text-align: center;">
+                                                                <button style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
+                                                                    <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                </div>`;
+        } else if (activeTab === '费用面板') {
+            mainContent = `
+                <div style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #f1f5f9; padding: 16px; gap: 16px; overflow: auto;">
+                    <!-- Receivable Section -->
+                    <div style="display: flex; flex-direction: column; background: white; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; flex-shrink: 0;">
+                        <!-- Toolbar -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f0f9ff; border-bottom: 1px solid #e2e8f0;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: #0284c7; cursor: pointer;">
+                                    <input type="radio" name="expense-panel-tab-type" checked style="accent-color: #0284c7;"> 应收
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #475569; cursor: pointer;">
+                                    <input type="checkbox" style="border-radius: 2px;"> 完成收款
+                                </label>
+                                
+                                <!-- Buttons -->
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                        新增 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                    </button>
+                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
+                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
+                                <span>客户报价: 0.00/KG</span>
+                                <span>结算单计费重量: 0.000</span>
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div style="overflow-x: auto; min-height: 200px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
+                                <thead style="background: #f8fafc;">
+                                    <tr>
+                                        <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">费用</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">金额</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">单价</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">数量</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">计费日期</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">币别</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">备注</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">汇率</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">对账单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">形单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">核销状态</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Empty State -->
+                                    <tr>
+                                        <td colspan="25" style="padding: 40px 0; text-align: center; color: #94a3b8;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                                <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                                <span>暂无数据</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Payable Section -->
+                    <div style="display: flex; flex-direction: column; background: white; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; flex-shrink: 0;">
+                        <!-- Toolbar -->
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f0f9ff; border-bottom: 1px solid #e2e8f0;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: #0284c7; cursor: pointer;">
+                                    <input type="radio" name="expense-panel-tab-type-pay" checked style="accent-color: #0284c7;"> 应付
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #475569; cursor: pointer;">
+                                    <input type="checkbox" style="border-radius: 2px;"> 完成付款
+                                </label>
+                                
+                                <!-- Buttons -->
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <button style="padding: 4px 10px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                        新增 <i data-lucide="chevron-down" style="width: 12px; height: 12px;"></i>
+                                    </button>
+                                    
+                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">付款申请</button>
+                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
+                                <span>承运商报价: 0.00/KG</span>
+                                <span>订单计费重量: 0.000</span>
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div style="overflow-x: auto; min-height: 200px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
+                                <thead style="background: #f8fafc;">
+                                    <tr>
+                                        <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">费用</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">金额</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">单价</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">数量</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">计费日期</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">币别</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">备注</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">汇率</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">对账单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">形单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">核销状态</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Empty State -->
+                                    <tr>
+                                        <td colspan="25" style="padding: 40px 0; text-align: center; color: #94a3b8;">
+                                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                                <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                                <span>暂无数据</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`;
         } else if (activeTab === '任务中心') {
             mainContent = `
                 <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white;">
@@ -7131,7 +7557,7 @@ function renderTabs(activeTab) {
                 </div>`;
             } else {
                 // For '订单管理' and '运营概览', don't use the statement-container wrapper to allow full width
-                const noWrapper = ['订单管理', '运营概览', '货量利润表'].includes(activeTab);
+                const noWrapper = ['订单管理', '运营概览', '货量利润表', '费用录入', '费用面板'].includes(activeTab);
                 if (noWrapper) {
                     contentHTML = mainContent;
                 } else {
@@ -7143,10 +7569,14 @@ function renderTabs(activeTab) {
             }
 
             const pageContent = document.querySelector('.page-content');
-            if (['订单管理', '运营概览', '货量利润表'].includes(activeTab)) {
+            if (['订单管理', '运营概览', '货量利润表', '费用录入', '费用面板'].includes(activeTab)) {
                 pageContent.style.padding = '0';
+                pageContent.style.height = '100%';
+                pageContent.style.overflow = 'hidden';
             } else {
                 pageContent.style.padding = '2rem';
+                pageContent.style.height = '';
+                pageContent.style.overflow = '';
             }
             pageContent.innerHTML = contentHTML;
         }
