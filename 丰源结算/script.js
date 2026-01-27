@@ -50,7 +50,7 @@ const businessMenuData = [
     {
         title: "业务管理",
         icon: "briefcase",
-        items: ["费用录入", "费用面板", "运单管理"]
+        items: ["费用录入", "费用面板", "运单管理", "订单回显"]
     }
 ];
 
@@ -1370,7 +1370,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值卡管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值卡管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板' || activeTab === '订单回显') {
 
 
         let mainContent = '';
@@ -7431,7 +7431,7 @@ function renderTabs(activeTab) {
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">对账单号</th>
-                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">形单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">账单号</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">核销状态</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销单号</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
@@ -7503,7 +7503,7 @@ function renderTabs(activeTab) {
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">对账单号</th>
-                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">形单号</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">账单号</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">核销状态</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销单号</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
@@ -7522,6 +7522,86 @@ function renderTabs(activeTab) {
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>`;
+        } else if (activeTab === '订单回显') {
+            // Sample order data for display
+            const orderDisplayData = window.orderDisplayData || [
+                { orderNo: 'WB20250101001', receivable: 1500.00, payable: 1000.00, profit: 500.00 },
+                { orderNo: 'WB20250101002', receivable: 2800.00, payable: 2000.00, profit: 800.00 },
+                { orderNo: 'WB20250101003', receivable: 3200.00, payable: 2500.00, profit: 700.00 },
+                { orderNo: 'WB20250101004', receivable: 1800.00, payable: 1200.00, profit: 600.00 },
+                { orderNo: 'WB20250101005', receivable: 4500.00, payable: 3800.00, profit: 700.00 }
+            ];
+
+            // Calculate totals
+            const totalOrders = orderDisplayData.length;
+            const totalReceivable = orderDisplayData.reduce((sum, o) => sum + o.receivable, 0);
+            const totalPayable = orderDisplayData.reduce((sum, o) => sum + o.payable, 0);
+            const totalProfit = orderDisplayData.reduce((sum, o) => sum + o.profit, 0);
+            const grossMargin = totalReceivable > 0 ? ((totalProfit / totalReceivable) * 100).toFixed(2) : 0;
+
+            // Build table rows
+            let tableRows = '';
+            orderDisplayData.forEach(order => {
+                tableRows += '<tr style="border-bottom: 1px solid #f1f5f9;">' +
+                    '<td style="width: 25%; padding: 12px 16px; color: #4f46e5; font-weight: 500;">' + order.orderNo + '</td>' +
+                    '<td style="width: 25%; padding: 12px 16px; text-align: right; color: #10b981; font-weight: 600;">' + order.receivable.toFixed(2) + '</td>' +
+                    '<td style="width: 25%; padding: 12px 16px; text-align: right; color: #ef4444; font-weight: 600;">' + order.payable.toFixed(2) + '</td>' +
+                    '<td style="width: 25%; padding: 12px 16px; text-align: right; color: #1e293b; font-weight: 700;">' + order.profit.toFixed(2) + '</td>' +
+                    '</tr>';
+            });
+
+            mainContent = `
+                <div style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #f8fafc; padding: 24px; align-items: center;">
+                    <div style="background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; display: flex; flex-direction: column; width: 1500px; height: 250px;">
+                        <!-- Header -->
+                        <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                            <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: #1e293b;">订单回显</h3>
+                        </div>
+                        
+                        <!-- Table -->
+                        <div style="flex: 1; overflow: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                                <thead style="background: #f1f5f9; position: sticky; top: 0;">
+                                    <tr>
+                                        <th style="width: 25%; padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">运单单号</th>
+                                        <th style="width: 25%; padding: 12px 16px; text-align: right; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">应收</th>
+                                        <th style="width: 25%; padding: 12px 16px; text-align: right; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">应付</th>
+                                        <th style="width: 25%; padding: 12px 16px; text-align: right; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">利润</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Summary Footer -->
+                        <div style="padding: 16px 24px; border-top: 2px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 0.9rem; font-weight: 600; color: #1e293b;">合计</span>
+                                <span style="font-size: 0.85rem; color: #64748b;">共 <strong style="color: #4f46e5;">${totalOrders}</strong> 个运单</span>
+                            </div>
+                            <div style="display: flex; gap: 24px; align-items: center;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                                    <span style="font-size: 0.75rem; color: #64748b;">总应收</span>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #10b981;">${totalReceivable.toFixed(2)}</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                                    <span style="font-size: 0.75rem; color: #64748b;">总应付</span>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #ef4444;">${totalPayable.toFixed(2)}</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                                    <span style="font-size: 0.75rem; color: #64748b;">总利润</span>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #1e293b;">${totalProfit.toFixed(2)}</span>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 2px; padding-left: 16px; border-left: 1px solid #e2e8f0;">
+                                    <span style="font-size: 0.75rem; color: #64748b;">毛利率</span>
+                                    <span style="font-size: 1.1rem; font-weight: 700; color: #4f46e5;">${grossMargin}%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -12183,8 +12263,11 @@ window.addExpenseRow = function (type) {
     }
 
     // Options configuration
-    const categoryOptions = type === 'receivable' ? ['收入', '代垫'] : ['支出'];
-    const companyOptions = ['深圳市丰源物流有限公司', '上海顺丰速运有限公司', '北京京东世纪贸易有限公司'];
+    // 应收面板: 类别选项 应收(默认)、代垫; 应付面板: 应付(默认)
+    const categoryOptions = type === 'receivable' ? ['应收', '代垫'] : ['应付'];
+    // 结算公司: 5个虚拟选项
+    const companyOptions = ['深圳市丰源物流有限公司', '上海顺丰速运有限公司', '北京京东世纪贸易有限公司', '广州德邦物流有限公司', '杭州中通快递有限公司'];
+    // 费用: 5个虚拟选项
     const expenseOptions = ['运费', '操作费', '提货费', '送货费', '杂费'];
 
     const newRow = document.createElement('tr');
@@ -12325,7 +12408,7 @@ window.addFeeEntryRow = function (type) {
     // Define options
     const expenseOptions = ['请选择', '保险费', '装卸费', '保管费', '包装费', '其他'];
     const companyOptions = ['深圳市丰源物流有限公司', '东莞分公司', '广州分公司'];
-    const categoryOptions = type === 'income' ? ['收入', '代垫'] : ['支出'];
+    const categoryOptions = type === 'income' ? ['应收', '代垫'] : ['应付'];
 
     const expenseSelectOptions = expenseOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('');
     const companySelectOptions = companyOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('');
@@ -12570,16 +12653,14 @@ window.addFeeEntryRow = function (type) {
         <option value="中通供应链">中通供应链</option>
     `;
 
-    // Category options for upper panel (income): 应收, 代垫; default to 应付
+    // Category options for upper panel (income): 应收, 代垫 only (no 应付)
     const categoryOptionsIncome = `
-        <option value="应付">应付</option>
         <option value="应收">应收</option>
         <option value="代垫">代垫</option>
     `;
 
-    // Category options for lower panel (cost)
+    // Category options for lower panel (cost) - default to 应付
     const categoryOptionsCost = `
-        <option value="">请选择</option>
         <option value="应付">应付</option>
     `;
 
@@ -12633,13 +12714,49 @@ window.addExpenseRow = function (type) {
     const today = new Date().toISOString().split('T')[0];
     const newId = (type === 'receivable' ? 'REC-' : 'PAY-') + Date.now();
 
+    // Options configuration
+    // 类别: 应收面板 - 应收(默认)/代垫; 应付面板 - 应付(默认)
+    const categoryOptions = type === 'receivable'
+        ? '<option value="应收" selected>应收</option><option value="代垫">代垫</option>'
+        : '<option value="应付" selected>应付</option>';
+
+    // 结算公司: 5个虚拟选项
+    const companyOptions = `
+        <option value="深圳市丰源物流有限公司">深圳市丰源物流有限公司</option>
+        <option value="上海顺丰速运有限公司">上海顺丰速运有限公司</option>
+        <option value="北京京东世纪贸易有限公司">北京京东世纪贸易有限公司</option>
+        <option value="广州德邦物流有限公司">广州德邦物流有限公司</option>
+        <option value="杭州中通快递有限公司">杭州中通快递有限公司</option>
+    `;
+
+    // 费用: 5个虚拟选项
+    const expenseOptions = `
+        <option value="运费">运费</option>
+        <option value="操作费">操作费</option>
+        <option value="提货费">提货费</option>
+        <option value="送货费">送货费</option>
+        <option value="杂费">杂费</option>
+    `;
+
     const newRow = document.createElement('tr');
     newRow.innerHTML = `
         <td style="padding: 6px 4px; border-bottom: 1px solid #f1f5f9; text-align: center;"><input type="checkbox"></td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">${dataArray.length + 1}</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 100px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
+            <select style="width: 70px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
+                ${categoryOptions}
+            </select>
+        </td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
+            <select style="width: 150px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
+                ${companyOptions}
+            </select>
+        </td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
+            <select style="width: 80px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
+                ${expenseOptions}
+            </select>
+        </td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" style="width: 70px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="1" style="width: 40px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
