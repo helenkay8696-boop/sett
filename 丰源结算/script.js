@@ -5861,7 +5861,7 @@ function renderTabs(activeTab) {
                     <!-- Status Tabs (Simplified based on Image 1) -->
                     <div style="background: #fff; padding: 0 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569;">
-                            <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">平台付款</div>
+
                             <div class="active" onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
                             <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">草稿/驳回</div>
                             <div onclick="window.switchPaymentApplicationTab(this)" style="padding: 12px 0; cursor: pointer;">审核中 <span style="background:#f1f5f9; padding: 0 4px; border-radius: 4px;">56</span></div>
