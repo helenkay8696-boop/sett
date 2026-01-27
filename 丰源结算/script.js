@@ -3043,10 +3043,6 @@ function renderTabs(activeTab) {
                             <i data-lucide="file-plus" style="width: 14px; height: 14px;"></i> 按票生成账单
                         </button>
 
-                         <!-- Invoice Application Button -->
-                        <button class="primary-btn" onclick="window.goToInvoiceApplication()" style="height: 32px; padding: 0 16px; background: #6366f1; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: 8px;">
-                            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i> 开票申请
-                        </button>
                     </div>
 
 
@@ -3627,7 +3623,7 @@ function renderTabs(activeTab) {
                     <button class="primary-btn" onclick="showNewReceiptModal()" style="height: 32px; padding: 0 12px; background: #4f46e5; border: none; border-radius: 4px; color: white; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
                         <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> 新建收款
                     </button>
-                    <button class="primary-btn" style="height: 32px; padding: 0 12px; background: #4f46e5; border: none; border-radius: 4px; color: white; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
+                    <button class="primary-btn" onclick="window.goToPaymentApplication()" style="height: 32px; padding: 0 12px; background: #4f46e5; border: none; border-radius: 4px; color: white; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
                         <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> 新建付款
                     </button>
                     <div class="relative-container">
@@ -5953,7 +5949,7 @@ function renderTabs(activeTab) {
                             </div>
                             <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                 <label style="color: #64748b;">关键字</label>
-                                <input type="text" placeholder="请输入提单号/申请号" style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; height: 32px; width: 200px; outline: none;">
+                                <input type="text" placeholder="请输入结算单位/申请号" style="border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; height: 32px; width: 200px; outline: none;">
                             </div>
                              <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                 <label style="color: #64748b;">申请人</label>
@@ -7140,7 +7136,7 @@ function renderTabs(activeTab) {
             mainContent = `
                 <div style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #f1f5f9; overflow: auto; padding: 16px;">
                     <div style="margin-bottom: 8px;">
-                        <button style="background: #4f46e5; color: white; padding: 6px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                        <button onclick="window.saveExpenseEntryAndSyncToPanel()" style="background: #4f46e5; color: white; padding: 6px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                             <i data-lucide="save" style="width: 14px; height: 14px;"></i> 保存
                         </button>
                     </div>
@@ -7162,7 +7158,7 @@ function renderTabs(activeTab) {
                                                     <!-- Grid Items -->
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-receivable-freight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
@@ -7175,15 +7171,15 @@ function renderTabs(activeTab) {
                                                     
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-delivery-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-loading-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-unloading-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     
                                                     <div style="display: flex; align-items: center; gap: 4px;">
@@ -7279,7 +7275,7 @@ function renderTabs(activeTab) {
                                                 <!-- Row 1 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应付运费:</label>
-                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="expense-entry-payable-freight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
@@ -8045,6 +8041,15 @@ The above content does NOT show the entire file contents. If you need to view an
 
         if (activeTab === '应付明细') {
             updatePayablesGenerateBillButtonState();
+        }
+
+        if (activeTab === '费用面板') {
+            // Render any previously saved expense entry data
+            setTimeout(() => {
+                if (typeof window.renderExpensePanelFromSavedData === 'function') {
+                    window.renderExpensePanelFromSavedData();
+                }
+            }, 100);
         }
 
         if (activeTab === '后台管理') {
@@ -12390,4 +12395,395 @@ window.jumpToStatementCreationFromExpensePanel = function () {
             console.error('Views not found after switching tab');
         }
     }, 100);
+};
+
+// --- Expense Entry to Expense Panel Data Sync ---
+// Global data arrays for expense panel
+window.expensePanelReceivableData = window.expensePanelReceivableData || [];
+window.expensePanelPayableData = window.expensePanelPayableData || [];
+
+// Save expense entry data and sync to expense panel
+window.saveExpenseEntryAndSyncToPanel = function () {
+    // Get values from expense entry form
+    const receivableFreight = document.getElementById('expense-entry-receivable-freight');
+    const deliveryFee = document.getElementById('expense-entry-delivery-fee');
+    const loadingFee = document.getElementById('expense-entry-loading-fee');
+    const unloadingFee = document.getElementById('expense-entry-unloading-fee');
+    const payableFreight = document.getElementById('expense-entry-payable-freight');
+
+    const today = new Date().toISOString().split('T')[0];
+    let hasData = false;
+
+    // Clear previous data for new sync (or append, depending on requirement)
+    window.expensePanelReceivableData = [];
+    window.expensePanelPayableData = [];
+
+    // Process receivable freight (应收运费 -> 费用面板应收: 运费)
+    if (receivableFreight && receivableFreight.value && parseFloat(receivableFreight.value) > 0) {
+        window.expensePanelReceivableData.push({
+            id: 'REC-' + Date.now() + '-1',
+            name: '运费',
+            amount: parseFloat(receivableFreight.value) || 0,
+            date: today,
+            currency: 'CNY',
+            status: '未核销'
+        });
+        hasData = true;
+    }
+
+    // Process delivery fee (送货费 -> 费用面板应收: 送货费)
+    if (deliveryFee && deliveryFee.value && parseFloat(deliveryFee.value) > 0) {
+        window.expensePanelReceivableData.push({
+            id: 'REC-' + Date.now() + '-2',
+            name: '送货费',
+            amount: parseFloat(deliveryFee.value) || 0,
+            date: today,
+            currency: 'CNY',
+            status: '未核销'
+        });
+        hasData = true;
+    }
+
+    // Process loading fee (装货费 -> 费用面板应收: 装货费)
+    if (loadingFee && loadingFee.value && parseFloat(loadingFee.value) > 0) {
+        window.expensePanelReceivableData.push({
+            id: 'REC-' + Date.now() + '-3',
+            name: '装货费',
+            amount: parseFloat(loadingFee.value) || 0,
+            date: today,
+            currency: 'CNY',
+            status: '未核销'
+        });
+        hasData = true;
+    }
+
+    // Process unloading fee (卸货费 -> 费用面板应收: 卸货费)
+    if (unloadingFee && unloadingFee.value && parseFloat(unloadingFee.value) > 0) {
+        window.expensePanelReceivableData.push({
+            id: 'REC-' + Date.now() + '-4',
+            name: '卸货费',
+            amount: parseFloat(unloadingFee.value) || 0,
+            date: today,
+            currency: 'CNY',
+            status: '未核销'
+        });
+        hasData = true;
+    }
+
+    // Process payable freight (应付运费 -> 费用面板应付: 运费)
+    if (payableFreight && payableFreight.value && parseFloat(payableFreight.value) > 0) {
+        window.expensePanelPayableData.push({
+            id: 'PAY-' + Date.now() + '-1',
+            name: '运费',
+            amount: parseFloat(payableFreight.value) || 0,
+            date: today,
+            currency: 'CNY',
+            status: '未核销'
+        });
+        hasData = true;
+    }
+
+    // Process income table data (上面面板 -> 费用面板应收)
+    const incomeTbody = document.getElementById('fee-entry-income-tbody');
+    if (incomeTbody) {
+        const rows = incomeTbody.querySelectorAll('tr');
+        rows.forEach((row, index) => {
+            const selects = row.querySelectorAll('select');
+            const inputs = row.querySelectorAll('input');
+            // First select is fee name, first input is amount
+            const feeName = selects[0] ? selects[0].value.trim() : '';
+            const feeAmount = inputs[0] ? parseFloat(inputs[0].value) : 0;
+            if (feeName && feeAmount > 0) {
+                window.expensePanelReceivableData.push({
+                    id: 'REC-TABLE-' + Date.now() + '-' + index,
+                    name: feeName,
+                    amount: feeAmount,
+                    date: today,
+                    currency: 'CNY',
+                    status: '未核销'
+                });
+                hasData = true;
+            }
+        });
+    }
+
+    // Process cost table data (下面面板 -> 费用面板应付)
+    const costTbody = document.getElementById('fee-entry-cost-tbody');
+    if (costTbody) {
+        const rows = costTbody.querySelectorAll('tr');
+        rows.forEach((row, index) => {
+            const selects = row.querySelectorAll('select');
+            const inputs = row.querySelectorAll('input');
+            // First select is fee name, first input is amount
+            const feeName = selects[0] ? selects[0].value.trim() : '';
+            const feeAmount = inputs[0] ? parseFloat(inputs[0].value) : 0;
+            if (feeName && feeAmount > 0) {
+                window.expensePanelPayableData.push({
+                    id: 'PAY-TABLE-' + Date.now() + '-' + index,
+                    name: feeName,
+                    amount: feeAmount,
+                    date: today,
+                    currency: 'CNY',
+                    status: '未核销'
+                });
+                hasData = true;
+            }
+        });
+    }
+
+    if (hasData) {
+        alert('保存成功！数据已同步到费用面板。');
+    } else {
+        alert('请填写费用数据后再保存。');
+    }
+};
+
+// Function to add fee entry row to expense entry page tables
+window.addFeeEntryRow = function (type) {
+    const tbodyId = type === 'income' ? 'fee-entry-income-tbody' : 'fee-entry-cost-tbody';
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) {
+        console.error('Tbody not found for type:', type);
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    const newRow = document.createElement('tr');
+    newRow.style.borderBottom = '1px solid #f8fafc';
+    newRow.style.height = '30px';
+
+    // Fee name options (5 virtual data)
+    const feeNameOptions = `
+        <option value="">请选择</option>
+        <option value="运输费">运输费</option>
+        <option value="装卸费">装卸费</option>
+        <option value="仓储费">仓储费</option>
+        <option value="保险费">保险费</option>
+        <option value="包装费">包装费</option>
+    `;
+
+    // Settlement company options (3 virtual data)
+    const companyOptions = `
+        <option value="">请选择</option>
+        <option value="丰源物流有限公司">丰源物流有限公司</option>
+        <option value="顺达运输集团">顺达运输集团</option>
+        <option value="中通供应链">中通供应链</option>
+    `;
+
+    // Category options for upper panel (income): 应收, 代垫; default to 应付
+    const categoryOptionsIncome = `
+        <option value="应付">应付</option>
+        <option value="应收">应收</option>
+        <option value="代垫">代垫</option>
+    `;
+
+    // Category options for lower panel (cost)
+    const categoryOptionsCost = `
+        <option value="">请选择</option>
+        <option value="应付">应付</option>
+    `;
+
+    const categoryOptions = type === 'income' ? categoryOptionsIncome : categoryOptionsCost;
+
+    newRow.innerHTML = `
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
+            <select style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; background: white;">
+                ${feeNameOptions}
+            </select>
+        </td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"><input type="text" placeholder="0.00" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; text-align: right;"></td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
+            <select style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; background: white;">
+                ${companyOptions}
+            </select>
+        </td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
+            <select style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; background: white;">
+                ${categoryOptions}
+            </select>
+        </td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><input type="date" value="${today}" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none;"></td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><input type="text" placeholder="联系人" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none;"></td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><input type="text" placeholder="电话" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none;"></td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><input type="text" placeholder="备注" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none;"></td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><span style="color: #f59e0b; font-size: 0.75rem;">未核销</span></td>
+        <td style="padding: 4px 8px; text-align: center;">
+            <button onclick="this.closest('tr').remove()" style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
+                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+            </button>
+        </td>
+    `;
+
+    tbody.appendChild(newRow);
+    if (window.lucide) window.lucide.createIcons();
+};
+
+// Function to add expense row to expense panel tables (for rendering)
+window.addExpenseRow = function (type) {
+    const tbody = document.getElementById(type === 'receivable' ? 'expense-receivable-tbody' : 'expense-payable-tbody');
+    if (!tbody) {
+        console.error('Tbody not found for type:', type);
+        return;
+    }
+
+    // Get the correct data array
+    const dataArray = type === 'receivable' ? window.expensePanelReceivableData : window.expensePanelPayableData;
+
+    // Add a new empty row for manual entry
+    const today = new Date().toISOString().split('T')[0];
+    const newId = (type === 'receivable' ? 'REC-' : 'PAY-') + Date.now();
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td style="padding: 6px 4px; border-bottom: 1px solid #f1f5f9; text-align: center;"><input type="checkbox"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">${dataArray.length + 1}</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 100px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" style="width: 70px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="1" style="width: 40px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${today}</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">CNY</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input type="text" style="width: 80px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1.00</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0%</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">-</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;"><span style="color: #f59e0b;">未核销</span></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">
+            <button onclick="this.closest('tr').remove()" style="border: none; background: transparent; color: #ef4444; cursor: pointer;">
+                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+            </button>
+        </td>
+    `;
+
+    // Remove empty state row if exists
+    const emptyRow = tbody.querySelector('tr td[colspan]');
+    if (emptyRow) {
+        emptyRow.closest('tr').remove();
+    }
+
+    tbody.appendChild(newRow);
+    if (window.lucide) window.lucide.createIcons();
+};
+
+// Function to render expense panel data from saved expense entry
+window.renderExpensePanelFromSavedData = function () {
+    const receivableTbody = document.getElementById('expense-receivable-tbody');
+    const payableTbody = document.getElementById('expense-payable-tbody');
+
+    // Render receivable data
+    if (receivableTbody && window.expensePanelReceivableData && window.expensePanelReceivableData.length > 0) {
+        receivableTbody.innerHTML = '';
+        window.expensePanelReceivableData.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="padding: 6px 4px; border-bottom: 1px solid #f1f5f9; text-align: center;"><input type="checkbox"></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">${index + 1}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">应收</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.name}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 600; color: #4f46e5;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.date}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.currency}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1.00</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0%</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;"><span style="color: #f59e0b;">${item.status}</span></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                    <button style="border: none; background: transparent; color: #4f46e5; cursor: pointer;">
+                        <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                    </button>
+                </td>
+            `;
+            receivableTbody.appendChild(row);
+        });
+        if (window.lucide) window.lucide.createIcons();
+
+        // Update summary totals
+        const totalReceivable = window.expensePanelReceivableData.reduce((sum, item) => sum + item.amount, 0);
+        const summaryReceivable = document.getElementById('summary-receivable');
+        if (summaryReceivable) summaryReceivable.textContent = totalReceivable.toFixed(2);
+    }
+
+    // Render payable data
+    if (payableTbody && window.expensePanelPayableData && window.expensePanelPayableData.length > 0) {
+        payableTbody.innerHTML = '';
+        window.expensePanelPayableData.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="padding: 6px 4px; border-bottom: 1px solid #f1f5f9; text-align: center;"><input type="checkbox"></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">${index + 1}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">应付</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.name}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 600; color: #ef4444;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.date}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.currency}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1.00</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0%</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;"><span style="color: #f59e0b;">${item.status}</span></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">
+                    <button style="border: none; background: transparent; color: #4f46e5; cursor: pointer;">
+                        <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+                    </button>
+                </td>
+            `;
+            payableTbody.appendChild(row);
+        });
+        if (window.lucide) window.lucide.createIcons();
+
+        // Update summary totals
+        const totalPayable = window.expensePanelPayableData.reduce((sum, item) => sum + item.amount, 0);
+        const summaryPayable = document.getElementById('summary-payable');
+        if (summaryPayable) summaryPayable.textContent = totalPayable.toFixed(2);
+    }
+
+    // Calculate and update profit
+    const totalRec = window.expensePanelReceivableData.reduce((sum, item) => sum + item.amount, 0);
+    const totalPay = window.expensePanelPayableData.reduce((sum, item) => sum + item.amount, 0);
+    const profit = totalRec - totalPay;
+    const profitEl = document.getElementById('summary-profit');
+    if (profitEl) profitEl.textContent = profit.toFixed(2);
+
+    // Calculate gross margin
+    const marginEl = document.getElementById('summary-gross-margin');
+    if (marginEl && totalRec > 0) {
+        const margin = ((totalRec - totalPay) / totalRec * 100).toFixed(0);
+        marginEl.textContent = margin + '%';
+    }
 };
