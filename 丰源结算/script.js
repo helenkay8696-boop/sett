@@ -62,6 +62,30 @@ const reportMenuData = [
     }
 ];
 
+window.goToInvoiceApplication = function () {
+    // 1. Use existing addTab function to switch to the tab and render it
+    if (typeof window.addTab === 'function') {
+        window.addTab('开票申请');
+    } else if (typeof addTab === 'function') {
+        addTab('开票申请');
+    } else {
+        console.error('addTab function not found');
+        return;
+    }
+
+    // 2. Open the create view immediately
+    // Wait for render to complete (since renderTabs replaces innerHTML)
+    setTimeout(() => {
+        const listView = document.getElementById('invoice-application-list-view');
+        const createView = document.getElementById('invoice-application-create-view');
+
+        if (listView && createView) {
+            listView.style.display = 'none';
+            createView.style.display = 'flex';
+        }
+    }, 100);
+};
+
 window.pendingRechargeRequests = [];
 window.processedRechargeRequests = [];
 
@@ -2982,7 +3006,14 @@ function renderTabs(activeTab) {
                         <button id="receivables-generate-bill-btn" disabled class="secondary-btn" onclick="showGenerateBillModal()" style="height: 32px; padding: 0 16px; background: #f1f5f9; color: #94a3b8; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: not-allowed; margin-left: 8px; transition: all 0.2s;">
                             <i data-lucide="file-plus" style="width: 14px; height: 14px;"></i> 按票生成账单
                         </button>
+
+                         <!-- Invoice Application Button -->
+                        <button class="primary-btn" onclick="window.goToInvoiceApplication()" style="height: 32px; padding: 0 16px; background: #6366f1; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: 8px;">
+                            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i> 开票申请
+                        </button>
                     </div>
+
+
 
                      <!-- Table Content Area -->
                     <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto;">
@@ -7335,7 +7366,7 @@ function renderTabs(activeTab) {
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button class="primary-btn" onclick="window.addExpenseRow('receivable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
                                     <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
-                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                    <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
                                 </div>
                             </div>
                             <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
@@ -7407,7 +7438,7 @@ function renderTabs(activeTab) {
                                     <button class="primary-btn" onclick="window.addExpenseRow('payable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
                                     
                                     <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">付款申请</button>
-                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                    <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
                                 </div>
                             </div>
                             <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
@@ -11734,19 +11765,19 @@ window.togglePayableState = function (checkbox) {
 window.jumpToInvoiceFromWaybill = function () {
     // 1. Gather data to carry over
     // We'll look at window.expenseAuditData (Revenue items) as candidates
-    const revenueItems = window.expenseAuditData.filter(e => e.expenseType === 'revenue');
+    const revenueItems = window.expenseAuditData ? window.expenseAuditData.filter(e => e.expenseType === 'revenue') : [];
 
-    if (revenueItems.length === 0) {
-        if (!confirm('当前没有应收费用数据，是否仍要跳转到开票申请？')) {
-            return;
-        }
-    }
+    // Removed blocking confirmation as per user feedback/issue
+    // if (revenueItems.length === 0) { ... }
 
     // 2. Switch Tab
-    if (window.addTab) {
+    if (typeof window.addTab === 'function') {
         window.addTab('开票申请');
+    } else if (typeof addTab === 'function') {
+        addTab('开票申请');
     } else {
         console.error('addTab function not found');
+        alert('无法跳转：addTab 函数未找到');
         return;
     }
 
@@ -12295,4 +12326,32 @@ window.addFeeEntryRow = function (type) {
     tbody.insertBefore(newRow, tbody.firstChild);
 
     if (window.lucide) window.lucide.createIcons();
+};
+
+// --- Expense Panel to Statement Creation Jump ---
+window.jumpToStatementCreationFromExpensePanel = function () {
+    // 1. Switch Tab to '应收对账'
+    if (typeof window.addTab === 'function') {
+        // Trigger the tab logic which renders the HTML for '应收对账'
+        window.addTab('应收对账');
+    } else {
+        console.error('addTab function not found');
+        return;
+    }
+
+    // 2. Wait for the DOM to update
+    setTimeout(() => {
+        // 3. Find the views
+        // Note: The ID might be inside the mainContent rendered string, so it should exist after addTab execution.
+        const listView = document.getElementById('statement-list-view');
+        const createView = document.getElementById('statement-create-view');
+
+        if (listView && createView) {
+            // 4. Toggle Visibility
+            listView.style.display = 'none';
+            createView.style.display = 'flex';
+        } else {
+            console.error('Views not found after switching tab');
+        }
+    }, 100);
 };
