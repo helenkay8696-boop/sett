@@ -78,10 +78,16 @@ window.goToInvoiceApplication = function () {
     setTimeout(() => {
         const listView = document.getElementById('invoice-application-list-view');
         const createView = document.getElementById('invoice-application-create-view');
+        const customerSidebar = document.querySelector('.customer-sidebar');
 
         if (listView && createView) {
             listView.style.display = 'none';
             createView.style.display = 'flex';
+        }
+
+        // Hide customer sidebar
+        if (customerSidebar) {
+            customerSidebar.style.display = 'none';
         }
     }, 100);
 };
@@ -7365,7 +7371,7 @@ function renderTabs(activeTab) {
                                 <!-- Buttons -->
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button class="primary-btn" onclick="window.addExpenseRow('receivable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
-                                    <button style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
+                                    <button onclick="window.goToInvoiceApplication()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
                                     <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
                                 </div>
                             </div>
