@@ -6133,7 +6133,7 @@ function renderTabs(activeTab) {
                                 <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="pay-item-type" checked> 收付</label>
                             </div>
                             <div style="display: flex; align-items: center; gap: 4px; flex: 1;">
-                                 <input type="text" placeholder="提单号/柜号/SO/工作号/帐单号/工作单号/提单参考号/中转单号/USA号" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none;">
+                                 <input type="text" placeholder="工作号/帐单号/工作单号/中转单号" style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none;">
                                  <button style="height: 32px; background: #4f46e5; border: none; border-radius: 4px; color: white; padding: 0 16px; display: flex; align-items: center; gap: 4px; cursor: pointer;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
                             </div>
                             <a href="#" style="color: #4f46e5; white-space: nowrap;">更多(0) <i data-lucide="chevron-down" style="width: 10px; height: 10px; display: inline;"></i></a>
@@ -7531,10 +7531,333 @@ function renderTabs(activeTab) {
                     </div>
                 </div>
              `;
-        } else {
+        } else if (activeTab === '应收明细') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                    <!-- Status Bar (Responsive: Horizontal Scroll) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待出账单 (89)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待对账(月结) (14)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">未开票 (133)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">申请开票中 (0)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已开票 (5)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">未核销 (115)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">预收待到账 (0)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">部分核销 (0)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已核销 (23)</div>
+                    </div>
 
+                    <!-- Filter Bar (Responsive: Wrapping) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>工作单日期</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <div class="select-box" style="width: 80px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>关键字</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <input type="text" placeholder="请输入系统单号/工作单号/客户名称" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white; color: #64748b;"><span>销账状态</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white; color: #64748b;"><span>账单状态</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white; color: #64748b;"><span>对账状态</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white; color: #64748b;"><span>费用审核</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+
+                         <div style="flex: 1; min-width: 10px;"></div> <!-- Spacer -->
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 创建账单</button>
+                         <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #cbd5e1; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: not-allowed; white-space: nowrap;"><i data-lucide="file-plus" style="width: 14px; height: 14px;"></i> 按票生成账单</button>
+                    </div>
+
+                    <!-- Table List -->
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                         <table class="statement-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;"><input type="checkbox"></th>
+                                    <th style="width: 40px; text-align: center;">#</th>
+                                    <th>来源</th>
+                                    <th>AR/AP</th>
+                                    <th>单据类型</th>
+                                    <th>系统单号</th>
+                                    <th>结算公司</th>
+                                    <th>工作单日期</th>
+                                    <th>计费日期</th>
+                                    <th>币制</th>
+                                    <th>税率</th>
+                                    <th>数量</th>
+                                    <th>单位</th>
+                                    <th>含税金额</th>
+                                    <th>已销金额</th>
+                                    <th>未销金额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 <tr style="border-bottom: 1px solid #f1f5f9;">
+                                     <td style="text-align: center; padding: 12px;"><input type="checkbox"></td>
+                                     <td style="text-align: center; padding: 12px;">1</td>
+                                     <td style="padding: 12px;">费用</td>
+                                     <td style="padding: 12px;">AR</td>
+                                     <td style="padding: 12px;">整车</td>
+                                     <td style="padding: 12px; color: #4f46e5;">S20231201001</td>
+                                     <td style="padding: 12px;">深圳市远航达</td>
+                                     <td style="padding: 12px;">2023-12-01</td>
+                                     <td style="padding: 12px;">2023-12-01</td>
+                                     <td style="padding: 12px;">USD</td>
+                                     <td style="padding: 12px;">6%</td>
+                                     <td style="padding: 12px;">1</td>
+                                     <td style="padding: 12px;">BOX</td>
+                                     <td style="padding: 12px; text-align: right;">1000.00</td>
+                                     <td style="padding: 12px; text-align: right;">0.00</td>
+                                     <td style="padding: 12px; text-align: right;">1000.00</td>
+                                 </tr>
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '应付明细') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                    <!-- Status Bar (Responsive) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待收票 (45)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待对账 (12)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待付款 (88)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">部分付款 (2)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已付款 (150)</div>
+                    </div>
+
+                     <!-- Filter Bar (Responsive) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>工作单日期</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <div class="select-box" style="width: 80px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>关键字</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <input type="text" placeholder="请输入系统单号/工作单号/供应商名称" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         
+                         <div style="flex: 1; min-width: 10px;"></div>
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                         <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #4f46e5; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="download" style="width: 14px; height: 14px;"></i> 导出</button>
+                    </div>
+
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                          <div style="padding: 40px; text-align: center; color: #94a3b8;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                <span>暂无数据</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '客户账单') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                     <!-- Status Bar (Responsive) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待确认 (5)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待开票 (10)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">部分开票 (2)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已开票 (50)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已核销 (45)</div>
+                    </div>
+
+                     <!-- Filter Bar (Responsive) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>账单日期</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <input type="text" placeholder="账单号/客户名称" style="width: 200px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         
+                         <div style="flex: 1; min-width: 10px;"></div>
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                    </div>
+
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                           <div style="padding: 40px; text-align: center; color: #94a3b8;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                <span>暂无数据</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '收付款') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                    <!-- Status Bar (Responsive) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待核销 (15)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已核销 (120)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">部分核销 (3)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">预收待确认 (2)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">退款处理 (1)</div>
+                    </div>
+
+                     <!-- Filter Bar (Responsive) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>日期类型</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>收款账户</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <input type="text" placeholder="对方单位/流水号/摘要" style="width: 200px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         
+                         <div style="flex: 1; min-width: 10px;"></div>
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                         <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #4f46e5; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增收款</button>
+                    </div>
+
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                           <div style="padding: 40px; text-align: center; color: #94a3b8;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i data-lucide="search-x" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                <span>暂无数据</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '付款申请') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                    <!-- Status Bar (Responsive) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待提交 (5)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">审核中 (8)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待付款 (10)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已付款 (150)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已驳回 (2)</div>
+                    </div>
+
+                     <!-- Filter Bar (Responsive) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>申请日期</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>申请人</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <input type="text" placeholder="单号/收款单位" style="width: 200px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         
+                         <div style="flex: 1; min-width: 10px;"></div>
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 申请付款</button>
+                    </div>
+
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                           <div style="padding: 40px; text-align: center; color: #94a3b8;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i data-lucide="file-check" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                <span>暂无数据</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '发票管理') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                    <!-- Status Bar (Responsive) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待开票 (12)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已开票 (130)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已作废 (2)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">红冲 (0)</div>
+                    </div>
+
+                     <!-- Filter Bar (Responsive) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>开票日期</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>开票单位</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <input type="text" placeholder="发票号码/客户名称" style="width: 200px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         
+                         <div style="flex: 1; min-width: 10px;"></div>
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 登记发票</button>
+                    </div>
+
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                           <div style="padding: 40px; text-align: center; color: #94a3b8;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i data-lucide="receipt" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                <span>暂无数据</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+        } else if (activeTab === '开票申请') {
+            mainContent = `
+                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: white; overflow: hidden;">
+                    <!-- Status Bar (Responsive) -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; background: white; display: flex; align-items: center; gap: 24px; overflow-x: auto; white-space: nowrap; flex-shrink: 0; -webkit-overflow-scrolling: touch;">
+                         <div class="internal-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; cursor: pointer;">全部</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待审核 (5)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">待开票 (8)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已开票 (50)</div>
+                         <div class="internal-tab" style="padding: 12px 0; cursor: pointer;">已驳回 (1)</div>
+                    </div>
+
+                     <!-- Filter Bar (Responsive) -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; flex-shrink: 0;">
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>申请日期</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                            <span style="color: #64748b;">-</span>
+                             <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         </div>
+                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 0.85rem; background: white;"><span>申请人</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                         <input type="text" placeholder="单号/客户名称" style="width: 200px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; outline: none;">
+                         
+                         <div style="flex: 1; min-width: 10px;"></div>
+
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 申请开票</button>
+                    </div>
+
+                    <div style="flex-grow: 1; padding: 0; overflow: auto;">
+                           <div style="padding: 40px; text-align: center; color: #94a3b8;">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <i data-lucide="file-plus" style="width: 32px; height: 32px; opacity: 0.5;"></i>
+                                <span>暂无数据</span>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+        } else {
             mainContent = `
                 <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; height: 100%;">
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
                 <h2 style="color: #1e293b; margin-bottom: 1rem;">${activeTab} Content</h2>
                 <p style="color: #64748b;">This is a demonstration of the ${activeTab} page view.</p>
                 </div>`;
@@ -8465,7 +8788,7 @@ function showNewReceiptModal() {
                     <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="bottom_toggle" checked> 收/付</label>
                 </div>
                 <div style="display: flex; border: 1px solid #e2e8f0; border-radius: 4px; align-items: center; height: 28px; width: 280px;">
-                    <input type="text" placeholder="工作号/参考号/提单号/柜号/发票号/核销单号" style="border: none; outline: none; flex: 1; padding: 0 12px; font-size: 0.75rem;">
+                    <input type="text" placeholder="工作号/参考号/发票号/核销单号" style="border: none; outline: none; flex: 1; padding: 0 12px; font-size: 0.75rem;">
                 </div>
                 <div style="display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 4px; height: 28px;">
                     <div style="padding: 0 8px; border-right: 1px solid #e2e8f0; font-size: 0.75rem; background: #f8fafc; border-radius: 4px 0 0 4px; height: 100%; display: flex; align-items: center;">对账单号 <i data-lucide="chevron-down" style="width: 12px; height: 12px; margin-left: 4px;"></i></div>
@@ -8483,8 +8806,8 @@ function showNewReceiptModal() {
                 </div>
                 <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
                     <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b;"><input type="checkbox"> 仅显示已勾选</label>
-                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b;"><input type="radio" checked> 全部</label>
-                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b;"><input type="radio"> 按费用明细核销</label>
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b;"><input type="radio" name="verification_type" checked> 全部</label>
+                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b;"><input type="radio" name="verification_type"> 按费用明细核销</label>
                     <button style="border: 1px solid #4f46e5; color: #4f46e5; background: white; height: 28px; padding: 0 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer;">自动分配</button>
                     <button style="border: 1px solid #e2e8f0; color: #64748b; background: white; height: 28px; padding: 0 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer;">重置</button>
                 </div>
