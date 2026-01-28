@@ -532,6 +532,16 @@ window.viewWaybillDetails = function (no) {
     }, 100);
 };
 
+window.toggleAllWaybills = function (source) {
+    const checkboxes = document.querySelectorAll('.waybill-row-checkbox');
+    checkboxes.forEach(cb => cb.checked = source.checked);
+};
+
+window.toggleAllWaybills = function (source) {
+    const checkboxes = document.querySelectorAll('.waybill-row-checkbox');
+    checkboxes.forEach(cb => cb.checked = source.checked);
+};
+
 window.bankReceiptData = [
     { id: 1, name: '深圳市远通物流有限公司', bank: '招商银行深圳分行', account: '755912345678901', currency: 'CNY', serial: '202512270001', amount: '50,000.00', time: '2025-12-27 10:30', payer: 'ABC TRADING LTD', unit: '总公司', payerAccount: '6222021234567890', summary: '货款', match: 'ORDER-001', status: 'pending_confirm' },
     { id: 2, name: '广州快运达货运代理有限公司', bank: '中国银行广州分行', account: '621234567890123', currency: 'USD', serial: '202512270002', amount: '10,000.00', time: '2025-12-27 11:15', payer: 'XYZ LOGISTICS INC', unit: '广州分公司', payerAccount: '4567890123456789', summary: '运费', match: '-', status: 'pending_confirm' },
@@ -1527,7 +1537,7 @@ function renderTabs(activeTab) {
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
                                 <thead style="background: #f8fafc; color: #64748b; border-bottom: 1px solid #e2e8f0;">
                                     <tr>
-                                        <th style="padding: 12px 16px; text-align: left; width: 40px;"><input type="checkbox"></th>
+                                        <th style="padding: 12px 16px; text-align: left; width: 40px;"><input type="checkbox" onchange="window.toggleAllWaybills(this)"></th>
                                         <th style="padding: 12px 16px; text-align: left;">运单单号</th>
                                         <th style="padding: 12px 16px; text-align: left;">托运日期</th>
                                         <th style="padding: 12px 16px; text-align: left;">客户名称</th>
@@ -1548,17 +1558,13 @@ function renderTabs(activeTab) {
                                         </tr>
                                     ` : waybills.map(item => `
                                         <tr style="border-bottom: 1px solid #f1f5f9; background: white;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
-                                            <td style="padding: 12px 16px; text-align: left;"><input type="checkbox"></td>
+                                            <td style="padding: 12px 16px; text-align: left;"><input type="checkbox" class="waybill-row-checkbox"></td>
                                             <td style="padding: 12px 16px; color: #4f46e5; font-weight: 500;">${item.no || '-'}</td>
                                             <td style="padding: 12px 16px;">${item.date || '-'}</td>
                                             <td style="padding: 12px 16px;">${item.customer || '-'}</td>
                                             <td style="padding: 12px 16px;">${item.route || '-'}</td>
                                             <td style="padding: 12px 16px;">${item.goods || '-'}</td>
                                             <td style="padding: 12px 16px; text-align: center;">
-                                                <div style="display: flex; gap: 8px; justify-content: center;">
-                                                    <button onclick="window.viewWaybillDetails('${item.no}')" style="color: #4f46e5; background: none; border: none; font-size: 0.75rem; cursor: pointer;">详情</button>
-                                                    <button style="color: #ef4444; background: none; border: none; font-size: 0.75rem; cursor: pointer;">删除</button>
-                                                </div>
                                             </td>
                                         </tr>
                                     `).join('')}
@@ -6975,7 +6981,7 @@ function renderTabs(activeTab) {
                                         <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
                                             <thead style="background: #f8fafc;">
                                                 <tr>
-                                                    <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                                    <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox" onclick="window.toggleAllExpenseRows(this, 'receivable')"></th>
                                                     <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
                                                     <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
                                                     <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
@@ -7059,7 +7065,7 @@ function renderTabs(activeTab) {
                                         <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
                                             <thead style="background: #f8fafc;">
                                                 <tr>
-                                                    <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                                    <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox" onclick="window.toggleAllExpenseRows(this, 'receivable')"></th>
                                                     <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
                                                     <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
                                                     <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
@@ -7391,17 +7397,17 @@ function renderTabs(activeTab) {
                                     <input type="radio" name="expense-panel-tab-type" checked style="accent-color: #0284c7;"> 应收
                                 </label>
                                 <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #475569; cursor: pointer;">
-                                    <input type="checkbox" style="border-radius: 2px;"> 完成收款
+                                    <input type="checkbox" style="border-radius: 2px;"> 完成应收
                                 </label>
                                 
                                 <!-- Buttons -->
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button class="primary-btn" onclick="window.addExpenseRow('receivable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
-                                    <button onclick="window.copyToReceivable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">复制到应收</button>
+                                    <button onclick="window.copyToReceivableRow()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">复制到应收</button>
                                     <button onclick="window.goToInvoiceApplication()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
                                     <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
-                                    <button onclick="window.batchModifyReceivable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
-                                    <button onclick="window.batchDeleteReceivable()" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
+                                    <button onclick="window.batchModifyRow('receivable')" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
+                                    <button onclick="window.batchDeleteRow('receivable')" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
                                 </div>
                             </div>
                             <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
@@ -7414,7 +7420,7 @@ function renderTabs(activeTab) {
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
                                 <thead style="background: #f8fafc;">
                                     <tr>
-                                        <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                        <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox" onclick="window.toggleAllExpenseRows(this, 'receivable')"></th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
@@ -7465,17 +7471,17 @@ function renderTabs(activeTab) {
                                     <input type="radio" name="expense-panel-tab-type-pay" checked style="accent-color: #0284c7;"> 应付
                                 </label>
                                 <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; color: #475569; cursor: pointer;">
-                                    <input type="checkbox" style="border-radius: 2px;"> 完成付款
+                                    <input type="checkbox" style="border-radius: 2px;"> 完成应付
                                 </label>
                                 
                                 <!-- Buttons -->
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button class="primary-btn" onclick="window.addExpenseRow('payable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
-                                    <button onclick="window.copyToPayable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">复制到应付</button>
+                                    <button onclick="window.copyToPayableRow()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">复制到应付</button>
                                     <button onclick="window.goToPaymentApplication()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">付款申请</button>
                                     <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
-                                    <button onclick="window.batchModifyPayable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
-                                    <button onclick="window.batchDeletePayable()" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
+                                    <button onclick="window.batchModifyRow('payable')" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
+                                    <button onclick="window.batchDeleteRow('payable')" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
                                 </div>
                             </div>
                             <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
@@ -7488,7 +7494,7 @@ function renderTabs(activeTab) {
                             <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
                                 <thead style="background: #f8fafc;">
                                     <tr>
-                                        <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox"></th>
+                                        <th style="padding: 6px 4px; border-bottom: 1px solid #e2e8f0; width: 30px; text-align: center;"><input type="checkbox" onclick="window.toggleAllExpenseRows(this, 'payable')"></th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 30px;">#</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">类别</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">结算公司</th>
@@ -12324,6 +12330,263 @@ window.addExpenseRow = function (type) {
     if (window.lucide) window.lucide.createIcons();
 };
 
+window.copyToReceivableRow = function () {
+    const tbody = document.getElementById('expense-receivable-tbody');
+    if (!tbody) return;
+
+    // Find all checked rows in the receivable table
+    const checkedRows = Array.from(tbody.querySelectorAll('tr')).filter(row => {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        return checkbox && checkbox.checked;
+    });
+
+    if (checkedRows.length === 0) {
+        alert('请先勾选需要复制的数据');
+        return;
+    }
+
+    checkedRows.forEach(row => {
+        // Create a new row by cloning the existing one
+        const newRow = row.cloneNode(true);
+
+        // Update the checkbox to be unchecked for the new row
+        const newCheckbox = newRow.querySelector('input[type="checkbox"]');
+        if (newCheckbox) newCheckbox.checked = false;
+
+        // Copy values from original inputs/selects to new inputs/selects
+        // cloneNode(true) copies attributes but NOT the current value of inputs if changed by user
+        const originalInputs = row.querySelectorAll('input, select');
+        const newInputs = newRow.querySelectorAll('input, select');
+
+        originalInputs.forEach((input, index) => {
+            if (newInputs[index]) {
+                newInputs[index].value = input.value;
+            }
+        });
+
+        // Append the new row
+        tbody.appendChild(newRow);
+    });
+
+    // Update indices for all rows
+    Array.from(tbody.children).forEach((row, index) => {
+        // Assuming the index is in the second column (index 1)
+        if (row.cells[1]) {
+            row.cells[1].textContent = index + 1;
+        }
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+    alert(`成功复制 ${checkedRows.length} 条数据`);
+};
+
+window.copyToPayableRow = function () {
+    const tbody = document.getElementById('expense-payable-tbody');
+    if (!tbody) return;
+
+    // Find all checked rows in the payable table
+    const checkedRows = Array.from(tbody.querySelectorAll('tr')).filter(row => {
+        const checkbox = row.querySelector('input[type="checkbox"]');
+        return checkbox && checkbox.checked;
+    });
+
+    if (checkedRows.length === 0) {
+        alert('请先勾选需要复制的数据');
+        return;
+    }
+
+    checkedRows.forEach(row => {
+        // Create a new row by cloning the existing one
+        const newRow = row.cloneNode(true);
+
+        // Update the checkbox to be unchecked for the new row
+        const newCheckbox = newRow.querySelector('input[type="checkbox"]');
+        if (newCheckbox) newCheckbox.checked = false;
+
+        // Copy values from original inputs/selects to new inputs/selects
+        // cloneNode(true) copies attributes but NOT the current value of inputs if changed by user
+        const originalInputs = row.querySelectorAll('input, select');
+        const newInputs = newRow.querySelectorAll('input, select');
+
+        originalInputs.forEach((input, index) => {
+            if (newInputs[index]) {
+                newInputs[index].value = input.value;
+            }
+        });
+
+        // Append the new row
+        tbody.appendChild(newRow);
+    });
+
+    // Update indices for all rows
+    Array.from(tbody.children).forEach((row, index) => {
+        // Assuming the index is in the second column (index 1)
+        if (row.cells[1]) {
+            row.cells[1].textContent = index + 1;
+        }
+    });
+
+    if (window.lucide) window.lucide.createIcons();
+    alert(`成功复制 ${checkedRows.length} 条数据`);
+};
+
+window.toggleAllExpenseRows = function (source, type) {
+    const tbodyId = type === 'receivable' ? 'expense-receivable-tbody' : 'expense-payable-tbody';
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+
+    const checkboxes = tbody.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.checked = source.checked;
+    });
+};
+
+window.batchModifyRow = function (type) {
+    const tbodyId = type === 'receivable' ? 'expense-receivable-tbody' : 'expense-payable-tbody';
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+
+    // Check checkboxes inside the tbody, avoiding the header checkbox if mistakenly grabbed
+    const checkedBoxes = tbody.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedBoxes.length === 0) {
+        alert('请先勾选需要批量修改的数据');
+        return;
+    }
+
+    // Check if modal already exists
+    let modal = document.getElementById('batch-modify-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'batch-modify-modal';
+        modal.className = 'modal-overlay';
+        modal.style.zIndex = '9999'; // Ensure it's on top
+        modal.style.position = 'fixed';
+        modal.style.inset = '0';
+        modal.style.background = 'rgba(0,0,0,0.5)';
+        modal.style.display = 'none'; // Initially hidden
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="modal-container" style="width: 480px; height: auto; max-height: 90vh; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); font-family: 'Microsoft YaHei', sans-serif; display: flex; flex-direction: column;">
+            <div class="modal-header" style="padding: 20px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="width: 4px; height: 16px; background: #4f46e5; border-radius: 2px;"></div>
+                    <h3 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #1e293b;">批量修改</h3>
+                </div>
+                <button onclick="window.closeBatchModifyModal()" style="border: none; background: transparent; cursor: pointer; color: #94a3b8; transition: color 0.2s;" onmouseover="this.style.color='#64748b'" onmouseout="this.style.color='#94a3b8'">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            <div class="modal-content" style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px dashed #cbd5e1; color: #64748b; font-size: 0.8rem; display: flex; gap: 8px; align-items: flex-start;">
+                    <i data-lucide="info" style="width: 14px; height: 14px; margin-top: 2px; flex-shrink: 0;"></i>
+                    <span>仅修改您填写的字段，未填写的字段将保持原样。金额将根据新的单价/数量自动重新计算。</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 0.85rem; font-weight: 500; color: #475569;">结算公司</label>
+                    <div style="position: relative;">
+                         <select id="batch-settlement-company" style="width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; font-size: 0.9rem; outline: none; appearance: none; background: white; transition: border-color 0.2s; cursor: pointer;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
+                            <option value="">(保持原样)</option>
+                            <option value="深圳市土源物流有限公司">深圳市土源物流有限公司</option>
+                            <option value="东莞市测试物流有限公司">东莞市测试物流有限公司</option>
+                        </select>
+                        <i data-lucide="chevron-down" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94a3b8; pointer-events: none;"></i>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 0.85rem; font-weight: 500; color: #475569;">单价</label>
+                        <div style="position: relative;">
+                            <input type="number" id="batch-unit-price" placeholder="保持原样" style="width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px 10px 28px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
+                            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.8rem;">¥</span>
+                        </div>
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 0.85rem; font-weight: 500; color: #475569;">数量</label>
+                         <div style="position: relative;">
+                            <input type="number" id="batch-unit-quantity" placeholder="保持原样" style="width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 20px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                <button onclick="window.closeBatchModifyModal()" style="padding: 8px 20px; border: 1px solid #e2e8f0; background: white; border-radius: 6px; color: #64748b; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='white'">取消</button>
+                <button onclick="window.saveBatchModify('${type}')" style="padding: 8px 24px; border: none; background: #4f46e5; border-radius: 6px; color: white; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4f46e5'">确认修改</button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    if (window.lucide) window.lucide.createIcons();
+};
+
+window.closeBatchModifyModal = function () {
+    const modal = document.getElementById('batch-modify-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+};
+
+window.saveBatchModify = function (type) {
+    const company = document.getElementById('batch-settlement-company').value;
+    const price = document.getElementById('batch-unit-price').value;
+    const quantity = document.getElementById('batch-unit-quantity').value;
+
+    const tbodyId = type === 'receivable' ? 'expense-receivable-tbody' : 'expense-payable-tbody';
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+    const checkedBoxes = tbody.querySelectorAll('input[type="checkbox"]:checked');
+
+    checkedBoxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        if (!row) return;
+
+        // Settlement Company (Index 3) - Select
+        if (company) {
+            const companySelect = row.cells[3].querySelector('select');
+            if (companySelect) companySelect.value = company;
+        }
+
+        // Unit Price (Index 6)
+        if (price !== '') {
+            const priceInput = row.cells[6].querySelector('input');
+            if (priceInput) priceInput.value = price;
+        }
+
+        // Quantity (Index 7)
+        if (quantity !== '') {
+            const qtyInput = row.cells[7].querySelector('input');
+            if (qtyInput) qtyInput.value = quantity;
+        }
+
+        // Recalculate Amount (Index 5) = Price * Qty
+        const priceInput = row.cells[6].querySelector('input');
+        const qtyInput = row.cells[7].querySelector('input');
+        // Amount cell is index 5. Check if it's input or text. From original view_file logic it seemed to have input.
+        const amountInput = row.cells[5].querySelector('input');
+
+        if (priceInput && qtyInput && amountInput) {
+            const p = parseFloat(priceInput.value) || 0;
+            const q = parseFloat(qtyInput.value) || 0;
+            amountInput.value = (p * q).toFixed(2);
+        }
+    });
+
+    alert('修改成功');
+    window.closeBatchModifyModal();
+};
+
+
+
+
+
+
 window.saveExpensePanelData = function () {
     let totalReceivable = 0;
     let totalPayable = 0;
@@ -12896,8 +13159,8 @@ window.renderExpensePanelFromSavedData = function () {
     }
 
     // Calculate and update profit
-    const totalRec = window.expensePanelReceivableData.reduce((sum, item) => sum + item.amount, 0);
-    const totalPay = window.expensePanelPayableData.reduce((sum, item) => sum + item.amount, 0);
+    const totalRec = (window.expensePanelReceivableData || []).reduce((sum, item) => sum + item.amount, 0);
+    const totalPay = (window.expensePanelPayableData || []).reduce((sum, item) => sum + item.amount, 0);
     const profit = totalRec - totalPay;
     const profitEl = document.getElementById('summary-profit');
     if (profitEl) profitEl.textContent = profit.toFixed(2);
@@ -12910,41 +13173,31 @@ window.renderExpensePanelFromSavedData = function () {
     }
 };
 
-// --- Placeholder functions for new Fee Panel buttons ---
-window.copyToReceivable = function () {
-    alert('复制到应收功能开发中...');
-};
+window.batchDeleteRow = function (type) {
+    const tbodyId = type === 'receivable' ? 'expense-receivable-tbody' : 'expense-payable-tbody';
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
 
-window.copyToPayable = function () {
-    alert('复制到应付功能开发中...');
-};
-
-window.batchModifyReceivable = function () {
-    alert('批量修改应收功能开发中...');
-};
-
-window.batchDeleteReceivable = function () {
-    const checked = document.querySelectorAll('#expense-receivable-tbody input[type="checkbox"]:checked');
-    if (checked.length === 0) {
-        alert('请先选择要删除的行');
+    const checkedBoxes = tbody.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedBoxes.length === 0) {
+        alert('请先勾选需要批量删除的数据');
         return;
     }
-    if (confirm('确定要删除选中的 ' + checked.length + ' 条记录吗？')) {
-        alert('批量删除应收功能开发中...');
-    }
-};
 
-window.batchModifyPayable = function () {
-    alert('批量修改应付功能开发中...');
-};
+    if (confirm(`确定要删除选中的 ${checkedBoxes.length} 条记录吗？`)) {
+        checkedBoxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            if (row) row.remove();
+        });
 
-window.batchDeletePayable = function () {
-    const checked = document.querySelectorAll('#expense-payable-tbody input[type="checkbox"]:checked');
-    if (checked.length === 0) {
-        alert('请先选择要删除的行');
-        return;
-    }
-    if (confirm('确定要删除选中的 ' + checked.length + ' 条记录吗？')) {
-        alert('批量删除应付功能开发中...');
+        // Re-index rows
+        Array.from(tbody.children).forEach((row, index) => {
+            if (row.cells[1]) {
+                row.cells[1].textContent = index + 1;
+            }
+        });
+
+        const typeName = type === 'receivable' ? '应收' : '应付';
+        alert(`批量删除${typeName}成功`);
     }
 };
