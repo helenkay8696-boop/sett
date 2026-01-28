@@ -7397,8 +7397,11 @@ function renderTabs(activeTab) {
                                 <!-- Buttons -->
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button class="primary-btn" onclick="window.addExpenseRow('receivable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
+                                    <button onclick="window.copyToReceivable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">复制到应收</button>
                                     <button onclick="window.goToInvoiceApplication()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">开票申请</button>
                                     <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                    <button onclick="window.batchModifyReceivable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
+                                    <button onclick="window.batchDeleteReceivable()" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
                                 </div>
                             </div>
                             <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
@@ -7468,9 +7471,11 @@ function renderTabs(activeTab) {
                                 <!-- Buttons -->
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <button class="primary-btn" onclick="window.addExpenseRow('payable')" style="height: 32px; padding: 0 16px; background: #dbeafe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 2px; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">新增</button>
-                                    
+                                    <button onclick="window.copyToPayable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">复制到应付</button>
                                     <button onclick="window.goToPaymentApplication()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">付款申请</button>
                                     <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
+                                    <button onclick="window.batchModifyPayable()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
+                                    <button onclick="window.batchDeletePayable()" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
                                 </div>
                             </div>
                             <div style="font-size: 0.75rem; color: #64748b; display: flex; gap: 12px;">
@@ -12902,5 +12907,44 @@ window.renderExpensePanelFromSavedData = function () {
     if (marginEl && totalRec > 0) {
         const margin = ((totalRec - totalPay) / totalRec * 100).toFixed(0);
         marginEl.textContent = margin + '%';
+    }
+};
+
+// --- Placeholder functions for new Fee Panel buttons ---
+window.copyToReceivable = function () {
+    alert('复制到应收功能开发中...');
+};
+
+window.copyToPayable = function () {
+    alert('复制到应付功能开发中...');
+};
+
+window.batchModifyReceivable = function () {
+    alert('批量修改应收功能开发中...');
+};
+
+window.batchDeleteReceivable = function () {
+    const checked = document.querySelectorAll('#expense-receivable-tbody input[type="checkbox"]:checked');
+    if (checked.length === 0) {
+        alert('请先选择要删除的行');
+        return;
+    }
+    if (confirm('确定要删除选中的 ' + checked.length + ' 条记录吗？')) {
+        alert('批量删除应收功能开发中...');
+    }
+};
+
+window.batchModifyPayable = function () {
+    alert('批量修改应付功能开发中...');
+};
+
+window.batchDeletePayable = function () {
+    const checked = document.querySelectorAll('#expense-payable-tbody input[type="checkbox"]:checked');
+    if (checked.length === 0) {
+        alert('请先选择要删除的行');
+        return;
+    }
+    if (confirm('确定要删除选中的 ' + checked.length + ' 条记录吗？')) {
+        alert('批量删除应付功能开发中...');
     }
 };
