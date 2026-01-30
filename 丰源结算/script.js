@@ -1785,7 +1785,7 @@ function renderTabs(activeTab) {
                                             <th>对账期起</th>
                                             <th>对账期止</th>
                                             <th>对账方式</th>
-                                            <th style="width: 80px; text-align: center;">操作</th>
+                                            <th style="width: 140px; text-align: center;">操作</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1802,7 +1802,7 @@ function renderTabs(activeTab) {
                                             <td>2025-11-01</td>
                                             <td>2025-11-30</td>
                                             <td>邮件确认</td>
-                                            <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a></td>
+                                            <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a> <a href="#" onclick="showAIReconciliationModal('DZ2025120001'); return false;" style="color: #10b981; text-decoration: none; margin-left: 8px;">AI对账</a></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align: center;"><input type="checkbox"></td>
@@ -1817,7 +1817,7 @@ function renderTabs(activeTab) {
                                             <td>2025-11-01</td>
                                             <td>2025-11-30</td>
                                             <td>平台确认</td>
-                                            <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a></td>
+                                            <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a> <a href="#" onclick="showAIReconciliationModal('DZ2025120002'); return false;" style="color: #10b981; text-decoration: none; margin-left: 8px;">AI对账</a></td>
                                         </tr>
                                         <tr>
                                             <td style="text-align: center;"><input type="checkbox"></td>
@@ -1832,7 +1832,7 @@ function renderTabs(activeTab) {
                                             <td>2025-11-01</td>
                                             <td>2025-11-30</td>
                                             <td>微信确认</td>
-                                            <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a></td>
+                                            <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a> <a href="#" onclick="showAIReconciliationModal('DZ2025120003'); return false;" style="color: #10b981; text-decoration: none; margin-left: 8px;">AI对账</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -4627,9 +4627,19 @@ function renderTabs(activeTab) {
                                             <span style="color: #334155;">limquan</span>
                                         </div>
                                     </div>
-                                    <a href="#" style="font-size: 0.8rem; color: #4f46e5; display: flex; align-items: center; gap: 4px;">
-                                        <i data-lucide="paperclip" style="width: 14px; height: 14px;"></i> 附件
-                                    </a>
+                                    <!-- 附件上传区域 -->
+                                    <div style="margin-top: 8px;">
+                                        <div style="display: flex; align-items: center; gap: 12px;">
+                                            <input type="file" id="invoice-attachment-input" multiple accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx" style="display: none;" onchange="handleInvoiceAttachmentUpload(event)">
+                                            <div onclick="document.getElementById('invoice-attachment-input').click()" style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px dashed #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 0.8rem; color: #4f46e5; background: #f8fafc; transition: all 0.2s;" onmouseover="this.style.borderColor='#4f46e5'; this.style.background='#eff6ff';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc';">
+                                                <i data-lucide="paperclip" style="width: 14px; height: 14px;"></i>
+                                                附件
+                                            </div>
+                                            <span style="font-size: 0.75rem; color: #94a3b8;">支持 JPG / Excel / PDF，最大 10MB</span>
+                                            <span id="invoice-attachment-count" style="font-size: 0.75rem; color: #64748b;"></span>
+                                        </div>
+                                        <div id="invoice-attachment-list" style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                                    </div>
                                 </div>
                              </div>
 
@@ -8015,7 +8025,7 @@ function renderTabs(activeTab) {
                          <div style="flex: 1; min-width: 10px;"></div>
 
                          <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
-                         <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #4f46e5; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增收款</button>
+                         <button onclick="showNewReceiptModal()" style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; color: #4f46e5; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增收款</button>
                     </div>
 
                     <div style="flex-grow: 1; padding: 0; overflow: auto;">
@@ -8055,7 +8065,7 @@ function renderTabs(activeTab) {
                          <div style="flex: 1; min-width: 10px;"></div>
 
                          <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
-                         <button style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 申请付款</button>
+                         <button onclick="showPaymentApplicationModal()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;"><i data-lucide="plus" style="width: 14px; height: 14px;"></i> 申请付款</button>
                     </div>
 
                     <div style="flex-grow: 1; padding: 0; overflow: auto;">
@@ -9087,15 +9097,23 @@ function showNewReceiptModal() {
                 <!-- Attachment Area -->
                 <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; flex-direction: column;">
                     <div style="display: flex; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
-                        <div style="padding: 4px 12px; font-size: 0.75rem; border-right: 1px solid #e2e8f0; border-bottom: 2px solid #4f46e5; color: #4f46e5; cursor: pointer;">水单附件(0)</div>
+                        <div id="receipt-attachment-tab" style="padding: 4px 12px; font-size: 0.75rem; border-right: 1px solid #e2e8f0; border-bottom: 2px solid #4f46e5; color: #4f46e5; cursor: pointer;">水单附件(<span id="receipt-attachment-count">0</span>)</div>
                         <div style="padding: 4px 12px; font-size: 0.75rem; color: #64748b; cursor: pointer;">发票附件(0)</div>
                     </div>
-                    <div style="flex-grow: 1; padding: 12px; display: flex; align-items: center; justify-content: center;">
-                        <div style="text-align: center; border: 1px dashed #cbd5e1; background: #eff6ff; border-radius: 4px; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;">
-                            <i data-lucide="paperclip" style="width: 14px; height: 14px; color: #4f46e5; margin-bottom: 8px;"></i>
-                             <div style="font-size: 0.75rem; color: #4f46e5;">附件</div>
-                            <i data-lucide="upload-cloud" style="width: 24px; height: 24px; color: #cbd5e1; margin-top: 12px;"></i>
+                    <div style="flex-grow: 1; padding: 12px; display: flex; flex-direction: column; overflow: hidden;">
+                        <!-- 隐藏的文件输入框 -->
+                        <input type="file" id="receipt-file-input" multiple accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx" style="display: none;" onchange="handleReceiptFileUpload(event)">
+                        
+                        <!-- 上传区域 -->
+                        <div id="receipt-upload-zone" onclick="document.getElementById('receipt-file-input').click()" style="text-align: center; border: 1px dashed #cbd5e1; background: #eff6ff; border-radius: 4px; padding: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; min-height: 80px;" onmouseover="this.style.borderColor='#4f46e5'; this.style.background='#e0e7ff';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#eff6ff';">
+                            <i data-lucide="paperclip" style="width: 18px; height: 18px; color: #4f46e5; margin-bottom: 6px;"></i>
+                            <div style="font-size: 0.75rem; color: #4f46e5; font-weight: 500;">附件</div>
+                            <i data-lucide="upload-cloud" style="width: 28px; height: 28px; color: #94a3b8; margin-top: 8px;"></i>
+                            <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 4px;">点击上传 JPG / Excel / PDF</div>
                         </div>
+                        
+                        <!-- 已上传文件列表 -->
+                        <div id="receipt-file-list" style="margin-top: 8px; overflow-y: auto; flex: 1; max-height: 60px;"></div>
                     </div>
                 </div>
             </div>
@@ -9219,7 +9237,744 @@ function closeReceiptModal() {
     if (modal) {
         modal.classList.remove('show');
     }
+    // 清空已上传的文件列表
+    window.receiptUploadedFiles = [];
 }
+
+// 存储已上传的文件
+window.receiptUploadedFiles = [];
+
+// 处理收款附件上传
+function handleReceiptFileUpload(event) {
+    const files = event.target.files;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf', '.xls', '.xlsx'];
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        // 验证文件格式
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            alert('不支持的文件格式：' + file.name + '\n仅支持 JPG、PNG、PDF、Excel 格式');
+            continue;
+        }
+
+        // 验证文件大小（最大10MB）
+        if (file.size > 10 * 1024 * 1024) {
+            alert('文件过大：' + file.name + '\n最大支持 10MB');
+            continue;
+        }
+
+        // 添加到已上传列表
+        window.receiptUploadedFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file,
+            id: Date.now() + '_' + i
+        });
+    }
+
+    // 渲染文件列表
+    renderReceiptFileList();
+
+    // 清空input以便可以重复选择同一文件
+    event.target.value = '';
+}
+
+// 获取文件图标
+function getFileIcon(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png'].includes(ext)) {
+        return 'image';
+    } else if (['xls', 'xlsx'].includes(ext)) {
+        return 'file-spreadsheet';
+    } else if (ext === 'pdf') {
+        return 'file-text';
+    }
+    return 'file';
+}
+
+// 获取文件图标颜色
+function getFileIconColor(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png'].includes(ext)) {
+        return '#10b981';  // 绿色 - 图片
+    } else if (['xls', 'xlsx'].includes(ext)) {
+        return '#22c55e';  // 深绿色 - Excel
+    } else if (ext === 'pdf') {
+        return '#ef4444';  // 红色 - PDF
+    }
+    return '#64748b';
+}
+
+// 格式化文件大小
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// 渲染收款附件文件列表
+function renderReceiptFileList() {
+    const listContainer = document.getElementById('receipt-file-list');
+    const countSpan = document.getElementById('receipt-attachment-count');
+
+    if (!listContainer) return;
+
+    // 更新附件计数
+    if (countSpan) {
+        countSpan.textContent = window.receiptUploadedFiles.length;
+    }
+
+    if (window.receiptUploadedFiles.length === 0) {
+        listContainer.innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    window.receiptUploadedFiles.forEach((file, index) => {
+        const icon = getFileIcon(file.name);
+        const iconColor = getFileIconColor(file.name);
+        html += `
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: #f8fafc; border-radius: 4px; margin-bottom: 4px; font-size: 0.7rem;">
+                <i data-lucide="${icon}" style="width: 14px; height: 14px; color: ${iconColor}; flex-shrink: 0;"></i>
+                <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1e293b;" title="${file.name}">${file.name}</span>
+                <span style="color: #94a3b8; flex-shrink: 0;">${formatFileSize(file.size)}</span>
+                <button onclick="removeReceiptFile('${file.id}')" style="border: none; background: transparent; cursor: pointer; padding: 2px; display: flex; align-items: center;">
+                    <i data-lucide="x" style="width: 12px; height: 12px; color: #ef4444;"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// 删除收款附件
+function removeReceiptFile(fileId) {
+    window.receiptUploadedFiles = window.receiptUploadedFiles.filter(f => f.id !== fileId);
+    renderReceiptFileList();
+}
+
+// ==================== 付款申请弹窗及附件上传功能 ====================
+
+// 存储付款申请的附件
+window.paymentInvoiceFiles = [];  // 发票文件
+window.paymentAttachmentFiles = [];  // 随件
+
+// 显示付款申请弹窗
+function showPaymentApplicationModal() {
+    let modal = document.getElementById('payment-application-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'payment-application-modal';
+        modal.className = 'modal-overlay';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="modal-container" style="width: 800px; max-width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i data-lucide="file-plus" style="width: 20px; height: 20px; color: #4f46e5;"></i>
+                    <span style="font-size: 1rem; font-weight: 600; color: #1e293b;">申请付款</span>
+                </div>
+                <button onclick="closePaymentApplicationModal()" style="border: none; background: transparent; cursor: pointer; padding: 4px;">
+                    <i data-lucide="x" style="width: 20px; height: 20px; color: #64748b;"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="modal-content" style="flex-grow: 1; padding: 20px; overflow-y: auto;">
+                <!-- 基本信息 -->
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #1e293b; margin-bottom: 12px;">基本信息</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="width: 70px; font-size: 0.8rem; color: #64748b;">收款单位</label>
+                            <div style="flex: 1; display: flex; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; align-items: center; height: 32px;">
+                                <input type="text" placeholder="请选择收款单位" style="border: none; outline: none; flex: 1; font-size: 0.8rem;">
+                                <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="width: 70px; font-size: 0.8rem; color: #64748b;">付款金额</label>
+                            <input type="text" placeholder="0.00" style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; height: 32px; font-size: 0.8rem; outline: none; text-align: right;">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="width: 70px; font-size: 0.8rem; color: #64748b;">付款账户</label>
+                            <div style="flex: 1; display: flex; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; align-items: center; height: 32px;">
+                                <input type="text" placeholder="请选择付款账户" style="border: none; outline: none; flex: 1; font-size: 0.8rem;">
+                                <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="width: 70px; font-size: 0.8rem; color: #64748b;">申请日期</label>
+                            <div style="flex: 1; display: flex; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; align-items: center; height: 32px;">
+                                <input type="text" value="${new Date().toISOString().split('T')[0]}" style="border: none; outline: none; flex: 1; font-size: 0.8rem;">
+                                <i data-lucide="calendar" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                            </div>
+                        </div>
+                        <div style="grid-column: span 2; display: flex; align-items: flex-start; gap: 8px;">
+                            <label style="width: 70px; font-size: 0.8rem; color: #64748b; margin-top: 8px;">摘要</label>
+                            <textarea placeholder="请输入付款摘要" style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px 10px; font-size: 0.8rem; outline: none; height: 60px; resize: none;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 附件上传区域 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+                    <!-- 附件标签页 -->
+                    <div style="display: flex; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                        <div id="payment-tab-invoice" onclick="switchPaymentAttachmentTab('invoice')" style="padding: 10px 16px; font-size: 0.8rem; border-bottom: 2px solid #4f46e5; color: #4f46e5; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;">
+                            <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>
+                            发票文件 (<span id="payment-invoice-count">0</span>)
+                        </div>
+                        <div id="payment-tab-attachment" onclick="switchPaymentAttachmentTab('attachment')" style="padding: 10px 16px; font-size: 0.8rem; color: #64748b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="paperclip" style="width: 14px; height: 14px;"></i>
+                            随件 (<span id="payment-attachment-count">0</span>)
+                        </div>
+                    </div>
+
+                    <!-- 发票文件上传区域 -->
+                    <div id="payment-invoice-panel" style="padding: 16px;">
+                        <input type="file" id="payment-invoice-input" multiple accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx" style="display: none;" onchange="handlePaymentFileUpload(event, 'invoice')">
+                        <div onclick="document.getElementById('payment-invoice-input').click()" style="border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#4f46e5'; this.style.background='#eff6ff';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc';">
+                            <i data-lucide="upload-cloud" style="width: 32px; height: 32px; color: #94a3b8; margin-bottom: 8px;"></i>
+                            <div style="font-size: 0.85rem; color: #4f46e5; font-weight: 500;">点击上传发票文件</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">支持 JPG / Excel / PDF，最大 10MB</div>
+                        </div>
+                        <div id="payment-invoice-list" style="margin-top: 12px; max-height: 120px; overflow-y: auto;"></div>
+                    </div>
+
+                    <!-- 随件上传区域 -->
+                    <div id="payment-attachment-panel" style="padding: 16px; display: none;">
+                        <input type="file" id="payment-attachment-input" multiple accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx" style="display: none;" onchange="handlePaymentFileUpload(event, 'attachment')">
+                        <div onclick="document.getElementById('payment-attachment-input').click()" style="border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#4f46e5'; this.style.background='#eff6ff';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc';">
+                            <i data-lucide="upload-cloud" style="width: 32px; height: 32px; color: #94a3b8; margin-bottom: 8px;"></i>
+                            <div style="font-size: 0.85rem; color: #4f46e5; font-weight: 500;">点击上传随件</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">支持 JPG / Excel / PDF，最大 10MB</div>
+                        </div>
+                        <div id="payment-attachment-list" style="margin-top: 12px; max-height: 120px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding: 16px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                <button onclick="closePaymentApplicationModal()" style="height: 36px; padding: 0 20px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">取消</button>
+                <button onclick="submitPaymentApplication()" style="height: 36px; padding: 0 20px; background: #4f46e5; border: none; color: white; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+                    提交申请
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('show');
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// 关闭付款申请弹窗
+function closePaymentApplicationModal() {
+    const modal = document.getElementById('payment-application-modal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+    // 清空已上传的文件列表
+    window.paymentInvoiceFiles = [];
+    window.paymentAttachmentFiles = [];
+}
+
+// 切换付款申请附件标签页
+function switchPaymentAttachmentTab(tab) {
+    const tabInvoice = document.getElementById('payment-tab-invoice');
+    const tabAttachment = document.getElementById('payment-tab-attachment');
+    const panelInvoice = document.getElementById('payment-invoice-panel');
+    const panelAttachment = document.getElementById('payment-attachment-panel');
+
+    if (tab === 'invoice') {
+        tabInvoice.style.borderBottom = '2px solid #4f46e5';
+        tabInvoice.style.color = '#4f46e5';
+        tabInvoice.style.fontWeight = '500';
+        tabAttachment.style.borderBottom = 'none';
+        tabAttachment.style.color = '#64748b';
+        tabAttachment.style.fontWeight = 'normal';
+        panelInvoice.style.display = 'block';
+        panelAttachment.style.display = 'none';
+    } else {
+        tabAttachment.style.borderBottom = '2px solid #4f46e5';
+        tabAttachment.style.color = '#4f46e5';
+        tabAttachment.style.fontWeight = '500';
+        tabInvoice.style.borderBottom = 'none';
+        tabInvoice.style.color = '#64748b';
+        tabInvoice.style.fontWeight = 'normal';
+        panelAttachment.style.display = 'block';
+        panelInvoice.style.display = 'none';
+    }
+}
+
+// 处理付款申请附件上传
+function handlePaymentFileUpload(event, type) {
+    const files = event.target.files;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf', '.xls', '.xlsx'];
+
+    const targetArray = type === 'invoice' ? window.paymentInvoiceFiles : window.paymentAttachmentFiles;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        // 验证文件格式
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            alert('不支持的文件格式：' + file.name + '\n仅支持 JPG、PNG、PDF、Excel 格式');
+            continue;
+        }
+
+        // 验证文件大小（最大10MB）
+        if (file.size > 10 * 1024 * 1024) {
+            alert('文件过大：' + file.name + '\n最大支持 10MB');
+            continue;
+        }
+
+        // 添加到已上传列表
+        targetArray.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file,
+            id: Date.now() + '_' + i
+        });
+    }
+
+    // 渲染文件列表
+    renderPaymentFileList(type);
+
+    // 清空input以便可以重复选择同一文件
+    event.target.value = '';
+}
+
+// 渲染付款申请文件列表
+function renderPaymentFileList(type) {
+    const listContainer = document.getElementById(type === 'invoice' ? 'payment-invoice-list' : 'payment-attachment-list');
+    const countSpan = document.getElementById(type === 'invoice' ? 'payment-invoice-count' : 'payment-attachment-count');
+    const files = type === 'invoice' ? window.paymentInvoiceFiles : window.paymentAttachmentFiles;
+
+    if (!listContainer) return;
+
+    // 更新附件计数
+    if (countSpan) {
+        countSpan.textContent = files.length;
+    }
+
+    if (files.length === 0) {
+        listContainer.innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    files.forEach((file) => {
+        const icon = getFileIcon(file.name);
+        const iconColor = getFileIconColor(file.name);
+        html += `
+            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f8fafc; border-radius: 6px; margin-bottom: 6px; font-size: 0.8rem; border: 1px solid #e2e8f0;">
+                <i data-lucide="${icon}" style="width: 16px; height: 16px; color: ${iconColor}; flex-shrink: 0;"></i>
+                <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1e293b;" title="${file.name}">${file.name}</span>
+                <span style="color: #94a3b8; flex-shrink: 0; font-size: 0.75rem;">${formatFileSize(file.size)}</span>
+                <button onclick="removePaymentFile('${file.id}', '${type}')" style="border: none; background: #fee2e2; cursor: pointer; padding: 4px; border-radius: 4px; display: flex; align-items: center;">
+                    <i data-lucide="trash-2" style="width: 12px; height: 12px; color: #ef4444;"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// 删除付款申请附件
+function removePaymentFile(fileId, type) {
+    if (type === 'invoice') {
+        window.paymentInvoiceFiles = window.paymentInvoiceFiles.filter(f => f.id !== fileId);
+    } else {
+        window.paymentAttachmentFiles = window.paymentAttachmentFiles.filter(f => f.id !== fileId);
+    }
+    renderPaymentFileList(type);
+}
+
+// 提交付款申请
+function submitPaymentApplication() {
+    const invoiceCount = window.paymentInvoiceFiles.length;
+    const attachmentCount = window.paymentAttachmentFiles.length;
+
+    alert(`付款申请已提交！\n发票文件：${invoiceCount} 个\n随件：${attachmentCount} 个`);
+    closePaymentApplicationModal();
+}
+
+// ==================== AI对账弹窗及附件上传功能 ====================
+
+// 存储AI对账的附件
+window.aiReconciliationFiles = [];
+window.currentReconciliationNo = '';
+
+// 显示AI对账弹窗
+function showAIReconciliationModal(reconciliationNo) {
+    window.currentReconciliationNo = reconciliationNo || '';
+    window.aiReconciliationFiles = [];
+
+    let modal = document.getElementById('ai-reconciliation-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'ai-reconciliation-modal';
+        modal.className = 'modal-overlay';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div class="modal-container" style="width: 600px; max-width: 95vw; max-height: 80vh; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom: none; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="brain" style="width: 24px; height: 24px; color: white;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.1rem; font-weight: 600; color: white;">AI 智能对账</div>
+                        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">对账单号: ${reconciliationNo || '新建对账'}</div>
+                    </div>
+                </div>
+                <button onclick="closeAIReconciliationModal()" style="border: none; background: rgba(255,255,255,0.2); cursor: pointer; padding: 8px; border-radius: 8px;">
+                    <i data-lucide="x" style="width: 18px; height: 18px; color: white;"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="modal-content" style="flex-grow: 1; padding: 24px; overflow-y: auto; background: #f8fafc;">
+                <!-- 说明区域 -->
+                <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: flex-start; gap: 12px;">
+                        <i data-lucide="info" style="width: 20px; height: 20px; color: #3b82f6; flex-shrink: 0; margin-top: 2px;"></i>
+                        <div style="font-size: 0.85rem; color: #1e40af; line-height: 1.5;">
+                            上传对账单文件，AI将自动识别并与系统数据进行比对，帮助您快速完成对账工作。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 上传区域 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white;">
+                    <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="file-up" style="width: 16px; height: 16px; color: #10b981;"></i>
+                            <span style="font-size: 0.85rem; font-weight: 500; color: #1e293b;">上传对账文件</span>
+                        </div>
+                        <span id="ai-file-count" style="font-size: 0.75rem; color: #64748b;">已上传 0 个文件</span>
+                    </div>
+                    
+                    <div style="padding: 20px;">
+                        <input type="file" id="ai-reconciliation-input" multiple accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx" style="display: none;" onchange="handleAIReconciliationUpload(event)">
+                        <div onclick="document.getElementById('ai-reconciliation-input').click()" style="border: 2px dashed #cbd5e1; background: #fafafa; border-radius: 8px; padding: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#10b981'; this.style.background='#f0fdf4';" onmouseout="this.style.borderColor='#cbd5e1'; this.style.background='#fafafa';">
+                            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                                <i data-lucide="upload" style="width: 28px; height: 28px; color: white;"></i>
+                            </div>
+                            <div style="font-size: 0.9rem; color: #1e293b; font-weight: 500; margin-bottom: 4px;">点击或拖拽文件到此处</div>
+                            <div style="font-size: 0.8rem; color: #64748b;">支持 JPG / Excel / PDF，最大 10MB</div>
+                        </div>
+                        
+                        <!-- 已上传文件列表 -->
+                        <div id="ai-reconciliation-file-list" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white;">
+                <div style="font-size: 0.8rem; color: #64748b;">
+                    <i data-lucide="zap" style="width: 14px; height: 14px; display: inline; vertical-align: middle; color: #f59e0b;"></i>
+                    AI处理通常需要10-30秒
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button onclick="closeAIReconciliationModal()" style="height: 40px; padding: 0 20px; background: white; border: 1px solid #e2e8f0; color: #64748b; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">取消</button>
+                    <button onclick="startAIReconciliation()" style="height: 40px; padding: 0 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; color: white; border-radius: 8px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                        <i data-lucide="sparkles" style="width: 16px; height: 16px;"></i>
+                        开始AI对账
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('show');
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// 关闭AI对账弹窗
+function closeAIReconciliationModal() {
+    const modal = document.getElementById('ai-reconciliation-modal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+    window.aiReconciliationFiles = [];
+}
+
+// 处理AI对账附件上传
+function handleAIReconciliationUpload(event) {
+    const files = event.target.files;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf', '.xls', '.xlsx'];
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        // 验证文件格式
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            alert('不支持的文件格式：' + file.name + '\n仅支持 JPG、PNG、PDF、Excel 格式');
+            continue;
+        }
+
+        // 验证文件大小（最大10MB）
+        if (file.size > 10 * 1024 * 1024) {
+            alert('文件过大：' + file.name + '\n最大支持 10MB');
+            continue;
+        }
+
+        // 添加到已上传列表
+        window.aiReconciliationFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file,
+            id: Date.now() + '_' + i
+        });
+    }
+
+    // 渲染文件列表
+    renderAIReconciliationFileList();
+
+    // 清空input以便可以重复选择同一文件
+    event.target.value = '';
+}
+
+// 渲染AI对账文件列表
+function renderAIReconciliationFileList() {
+    const listContainer = document.getElementById('ai-reconciliation-file-list');
+    const countSpan = document.getElementById('ai-file-count');
+
+    if (!listContainer) return;
+
+    // 更新附件计数
+    if (countSpan) {
+        countSpan.textContent = `已上传 ${window.aiReconciliationFiles.length} 个文件`;
+    }
+
+    if (window.aiReconciliationFiles.length === 0) {
+        listContainer.innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    window.aiReconciliationFiles.forEach((file) => {
+        const icon = getFileIcon(file.name);
+        const iconColor = getFileIconColor(file.name);
+        html += `
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                <div style="width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
+                    <i data-lucide="${icon}" style="width: 18px; height: 18px; color: ${iconColor};"></i>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 0.85rem; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">${file.name}</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">${formatFileSize(file.size)}</div>
+                </div>
+                <button onclick="removeAIReconciliationFile('${file.id}')" style="border: none; background: #fee2e2; cursor: pointer; padding: 6px; border-radius: 6px; display: flex; align-items: center;">
+                    <i data-lucide="trash-2" style="width: 14px; height: 14px; color: #ef4444;"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// 删除AI对账附件
+function removeAIReconciliationFile(fileId) {
+    window.aiReconciliationFiles = window.aiReconciliationFiles.filter(f => f.id !== fileId);
+    renderAIReconciliationFileList();
+}
+
+// 开始AI对账
+function startAIReconciliation() {
+    if (window.aiReconciliationFiles.length === 0) {
+        alert('请先上传对账文件！');
+        return;
+    }
+
+    const fileCount = window.aiReconciliationFiles.length;
+    const reconciliationNo = window.currentReconciliationNo || '新建对账';
+
+    alert(`AI对账已启动！\n\n对账单号：${reconciliationNo}\n已上传文件：${fileCount} 个\n\nAI正在处理中，请稍候...`);
+    closeAIReconciliationModal();
+}
+
+// ==================== 开票申请附件上传功能 ====================
+
+// 存储开票申请的附件
+window.invoiceAttachmentFiles = [];
+
+// 处理开票申请附件上传
+function handleInvoiceAttachmentUpload(event) {
+    const files = event.target.files;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf', '.xls', '.xlsx'];
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        // 验证文件格式
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            alert('不支持的文件格式：' + file.name + '\n仅支持 JPG、PNG、PDF、Excel 格式');
+            continue;
+        }
+
+        // 验证文件大小（最大10MB）
+        if (file.size > 10 * 1024 * 1024) {
+            alert('文件过大：' + file.name + '\n最大支持 10MB');
+            continue;
+        }
+
+        // 添加到已上传列表
+        window.invoiceAttachmentFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file,
+            id: Date.now() + '_' + i
+        });
+    }
+
+    // 渲染文件列表
+    renderInvoiceAttachmentList();
+
+    // 清空input以便可以重复选择同一文件
+    event.target.value = '';
+}
+
+// 渲染开票申请文件列表
+function renderInvoiceAttachmentList() {
+    const listContainer = document.getElementById('invoice-attachment-list');
+    const countSpan = document.getElementById('invoice-attachment-count');
+
+    if (!listContainer) return;
+
+    // 更新附件计数
+    if (countSpan) {
+        if (window.invoiceAttachmentFiles.length > 0) {
+            countSpan.textContent = `(${window.invoiceAttachmentFiles.length}个文件)`;
+        } else {
+            countSpan.textContent = '';
+        }
+    }
+
+    if (window.invoiceAttachmentFiles.length === 0) {
+        listContainer.innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    window.invoiceAttachmentFiles.forEach((file) => {
+        const icon = getFileIcon(file.name);
+        const iconColor = getFileIconColor(file.name);
+        html += `
+            <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: #f8fafc; border-radius: 4px; border: 1px solid #e2e8f0; font-size: 0.75rem;">
+                <i data-lucide="${icon}" style="width: 14px; height: 14px; color: ${iconColor};"></i>
+                <span style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1e293b;" title="${file.name}">${file.name}</span>
+                <span style="color: #94a3b8;">${formatFileSize(file.size)}</span>
+                <button onclick="removeInvoiceAttachmentFile('${file.id}')" style="border: none; background: transparent; cursor: pointer; padding: 2px; display: flex; align-items: center;">
+                    <i data-lucide="x" style="width: 12px; height: 12px; color: #ef4444;"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// 删除开票申请附件
+function removeInvoiceAttachmentFile(fileId) {
+    window.invoiceAttachmentFiles = window.invoiceAttachmentFiles.filter(f => f.id !== fileId);
+    renderInvoiceAttachmentList();
+}
+
+// ==================== 油卡信息导入文件上传功能 ====================
+
+// 存储油卡导入的文件
+window.fuelCardImportFiles = [];
+
+// 处理油卡文件上传
+function handleFuelCardFileUpload(event) {
+    const files = event.target.files;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf', '.xls', '.xlsx'];
+
+    let uploadedCount = 0;
+    let fileNames = [];
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+        // 验证文件格式
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            alert('不支持的文件格式：' + file.name + '\n仅支持 JPG、PNG、PDF、Excel 格式');
+            continue;
+        }
+
+        // 验证文件大小（最大10MB）
+        if (file.size > 10 * 1024 * 1024) {
+            alert('文件过大：' + file.name + '\n最大支持 10MB');
+            continue;
+        }
+
+        // 添加到已上传列表
+        window.fuelCardImportFiles.push({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            file: file,
+            id: Date.now() + '_' + i
+        });
+
+        uploadedCount++;
+        fileNames.push(file.name);
+    }
+
+    // 清空input以便可以重复选择同一文件
+    event.target.value = '';
+
+    // 显示上传成功提示
+    if (uploadedCount > 0) {
+        const isExcel = fileNames.some(name => name.toLowerCase().endsWith('.xls') || name.toLowerCase().endsWith('.xlsx'));
+
+        if (isExcel) {
+            alert(`已选择 ${uploadedCount} 个Excel文件：\n${fileNames.join('\n')}\n\n系统将自动解析Excel数据填充到表格中。`);
+        } else {
+            alert(`已上传 ${uploadedCount} 个文件：\n${fileNames.join('\n')}\n\n支持的文件格式：JPG、PNG、PDF、Excel`);
+        }
+    }
+}
+
 
 // Helper function for Bank-Enterprise Direct Config tab switching
 function toggleBankConfigTab(tab) {
@@ -9790,7 +10545,8 @@ window.showFuelCardImportModal = function () {
         <div class="modal-container" style="width: 90vw; max-width: 1200px; height: 85vh; display: flex; flex-direction: column; background: #f8fafc; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
             <!-- Toolbar -->
             <div style="background: #eef2ff; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                <button class="action-btn-classic" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                <input type="file" id="fuel-card-import-input" accept=".jpg,.jpeg,.png,.pdf,.xls,.xlsx" style="display: none;" onchange="handleFuelCardFileUpload(event)">
+                <button onclick="document.getElementById('fuel-card-import-input').click()" class="action-btn-classic" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
                     <i data-lucide="file-spreadsheet" style="width: 14px; height: 14px;"></i> 导入油卡
                 </button>
                 <button class="action-btn-classic" onclick="window.removeDuplicateFuelCards()" style="background: #f0fdf4; border: 1px solid #22c55e; color: #15803d; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
