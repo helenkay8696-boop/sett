@@ -7630,6 +7630,7 @@ function renderTabs(activeTab) {
                                     <button onclick="window.jumpToStatementCreationFromExpensePanel()" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">生成账单</button>
                                     <button onclick="window.batchModifyRow('payable')" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量修改</button>
                                     <button onclick="window.batchDeleteRow('payable')" style="padding: 4px 10px; background: white; color: #dc2626; border: 1px solid #fecaca; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量删除</button>
+                                    <button onclick="window.batchAllocateExpense('payable')" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">批量分摊</button>
                                     <button onclick="window.openFeeTemplateModal([], 'payable')" style="padding: 4px 10px; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 2px; font-size: 0.75rem; cursor: pointer;">费用模版</button>
                                 </div>
                             </div>
@@ -9820,7 +9821,12 @@ function startAIReconciliation() {
     const fileCount = window.aiReconciliationFiles.length;
     const reconciliationNo = window.currentReconciliationNo || '新建对账';
 
-    alert(`AI对账已启动！\n\n对账单号：${reconciliationNo}\n已上传文件：${fileCount} 个\n\nAI正在处理中，请稍候...`);
+    alert(`AI对账已启动！
+
+对账单号：${reconciliationNo}
+已上传文件：${fileCount} 个
+
+AI正在处理中，请稍候...`);
     closeAIReconciliationModal();
 }
 
@@ -9968,9 +9974,9 @@ function handleFuelCardFileUpload(event) {
         const isExcel = fileNames.some(name => name.toLowerCase().endsWith('.xls') || name.toLowerCase().endsWith('.xlsx'));
 
         if (isExcel) {
-            alert(`已选择 ${uploadedCount} 个Excel文件：\n${fileNames.join('\n')}\n\n系统将自动解析Excel数据填充到表格中。`);
+            alert(`已选择 ${uploadedCount} 个Excel文件:\n${fileNames.join('\n')}\n\n系统将自动解析Excel数据填充到表格中.`);
         } else {
-            alert(`已上传 ${uploadedCount} 个文件：\n${fileNames.join('\n')}\n\n支持的文件格式：JPG、PNG、PDF、Excel`);
+            alert(`已上传 ${uploadedCount} 个文件:\n${fileNames.join('\n')}\n\n支持的文件格式：JPG、PNG、PDF、Excel`);
         }
     }
 }
@@ -14308,6 +14314,167 @@ window.batchDeleteRow = function (type) {
         const typeName = type === 'receivable' ? '应收' : '应付';
         alert(`批量删除${typeName}成功`);
     }
+};
+
+// ==================== 批量分摊功能 ====================
+window.batchAllocateExpense = function (type) {
+    const tbodyId = type === 'receivable' ? 'expense-receivable-tbody' : 'expense-payable-tbody';
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+
+    const checkedBoxes = tbody.querySelectorAll('input[type="checkbox"]:checked');
+    if (checkedBoxes.length === 0) {
+        alert('请先勾选需要批量分摊的数据');
+        return;
+    }
+
+    // 收集勾选的数据
+    const selectedData = [];
+    checkedBoxes.forEach((checkbox, index) => {
+        const row = checkbox.closest('tr');
+        if (row) {
+            // 获取行数据
+            const billingDate = row.cells[8]?.querySelector('input')?.value || row.cells[8]?.textContent?.trim() || '-';
+            const settlementCompany = row.cells[3]?.querySelector('select')?.value || row.cells[3]?.textContent?.trim() || '-';
+            const fee = row.cells[4]?.querySelector('select')?.value || row.cells[4]?.textContent?.trim() || '-';
+            const amount = row.cells[5]?.querySelector('input')?.value || row.cells[5]?.textContent?.trim() || '0.00';
+            const currency = row.cells[9]?.querySelector('select')?.value || row.cells[9]?.textContent?.trim() || 'CNY';
+            
+            selectedData.push({
+                index: index + 1,
+                billingDate,
+                settlementCompany,
+                fee,
+                amount,
+                currency
+            });
+        }
+    });
+
+    // 打开批量分摊弹窗
+    openBatchAllocateModal(selectedData, type);
+};
+
+function openBatchAllocateModal(data, type) {
+    // 检查弹窗是否已存在
+    let modal = document.getElementById('batch-allocate-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'batch-allocate-modal';
+        modal.className = 'modal-overlay';
+        document.body.appendChild(modal);
+    }
+
+    // 生成表格行
+    let tableRows = '';
+    if (data.length > 0) {
+        data.forEach(item => {
+            tableRows += `
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 10px 12px; text-align: center; font-size: 0.8rem; color: #475569;">${item.index}</td>
+                    <td style="padding: 10px 12px; font-size: 0.8rem; color: #334155;">${item.billingDate}</td>
+                    <td style="padding: 10px 12px; font-size: 0.8rem; color: #334155;">${item.settlementCompany}</td>
+                    <td style="padding: 10px 12px; font-size: 0.8rem; color: #334155;">${item.fee}</td>
+                    <td style="padding: 10px 12px; font-size: 0.8rem; color: #334155; text-align: right;">${item.amount}</td>
+                    <td style="padding: 10px 12px; font-size: 0.8rem; color: #334155;">${item.currency}</td>
+                </tr>
+            `;
+        });
+    } else {
+        tableRows = `
+            <tr>
+                <td colspan="6" style="padding: 60px 0; text-align: center; color: #94a3b8;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <i data-lucide="search-x" style="width: 48px; height: 48px; opacity: 0.4;"></i>
+                        <span style="font-size: 0.85rem;">暂无数据</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    modal.innerHTML = `
+        <div class="modal-container" style="width: 800px; height: auto; max-height: 80vh; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div class="modal-header" style="padding: 12px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white;">
+                <span style="font-weight: 600; color: #1e293b; font-size: 0.95rem;">批量分摊</span>
+                <div class="modal-actions" style="display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="maximize-2" class="header-icon" style="width: 16px; height: 16px; color: #94a3b8; cursor: pointer;"></i>
+                    <i data-lucide="x" class="header-icon" style="width: 16px; height: 16px; color: #94a3b8; cursor: pointer;" onclick="closeBatchAllocateModal()"></i>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div style="padding: 20px; flex: 1; overflow: auto;">
+                <!-- 分摊方式选择 -->
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                    <label style="font-size: 0.85rem; color: #475569; white-space: nowrap;">请选择分摊方式</label>
+                    <select id="allocate-method" style="width: 150px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; font-size: 0.85rem; color: #334155; outline: none;">
+                        <option value="none">不分摊</option>
+                        <option value="ticket">按票分摊</option>
+                        <option value="billingWeight">按计费重分摊</option>
+                        <option value="weight">按重量分摊</option>
+                        <option value="volume">按体积分摊</option>
+                        <option value="quantity">按件数分摊</option>
+                        <option value="amount">按金额分摊</option>
+                        <option value="custom">自定义分摊</option>
+                    </select>
+                </div>
+
+                <!-- 数据表格 -->
+                <div style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th style="padding: 10px 12px; text-align: center; font-size: 0.8rem; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0; width: 50px;">#</th>
+                                <th style="padding: 10px 12px; text-align: left; font-size: 0.8rem; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0;">计费日期</th>
+                                <th style="padding: 10px 12px; text-align: left; font-size: 0.8rem; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0;">结算公司</th>
+                                <th style="padding: 10px 12px; text-align: left; font-size: 0.8rem; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0;">费用</th>
+                                <th style="padding: 10px 12px; text-align: right; font-size: 0.8rem; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0;">金额</th>
+                                <th style="padding: 10px 12px; text-align: left; font-size: 0.8rem; font-weight: 500; color: #64748b; border-bottom: 1px solid #e2e8f0;">币制</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batch-allocate-tbody">
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding: 12px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
+                <button onclick="closeBatchAllocateModal()" style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569; font-size: 0.85rem; cursor: pointer;">取消</button>
+                <button onclick="confirmBatchAllocate()" style="height: 32px; padding: 0 16px; background: #3b82f6; border: none; border-radius: 4px; color: white; font-size: 0.85rem; cursor: pointer;">确认分摊</button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    
+    if (window.lucide) window.lucide.createIcons();
+}
+
+window.closeBatchAllocateModal = function () {
+    const modal = document.getElementById('batch-allocate-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+};
+
+window.confirmBatchAllocate = function () {
+    const method = document.getElementById('allocate-method')?.value || 'none';
+    if (method === 'none') {
+        alert('请选择分摊方式');
+        return;
+    }
+    
+    // 执行分摊逻辑
+    alert(`分摊方式：${method}\n分摊操作已完成`);
+    closeBatchAllocateModal();
 };
 
 window.currentFeeTemplates = [];
