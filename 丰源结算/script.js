@@ -37,7 +37,7 @@ const menuData = [
     {
         title: "卡片管理",
         icon: "wallet",
-        items: ["油卡管理", "储值卡管理"]
+        items: ["油卡管理", "储值管理"]
     },
     {
         title: "设置",
@@ -1380,7 +1380,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值卡管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板' || activeTab === '配载费用' || activeTab === '订单回显') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板' || activeTab === '配载费用' || activeTab === '订单回显') {
 
 
         let mainContent = '';
@@ -2361,14 +2361,14 @@ function renderTabs(activeTab) {
                 </div>
                 </div>
             </div>`;
-        } else if (activeTab === '储值卡管理') {
+        } else if (activeTab === '储值管理') {
             mainContent = `
             <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #f8fafc; padding: 24px;">
                 <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <i data-lucide="users" style="width: 24px; height: 24px; color: var(--text-primary);"></i>
-                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">储值卡管理</h2>
+                        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">储值管理</h2>
                     </div>
                     <div style="display: flex; align-items: center; gap: 12px; background: white; padding: 6px 16px 6px 6px; border-radius: 50px; box-shadow: var(--shadow-sm);">
                         <div style="width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.8rem;">管</div>
@@ -2461,9 +2461,9 @@ function renderTabs(activeTab) {
                         <span style="font-size: 0.85rem; color: var(--text-secondary);">共 1,248 个账户</span>
                     </div>
                     
-                    <div style="overflow-x: auto;">
+                    <div style="overflow-x: auto; overflow-y: auto; flex: 1;">
                         <table class="data-table" style="width: 100%;">
-                            <thead>
+                            <thead style="position: sticky; top: 0; z-index: 1;">
                                 <tr style="background: #f8fafc;">
                                     <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">用户信息</th>
                                     <th rowspan="2" style="padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b;">用户ID</th>
@@ -6058,7 +6058,6 @@ function renderTabs(activeTab) {
                              <button style="background: #4f46e5; color: white; border: none; padding: 0 16px; height: 32px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
                                  <i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询
                              </button>
-                             <button style="background: #4f46e5; color: white; border: none; padding: 0 16px; height: 32px; border-radius: 4px; cursor: pointer;">付款报表</button>
                              <div style="flex: 1;"></div>
                              <!-- Action Buttons (List View) -->
                              <button onclick="openPaymentApplicationCreateView()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer;">
@@ -12505,7 +12504,7 @@ window.addConfigField = function () {
         <div class="config-field-item" style="display: flex; align-items: center; gap: 4px;">
             <button onclick="this.parentElement.remove()" style="width: 20px; height: 20px; padding: 0; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; flex-shrink: 0;" title="删除此字段">−</button>
             <select style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; background: white; min-width: 0; cursor: pointer;">
-                <option value="">请选择字段</option>
+                <option value="">请选择费用</option>
                 <option value="保险费">保险费</option>
                 <option value="包装费">包装费</option>
                 <option value="仓储费">仓储费</option>
@@ -14339,7 +14338,7 @@ window.batchAllocateExpense = function (type) {
             const fee = row.cells[4]?.querySelector('select')?.value || row.cells[4]?.textContent?.trim() || '-';
             const amount = row.cells[5]?.querySelector('input')?.value || row.cells[5]?.textContent?.trim() || '0.00';
             const currency = row.cells[9]?.querySelector('select')?.value || row.cells[9]?.textContent?.trim() || 'CNY';
-            
+
             selectedData.push({
                 index: index + 1,
                 billingDate,
@@ -14453,7 +14452,7 @@ function openBatchAllocateModal(data, type) {
     modal.style.display = 'flex';
     modal.style.alignItems = 'center';
     modal.style.justifyContent = 'center';
-    
+
     if (window.lucide) window.lucide.createIcons();
 }
 
@@ -14471,7 +14470,7 @@ window.confirmBatchAllocate = function () {
         alert('请选择分摊方式');
         return;
     }
-    
+
     // 执行分摊逻辑
     alert(`分摊方式：${method}\n分摊操作已完成`);
     closeBatchAllocateModal();
