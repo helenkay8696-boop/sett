@@ -1603,14 +1603,75 @@ function renderTabs(activeTab) {
                 </div>
             `;
         } else if (activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账') {
+            const isSidebarTab = activeTab === '应收对账' || activeTab === '应付对账';
+            const sidebarTitle = activeTab === '应付对账' ? '供应商列表' : '客户列表';
+            const sidebarSearchPlaceholder = activeTab === '应付对账' ? '搜索供应商' : '搜索客户名称';
+
+            const sidebarHtml = isSidebarTab ? `
+                <div class="customer-sidebar">
+                    <div class="sidebar-header">${sidebarTitle}</div>
+                    <div class="sidebar-search">
+                        <div class="search-input-group">
+                            <input type="text" placeholder="${sidebarSearchPlaceholder}">
+                                <i data-lucide="search" class="search-icon"></i>
+                        </div>
+                        <button class="more-btn" style="white-space: nowrap;">更多</button>
+                    </div>
+                    <div class="customer-list">
+                        <div class="customer-item active" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">全部 (94)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">萨姆达拉 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">深圳市远航达国际货运代理有限公司 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">深圳市路路通运输有限公司 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">深圳市好运来货运代理有限公司 (1)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">深圳运物云物流科技有限公司 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">贝塔测试科技有限公司 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">拖车公司 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">全部多个 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">22333344 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">杭州娃哈哈集团有限公司 (0)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">马士基（中国）航运有限公司深圳分公司 (1)</span>
+                        </div>
+                        <div class="customer-item" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%;">
+                            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">欣旺达新能源动力汽车有限公司 (0)</span>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+
             mainContent = `
-                <div class="statement-main" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
-                    <!-- List View Wrapper -->
-                    <div id="statement-list-view" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
+                <div class="statement-main" style="display: flex; flex-direction: row; width: 100%; height: 100%;">
+                    ${sidebarHtml}
+                    <!-- Right Main Area -->
+                    <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white;">
+                        <!-- List View Wrapper -->
+                        <div id="statement-list-view" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
                         <div style="width: 100%; border-bottom: 1px solid #e2e8f0; background: white; flex-shrink: 0;">
                         <div class="internal-tabs">
-                            <div class="internal-tab active" onclick="switchInternalTab('reminder')">对账提醒 <span class="badge">1</span></div>
-                            <div class="internal-tab" onclick="switchInternalTab('list')">对账单 <span class="badge">5</span></div>
+                            <div class="internal-tab active" onclick="switchInternalTab('reminder')">对账提醒 <span class="badge" id="badge-reminder-count">0</span></div>
+                            <div class="internal-tab" onclick="switchInternalTab('list')">对账单 <span class="badge" id="badge-list-count">0</span></div>
                         </div>
 
                         <!-- Reconciliation Reminder Content (Default) -->
@@ -1618,9 +1679,16 @@ function renderTabs(activeTab) {
                             <div class="internal-filter-bar">
                                 <div class="internal-input-group">
                                     <label>公司</label>
-                                    <div class="select-box" style="width: 120px;">
-                                        <span>请选择</span>
-                                        <i data-lucide="chevron-down"></i>
+                                    <div class="relative-container">
+                                        <div class="select-box" style="width: 280px; height: 34px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                                            <span id="reconciliation-reminder-company" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;" title="请选择">请选择</span>
+                                            <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                        </div>
+                                        <div class="dropdown-menu-custom hidden" style="width: 280px; max-height: 250px; overflow-y: auto;">
+                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="selectOption('reconciliation-reminder-company', '深圳市远航达国际货运代理有限公司')">深圳市远航达国际货运代理有限公司</div>
+                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="马士基（中国）航运有限公司深圳分公司" onclick="selectOption('reconciliation-reminder-company', '马士基（中国）航运有限公司深圳分公司')">马士基（中国）航运有限公司深圳分公司</div>
+                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="欣旺达新能源动力汽车有限公司" onclick="selectOption('reconciliation-reminder-company', '欣旺达新能源动力汽车有限公司')">欣旺达新能源动力汽车有限公司</div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="internal-input-group">
@@ -1779,7 +1847,7 @@ function renderTabs(activeTab) {
                                 <table class="statement-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 40px; text-align: center;"><input type="checkbox" /></th>
+                                            <th style="width: 40px; text-align: center;"><input type="checkbox" id="statement-check-all" onchange="window.toggleAllStatementCheckboxes(this)" /></th>
                                             <th style="width: 40px; text-align: center;">#</th>
                                             <th>客户确认</th>
                                             <th>收付类型</th>
@@ -1796,7 +1864,7 @@ function renderTabs(activeTab) {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td style="text-align: center;"><input type="checkbox"></td>
+                                            <td style="text-align: center;"><input type="checkbox" class="statement-row-checkbox" onchange="window.updateStatementCheckAllState()"></td>
                                             <td style="text-align: center;">1</td>
                                             <td>已确认</td>
                                             <td>AR</td>
@@ -1811,7 +1879,7 @@ function renderTabs(activeTab) {
                                             <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a> <a href="#" onclick="showAIReconciliationModal('DZ2025120001'); return false;" style="color: #10b981; text-decoration: none; margin-left: 8px;">AI对账</a></td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align: center;"><input type="checkbox"></td>
+                                            <td style="text-align: center;"><input type="checkbox" class="statement-row-checkbox" onchange="window.updateStatementCheckAllState()"></td>
                                             <td style="text-align: center;">2</td>
                                             <td>待确认</td>
                                             <td>AR</td>
@@ -1826,7 +1894,7 @@ function renderTabs(activeTab) {
                                             <td style="text-align: center;"><a href="#" style="color: #4f46e5; text-decoration: none;">详情</a> <a href="#" onclick="showAIReconciliationModal('DZ2025120002'); return false;" style="color: #10b981; text-decoration: none; margin-left: 8px;">AI对账</a></td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align: center;"><input type="checkbox"></td>
+                                            <td style="text-align: center;"><input type="checkbox" class="statement-row-checkbox" onchange="window.updateStatementCheckAllState()"></td>
                                             <td style="text-align: center;">3</td>
                                             <td>已作废</td>
                                             <td>AR</td>
@@ -1869,7 +1937,17 @@ function renderTabs(activeTab) {
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">结算单位</label>
                                             <div style="flex: 1; display: flex; gap: 8px;">
-                                                <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                                <div class="relative-container" style="flex: 1;">
+                                                    <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                        <span id="create-statement-settlement-unit" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                        <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                                    </div>
+                                                    <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 50;">
+                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="广州市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
+                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="上海市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
+                                                    </div>
+                                                </div>
                                                 <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">NL</div>
                                                 <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">月结</div>
                                             </div>
@@ -1887,14 +1965,14 @@ function renderTabs(activeTab) {
                                          <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">对账方式</label>
                                             <div class="relative-container" style="flex: 1;">
-                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="toggleDropdown(this)">
+                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
                                                     <span id="create-statement-recon-type">按费用对账</span>
                                                     <i data-lucide="chevron-down"></i>
                                                 </div>
-                                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0;">
-                                                    <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type', '按费用对账')">按费用对账</div>
-                                                    <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type', '按账单对账')">按账单对账</div>
-                                                    <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type', '按运单对账')">按运单对账</div>
+                                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0; z-index: 50;">
+                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type', '按费用对账'); event.stopPropagation();">按费用对账</div>
+                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type', '按账单对账'); event.stopPropagation();">按账单对账</div>
+                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type', '按运单对账'); event.stopPropagation();">按运单对账</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1908,18 +1986,28 @@ function renderTabs(activeTab) {
 
                                         <!-- Row 3 -->
                                          <div style="display: flex; align-items: center; gap: 8px;">
-                                            <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">预收次余额</label>
+                                            <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">预收款余额</label>
                                             <div style="flex: 1;"></div>
                                         </div>
                                          <div style="display: flex; align-items: center; gap: 8px;">
-                                            <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">预付次余额</label>
+                                            <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">预付款余额</label>
                                             <div style="flex: 1;"></div>
                                         </div>
 
                                         <!-- Row 4 -->
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">公司抬头</label>
-                                            <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                            <div class="relative-container" style="flex: 1;">
+                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                    <span id="create-statement-company-head" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                    <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                                </div>
+                                                <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 50;">
+                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-company-head', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="马士基（中国）航运有限公司深圳分公司" onclick="window.selectOption('create-statement-company-head', '马士基（中国）航运有限公司深圳分公司'); event.stopPropagation();">马士基（中国）航运有限公司深圳分公司</div>
+                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="欣旺达新能源动力汽车有限公司" onclick="window.selectOption('create-statement-company-head', '欣旺达新能源动力汽车有限公司'); event.stopPropagation();">欣旺达新能源动力汽车有限公司</div>
+                                                </div>
+                                            </div>
                                         </div>
                                          <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">说明</label>
@@ -1931,10 +2019,10 @@ function renderTabs(activeTab) {
                                     <div style="width: 320px; border-left: 1px solid #f1f5f9; padding-left: 20px;">
                                          <div style="margin-bottom: 12px; display: flex; gap: 16px;">
                                             <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b; cursor: pointer;">
-                                                <input type="radio" name="recon-type" /> 按参考凭证号对账
+                                                <input type="radio" name="recon-type" /> 按参考兑换率对账
                                             </label>
                                             <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #64748b; cursor: pointer;">
-                                                <input type="radio" name="recon-type" checked /> 按账单号对账
+                                                <input type="radio" name="recon-type" checked /> 按账单兑换率对账
                                             </label>
                                         </div>
                                          <div style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; margin-bottom: 12px; height: 80px; background: #f8fafc; display: flex; align-items: center; justify-content: center;">
@@ -1947,14 +2035,18 @@ function renderTabs(activeTab) {
 
                                     <!-- Right Column -->
                                     <div style="width: 280px; padding-left: 20px;">
-                                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                            <label style="width: 60px; text-align: right; color: #64748b; font-size: 13px;">银行账户</label>
-                                            <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                         <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px;">
+                                             <label style="width: 60px; text-align: right; color: #64748b; font-size: 13px; line-height: 32px;">银行账户</label>
+                                             <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; display: flex; flex-direction: column;">
+                                                 <div style="padding: 8px 12px; min-height: 50px; color: #cbd5e1; font-size: 13px; background: white; border-bottom: 1px solid #e2e8f0; border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                                                     请选择
+                                                 </div>
+                                                 <div style="padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                                                     <span style="color: #64748b;">已选: 0个账户</span>
+                                                     <a href="#" onclick="window.openBankAccountModal(); return false;" style="color: #3b82f6; text-decoration: none; cursor: pointer;">选择账户</a>
+                                                 </div>
+                                             </div>
                                          </div>
-                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 12px; height: 80px; color: #64748b; font-size: 12px; position: relative;">
-                                            0 个账户
-                                            <a href="#" style="position: absolute; bottom: 12px; right: 12px; color: #4f46e5; text-decoration: none;">选择账户></a>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1967,7 +2059,7 @@ function renderTabs(activeTab) {
                                         <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="fee-type" /> 应付</label>
                                         <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="fee-type" /> 收付</label>
                                      </div>
-                                     <input type="text" placeholder="请输入订单号" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 13px;" />
+                                     <input type="text" placeholder="请输入运单号" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 13px;" />
                                      <span style="font-size: 13px; color: #64748b;">费用名称</span>
                                      <div class="select-box" style="width: 100px; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
                                      <button class="primary-btn" style="height: 32px; padding: 0 12px;">
@@ -1976,7 +2068,7 @@ function renderTabs(activeTab) {
                                      <button class="secondary-btn" style="height: 32px; padding: 0 12px; display: flex; align-items: center; gap: 4px; background: white; border: 1px solid #e2e8f0; color: #64748b;">
                                         更多(1) <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
                                      </button>
-                                      <div style="display: flex; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; background: white; margin-left: auto;">
+                                      <div style="display: flex; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; background: white;">
                                          <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #475569; cursor: pointer;">
                                             <input type="radio" name="display-mode" /> 仅显示已勾选
                                          </label>
@@ -2028,17 +2120,17 @@ function renderTabs(activeTab) {
                                             <td>2023-12-10</td>
                                             <td>已审核</td>
                                             <td>运费</td>
-                                            <td>USD</td>
+                                            <td>CNY</td>
                                             <td>1</td>
                                             <td>500.00</td>
                                             <td>500.00</td>
-                                            <td>3500.00</td>
+                                            <td>500.00</td>
+                                            <td>500.00</td>
                                             <td>2023-12-31</td>
-                                            <td>3500.00</td>
-                                            <td>3500.00</td>
+                                            <td>500.00</td>
+                                            <td>500.00</td>
                                             <td>丰源物流</td>
                                             <td>深圳分公司</td>
-                                            <td>张三</td>
                                             <td>张三</td>
                                         </tr>
                                         <tr>
@@ -2113,7 +2205,7 @@ function renderTabs(activeTab) {
 
                 <!-- Filter Area -->
                 <div class="filter-area" style="padding: 12px 24px; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 12px; background: #fff;">
-                    <div class="persistent-filter-row">
+                    <div class="persistent-filter-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
                         <!-- Date Range -->
                         <div style="display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
                             <div class="select-box-filter" style="width: 95px; height: 32px; border-right: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: #f8fafc; font-size: 0.8rem; cursor: pointer;">
@@ -2364,6 +2456,7 @@ function renderTabs(activeTab) {
                             </tr>
                         </tbody>
                      </table>
+                </div>
                 </div>
                 </div>
             </div>`;
@@ -2947,7 +3040,7 @@ function renderTabs(activeTab) {
                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">申请开票中 (0)</div>
                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已开票 (5)</div>
                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">未核销 (115)</div>
-                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">预收待到账 (0)</div>
+                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">预销待到账 (0)</div>
                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">部分核销 (0)</div>
                             <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已核销 (23)</div>
                         </div>
@@ -2962,10 +3055,9 @@ function renderTabs(activeTab) {
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
                             <div style="display: flex; align-items: center; padding: 0 8px; gap: 4px;">
-                                <input type="text" placeholder="开始日期" style="width: 85px; height: 32px; border: none; font-size: 0.8rem; outline: none;">
+                                <input type="date" placeholder="开始日期" style="width: 105px; height: 32px; border: none; font-size: 0.8rem; outline: none; color: #475569; background: transparent;">
                                 <span style="color: #cbd5e1;">-</span>
-                                <input type="text" placeholder="结束日期" style="width: 85px; height: 32px; border: none; font-size: 0.8rem; outline: none;">
-                                <i data-lucide="calendar" style="width: 14px; height: 14px; color: #cbd5e1;"></i>
+                                <input type="date" placeholder="结束日期" style="width: 105px; height: 32px; border: none; font-size: 0.8rem; outline: none; color: #475569; background: transparent;">
                             </div>
                         </div>
 
@@ -3034,9 +3126,17 @@ function renderTabs(activeTab) {
                         </div>
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <label style="font-size: 0.8rem; color: #475569; font-weight: 500;">费用审核</label>
-                            <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                                <span>请选择</span>
-                                <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                            <div class="relative-container">
+                                <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                    <span id="receivables-fee-audit-status-selected">请选择</span>
+                                    <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                </div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '未提交')">未提交</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '审核中')">审核中</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '审核通过')">审核通过</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '审核驳回')">审核驳回</div>
+                                </div>
                             </div>
                         </div>
 
@@ -3060,7 +3160,7 @@ function renderTabs(activeTab) {
 
 
                      <!-- Table Content Area -->
-                    <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto;">
+                    <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto; min-height: 0;">
                         <table class="statement-table" style="min-width: max-content;">
                             <thead>
                                 <tr>
@@ -3193,11 +3293,11 @@ function renderTabs(activeTab) {
 
                                     <!-- Row 3 -->
                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">预收次余额</label>
+                                        <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">预收款余额</label>
                                         <div style="flex: 1;"></div>
                                     </div>
                                      <div style="display: flex; align-items: center; gap: 8px;">
-                                        <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">预付次余额</label>
+                                        <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">预付款余额</label>
                                         <div style="flex: 1;"></div>
                                     </div>
 
@@ -3232,14 +3332,18 @@ function renderTabs(activeTab) {
 
                                 <!-- Right Column -->
                                 <div style="width: 280px; padding-left: 20px;">
-                                     <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                        <label style="width: 60px; text-align: right; color: #64748b; font-size: 13px;">银行账户</label>
-                                        <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                     <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px;">
+                                         <label style="width: 60px; text-align: right; color: #64748b; font-size: 13px; line-height: 32px;">银行账户</label>
+                                         <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; display: flex; flex-direction: column;">
+                                             <div style="padding: 8px 12px; min-height: 50px; color: #cbd5e1; font-size: 13px; background: white; border-bottom: 1px solid #e2e8f0; border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                                                 请选择
+                                             </div>
+                                             <div style="padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                                                 <span style="color: #64748b;">已选: 0个账户</span>
+                                                 <a href="#" onclick="window.openBankAccountModal(); return false;" style="color: #3b82f6; text-decoration: none; cursor: pointer;">选择账户</a>
+                                             </div>
+                                         </div>
                                      </div>
-                                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 12px; height: 80px; color: #64748b; font-size: 12px; position: relative;">
-                                        0 个账户
-                                        <a href="#" style="position: absolute; bottom: 12px; right: 12px; color: #4f46e5; text-decoration: none;">选择账户></a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3252,7 +3356,7 @@ function renderTabs(activeTab) {
                                     <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="fee-type-receivables" /> 应付</label>
                                     <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="fee-type-receivables" /> 收付</label>
                                  </div>
-                                 <input type="text" placeholder="请输入订单号" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 13px;" />
+                                 <input type="text" placeholder="请输入运单号" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 13px;" />
                                  <span style="font-size: 13px; color: #64748b;">费用名称</span>
                                  <div class="select-box" style="width: 100px; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
                                  <button class="primary-btn" style="height: 32px; padding: 0 12px;">
@@ -3261,7 +3365,7 @@ function renderTabs(activeTab) {
                                  <button class="secondary-btn" style="height: 32px; padding: 0 12px; display: flex; align-items: center; gap: 4px; background: white; border: 1px solid #e2e8f0; color: #64748b;">
                                     更多(1) <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
                                  </button>
-                                  <div style="display: flex; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; background: white; margin-left: auto;">
+                                  <div style="display: flex; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; background: white;">
                                      <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #475569; cursor: pointer;">
                                         <input type="radio" name="display-mode-receivables" /> 仅显示已勾选
                                      </label>
@@ -3340,14 +3444,14 @@ function renderTabs(activeTab) {
                 <div style="border-bottom: 1px solid #e2e8f0; padding: 0 24px;">
                      <div class="status-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569; overflow-x: auto;">
                         <div class="status-tab active" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;">全部</div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;">待付账单 (66)</div>
+                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;">待收账单 (66)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">待对账(月结) (5)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">未收票 (80)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已收票 (2)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">待请款 (64)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已请款 (7)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">未核销 (74)</div>
-                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;">预付待核销 (0)</div>
+                        <div class="status-tab" style="padding: 12px 0; cursor: pointer;">预销待到账 (0)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">部分核销 (0)</div>
                         <div class="status-tab" style="padding: 12px 0; cursor: pointer;">已核销 (8)</div>
                     </div>
@@ -3362,10 +3466,9 @@ function renderTabs(activeTab) {
                             <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                         </div>
                         <div style="display: flex; align-items: center; padding: 0 8px; gap: 4px;">
-                            <input type="text" placeholder="开始日期" style="width: 85px; height: 32px; border: none; font-size: 0.8rem; outline: none;">
+                            <input type="date" placeholder="开始日期" style="width: 105px; height: 32px; border: none; font-size: 0.8rem; outline: none; color: #475569; background: transparent;">
                             <span style="color: #cbd5e1;">-</span>
-                            <input type="text" placeholder="结束日期" style="width: 85px; height: 32px; border: none; font-size: 0.8rem; outline: none;">
-                            <i data-lucide="calendar" style="width: 14px; height: 14px; color: #cbd5e1;"></i>
+                            <input type="date" placeholder="结束日期" style="width: 105px; height: 32px; border: none; font-size: 0.8rem; outline: none; color: #475569; background: transparent;">
                         </div>
                     </div>
 
@@ -3434,9 +3537,17 @@ function renderTabs(activeTab) {
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <label style="font-size: 0.8rem; color: #475569; font-weight: 500;">费用审核</label>
-                        <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <span>请选择</span>
-                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                        <div class="relative-container">
+                            <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                <span id="payables-fee-audit-status-selected">请选择</span>
+                                <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                            </div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '未提交')">未提交</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '审核中')">审核中</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '审核通过')">审核通过</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '审核驳回')">审核驳回</div>
+                            </div>
                         </div>
                     </div>
 
@@ -3452,7 +3563,7 @@ function renderTabs(activeTab) {
                 </div>
 
                  <!-- Table Content Area -->
-                <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto;">
+                <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto; min-height: 0;">
                     <table class="statement-table" style="min-width: max-content;">
                         <thead>
                             <tr>
@@ -3781,16 +3892,16 @@ function renderTabs(activeTab) {
 
                         <!-- Filter Area -->
                         <div class="bill-filter-area" style="padding: 16px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 12px;">
-                            <div class="persistent-filter-row">
+                            <div class="persistent-filter-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px;">
                                 <!-- Date Group -->
                                 <div style="display: flex; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
                                     <div class="select-box-filter" style="width: 110px; height: 32px; border-right: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: #f8fafc; white-space: nowrap; cursor: pointer;">
                                         <span>账单日期</span>
                                         <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
-                                    <input type="text" placeholder="开始日期" style="width: 100px; height: 32px; border: none; padding: 0 8px; font-size: 0.8rem; outline: none;" />
-                                        <span style="display: flex; align-items: center; color: #cbd5e1;">-</span>
-                                        <input type="text" placeholder="结束日期" style="width: 100px; height: 32px; border: none; padding: 0 8px; font-size: 0.8rem; outline: none;" />
+                                    <input type="date" placeholder="开始日期" style="width: 105px; height: 32px; border: none; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569; background: transparent;" />
+                                    <span style="display: flex; align-items: center; color: #cbd5e1;">-</span>
+                                    <input type="date" placeholder="结束日期" style="width: 105px; height: 32px; border: none; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569; background: transparent;" />
                                 </div>
 
                                 <!-- Keyword Input -->
@@ -3844,6 +3955,23 @@ function renderTabs(activeTab) {
                                     </select>
                                 </div>
 
+                                <!-- Fee Audit -->
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 0.8rem; font-weight: bold;">费用审核</label>
+                                    <div class="relative-container">
+                                        <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
+                                            <span id="customer-bill-fee-audit-status-selected">请选择</span>
+                                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                        </div>
+                                        <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
+                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '未提交')">未提交</div>
+                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '审核中')">审核中</div>
+                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '审核通过')">审核通过</div>
+                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '审核驳回')">审核驳回</div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #475569;">
                                     <input type="checkbox" id="bill-only-me" />
                                         <label for="bill-only-me">仅显示我创建的</label>
@@ -3858,13 +3986,16 @@ function renderTabs(activeTab) {
                                 <button id="customer-bill-create-btn" class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: 1px solid #4f46e5; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: 8px; transition: all 0.2s;" onclick="showCreateStatement()">
                                     <i data-lucide="plus" style="width: 14px; height: 14px;"></i> 创建账单
                                 </button>
+                                <button id="customer-bill-generate-stmt-btn" class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: 1px solid #4f46e5; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-left: 8px; transition: all 0.2s;" onclick="showCreateStatement()">
+                                    <i data-lucide="file-text" style="width: 14px; height: 14px;"></i> 生成对账单
+                                </button>
                             </div>
 
                         </div>
 
                         <!-- Empty Table / Content Area -->
-                        <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0;">
-                            <table class="statement-table">
+                        <div class="statement-table-container" style="flex-grow: 1; background: #f8fafc; padding: 0; overflow: auto; min-height: 0;">
+                            <table class="statement-table" style="min-width: max-content;">
                                 <thead>
                                     <tr>
                                         <th style="width: 40px; text-align: center;"><input type="checkbox" onchange="toggleAllCustomerBillCheckboxes(this)" /></th>
@@ -4046,11 +4177,11 @@ function renderTabs(activeTab) {
 
                                         <!-- Row 3 -->
                                          <div style="display: flex; align-items: center; gap: 8px;">
-                                            <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">预收次余额</label>
+                                            <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">预收款余额</label>
                                             <div style="flex: 1;"></div>
                                         </div>
                                          <div style="display: flex; align-items: center; gap: 8px;">
-                                            <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">预付次余额</label>
+                                            <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">预付款余额</label>
                                             <div style="flex: 1;"></div>
                                         </div>
 
@@ -4085,14 +4216,18 @@ function renderTabs(activeTab) {
 
                                     <!-- Right Column -->
                                     <div style="width: 280px; padding-left: 20px;">
-                                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                            <label style="width: 60px; text-align: right; color: #64748b; font-size: 13px;">银行账户</label>
-                                            <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                         <div style="display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px;">
+                                             <label style="width: 60px; text-align: right; color: #64748b; font-size: 13px; line-height: 32px;">银行账户</label>
+                                             <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; display: flex; flex-direction: column;">
+                                                 <div style="padding: 8px 12px; min-height: 50px; color: #cbd5e1; font-size: 13px; background: white; border-bottom: 1px solid #e2e8f0; border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                                                     请选择
+                                                 </div>
+                                                 <div style="padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                                                     <span style="color: #64748b;">已选: 0个账户</span>
+                                                     <a href="#" onclick="window.openBankAccountModal(); return false;" style="color: #3b82f6; text-decoration: none; cursor: pointer;">选择账户</a>
+                                                 </div>
+                                             </div>
                                          </div>
-                                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 12px; height: 80px; color: #64748b; font-size: 12px; position: relative;">
-                                            0 个账户
-                                            <a href="#" style="position: absolute; bottom: 12px; right: 12px; color: #4f46e5; text-decoration: none;">选择账户></a>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -4105,7 +4240,7 @@ function renderTabs(activeTab) {
                                         <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="fee-type-bill" /> 应付</label>
                                         <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;"><input type="radio" name="fee-type-bill" /> 收付</label>
                                      </div>
-                                     <input type="text" placeholder="请输入订单号" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 13px;" />
+                                     <input type="text" placeholder="请输入运单号" style="width: 240px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 13px;" />
                                      <span style="font-size: 13px; color: #64748b;">费用名称</span>
                                      <div class="select-box" style="width: 100px; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
                                      <button class="primary-btn" style="height: 32px; padding: 0 12px;">
@@ -4114,7 +4249,7 @@ function renderTabs(activeTab) {
                                      <button class="secondary-btn" style="height: 32px; padding: 0 12px; display: flex; align-items: center; gap: 4px; background: white; border: 1px solid #e2e8f0; color: #64748b;">
                                         更多(1) <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
                                      </button>
-                                      <div style="display: flex; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; background: white; margin-left: auto;">
+                                      <div style="display: flex; align-items: center; gap: 12px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 12px; height: 32px; background: white;">
                                          <label style="display: flex; align-items: center; gap: 4px; font-size: 13px; color: #475569; cursor: pointer;">
                                             <input type="radio" name="display-mode-bill" /> 仅显示已勾选
                                          </label>
@@ -4859,10 +4994,10 @@ function renderTabs(activeTab) {
                         <div style="display: flex; align-items: center; gap: 8px;">
                              <label style="font-size: 0.8rem; color: #475569; font-weight: 500;">申请时间</label>
                             <div style="display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
-                                <input type="text" placeholder="开始日期" style="width: 85px; height: 32px; border: none; font-size: 0.8rem; outline: none; padding-left: 8px;">
+                                <input type="text" placeholder="开始日期" onfocus="(this.type='date')" onblur="(this.value==''?this.type='text':this.type='date')" style="width: 105px; height: 32px; border: none; font-size: 0.8rem; outline: none; padding-left: 8px;">
                                 <i data-lucide="calendar" style="width: 14px; height: 14px; color: #cbd5e1;"></i>
                                 <span style="color: #cbd5e1; padding: 0 4px;">-</span>
-                                <input type="text" placeholder="结束日期" style="width: 85px; height: 32px; border: none; font-size: 0.8rem; outline: none;">
+                                <input type="text" placeholder="结束日期" onfocus="(this.type='date')" onblur="(this.value==''?this.type='text':this.type='date')" style="width: 105px; height: 32px; border: none; font-size: 0.8rem; outline: none;">
                                 <i data-lucide="calendar" style="width: 14px; height: 14px; color: #cbd5e1; padding-right: 8px;"></i>
                             </div>
                         </div>
@@ -5470,7 +5605,7 @@ function renderTabs(activeTab) {
                         <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; color: #3b82f6; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
                             <i data-lucide="upload" style="width: 14px; height: 14px;"></i> 导入
                         </button>
-                        <button class="primary-btn" style="height: 32px; padding: 0 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
+                        <button class="primary-btn" onclick="addTab('新增费用申请')" style="height: 32px; padding: 0 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
                             <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> 新增
                         </button>
                     </div>
@@ -5758,180 +5893,184 @@ function renderTabs(activeTab) {
             });
         } else if (activeTab === '新增费用申请') {
             document.querySelector('.page-content').innerHTML = `
-                <div class="statement-main" style="width: 100%; height: 100%; display: flex; flex-direction: column; background: #f8fafc;">
-                    
-                    <!-- 顶部标题区 -->
-                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 0.9rem; font-weight: 500; color: #334155;">申请单号:</span>
-                            <span style="font-size: 0.75rem; background: #dbf4e8; color: #10b981; padding: 2px 6px; border-radius: 4px;">自动生成</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button style="height: 30px; padding: 0 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                <div class="expense-apply-detail" style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #f1f5f9; overflow: auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <!-- 顶部操作栏 -->
+                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                        <div style="font-size: 0.85rem; color: #64748b;">单号：自动生成</div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="primary-btn" style="height: 28px; padding: 0 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.8rem;">
                                 <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i> 新增
                             </button>
-                            <button style="height: 30px; padding: 0 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                                <i data-lucide="check-square" style="width: 14px; height: 14px;"></i> 提交审核
+                            <button class="primary-btn" style="height: 28px; padding: 0 12px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.8rem;">
+                                <i data-lucide="save" style="width: 14px; height: 14px;"></i> 保存
                             </button>
-                            <button style="height: 30px; padding: 0 16px; background: white; color: #475569; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.85rem; cursor: pointer;">
-                                暂存草稿
-                            </button>
-                            <button onclick="if(window.removeTab) window.removeTab('新增费用申请'); else if(window.closeTab) window.closeTab('新增费用申请');" style="height: 30px; padding: 0 16px; background: white; color: #475569; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.85rem; cursor: pointer;">
-                                返回
-                            </button>
+                            <button onclick="closeTab('新增费用申请')" style="height: 28px; padding: 0 12px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; cursor: pointer; color: #64748b; font-size: 0.8rem;">返回</button>
                         </div>
                     </div>
 
-                    <!-- 上部表单信息区 -->
-                    <div style="padding: 16px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: grid; grid-template-columns: 320px 340px 300px 150px; justify-content: start; gap: 32px; font-size: 0.85rem;">
-                        <!-- 列1 -->
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="color: #ef4444;">*</span><label style="color: #475569; width: 60px;">结算单位</label>
-                                <select style="flex: 1; height: 30px; border: 1px solid #fecdd3; border-radius: 4px; background: #ffe4e6; color: #64748b; padding: 0 8px;">
-                                    <option>请选择</option>
-                                </select>
-                                <span style="font-size: 0.75rem; color: #94a3b8; border: 1px solid #e2e8f0; padding: 2px 4px; border-radius: 2px;">NL</span>
-                                <span style="font-size: 0.75rem; color: #94a3b8; border: 1px solid #e2e8f0; padding: 2px 4px; border-radius: 2px;">月结</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 60px; text-align: right;">类型</label>
-                                <select style="height: 30px; width: 80px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #64748b;">
-                                    <option>折合</option>
-                                </select>
-                                <select style="height: 30px; width: 80px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #64748b;">
-                                    <option>CNY</option>
-                                </select>
-                                <input type="text" value="0" style="height: 30px; width: 40px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; text-align: center;">
-                                <span style="color: #3b82f6; cursor: pointer;">汇率</span>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 8px;">
-                                <label style="color: #475569; width: 60px; text-align: right; margin-top: 6px;">备注</label>
-                                <textarea placeholder="请输入" style="flex: 1; height: 60px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px; resize: none; font-family: inherit; font-size: 0.85rem;"></textarea>
-                            </div>
-                        </div>
+                    <!-- 选项卡导航 -->
+                    <div style="background: white; padding: 0 24px; border-bottom: 1px solid #e2e8f0; display: flex; gap: 32px; flex-shrink: 0;">
+                        <div style="padding: 12px 0; border-bottom: 2px solid #3b82f6; color: #3b82f6; font-size: 0.85rem; font-weight: 500; cursor: pointer;">基本信息</div>
+                        <div style="padding: 12px 0; color: #64748b; font-size: 0.85rem; cursor: pointer;">电子文档</div>
+                    </div>
 
-                        <!-- 列2 -->
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 90px; text-align: right; white-space: nowrap;">预付款余额</label>
-                                <span style="color: #334155;">-</span>
+                    <div style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+                        <!-- 基本信息板块 -->
+                        <div style="background: white; border-radius: 4px; border: 1px solid #e2e8f0;">
+                            <div style="padding: 8px 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 6px;">
+                                <div style="width: 4px; height: 16px; background: #3b82f6; border-radius: 2px;"></div>
+                                <span style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">基本信息</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 90px; text-align: right; white-space: nowrap;">对方银行账户</label>
-                                <select style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #64748b;">
-                                    <option>请选择</option>
-                                </select>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 8px;">
-                                <div style="width: 90px;"></div>
-                                <div style="flex: 1; height: 60px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px; color: #cbd5e1; font-size: 0.75rem;">
-                                    对方银行账户明细
+                            <div style="padding: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 40px; font-size: 0.8rem;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 85px; text-align: right;"><span style="color: #ef4444;">*</span> 结算单位</label>
+                                    <select style="flex: 1; height: 32px; border: 1px solid #fecaca; background: #fef2f2; border-radius: 4px; padding: 0 8px; color: #94a3b8;">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 85px; text-align: right;"><span style="color: #ef4444;">*</span> 工作单日期</label>
+                                    <div style="flex: 1; position: relative; display: flex; align-items: center;">
+                                        <input type="text" value="2026-02-25" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 32px 0 8px; color: #475569;">
+                                        <i data-lucide="calendar" style="position: absolute; right: 8px; width: 14px; height: 14px; color: #94a3b8;"></i>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 85px; text-align: right;">关联工作单</label>
+                                    <select style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #94a3b8;">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="width: 85px; text-align: right;">关联客户</label>
+                                    <select style="flex: 1; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #94a3b8;">
+                                        <option>请选择</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; grid-column: span 2;">
+                                    <label style="width: 85px; text-align: right;">用途</label>
+                                    <div style="flex: 1; position: relative;">
+                                        <input type="text" placeholder="请输入" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 45px 0 8px;">
+                                        <span style="position: absolute; right: 8px; top: 9px; font-size: 0.7rem; color: #cbd5e1;">0 / 500</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; grid-column: span 3;">
+                                    <label style="width: 85px; text-align: right;"><span style="color: #ef4444;">*</span> 核算对象</label>
+                                    <div style="display: flex; align-items: center; gap: 20px; color: #475569;">
+                                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="target" checked style="margin: 0; accent-color: #3b82f6;"> 个人</label>
+                                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="target" style="margin: 0; accent-color: #3b82f6;"> 部门</label>
+                                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="radio" name="target" style="margin: 0; accent-color: #3b82f6;"> 公司</label>
+                                        <select style="width: 200px; height: 30px; border: 1px solid #fecaca; background: #fef2f2; border-radius: 4px; padding: 0 8px; color: #94a3b8; font-size: 0.75rem;">
+                                            <option>请选择</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 列3 -->
-                        <div style="display: flex; flex-direction: column; gap: 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 70px; text-align: right;">应支付日期</label>
-                                <input type="date" value="2026-02-24" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #334155;">
+                        <!-- 费用明细板块 -->
+                        <div style="background: white; border-radius: 4px; border: 1px solid #e2e8f0; flex: 1; display: flex; flex-direction: column; min-height: 400px; position: relative;">
+                            <div style="padding: 8px 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div style="width: 4px; height: 16px; background: #3b82f6; border-radius: 2px;"></div>
+                                    <span style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">费用明细</span>
+                                </div>
+                                <i data-lucide="settings" style="width: 14px; height: 14px; color: #94a3b8; cursor: pointer;"></i>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 70px; text-align: right;">开票方式</label>
-                                <div style="display: flex; align-items: center; gap: 8px; color: #475569;">
-                                    <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="invoice" checked style="margin:0;"> 先票后付</label>
-                                    <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="invoice" style="margin:0;"> 先行后票</label>
-                                    <label style="display: flex; align-items: center; gap: 4px;"><input type="radio" name="invoice" style="margin:0;"> 不开票</label>
+                            
+                            <!-- 子页签 (应付) -->
+                            <div style="padding: 0 12px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 20px;">
+                                <div style="display: flex; align-items: center; gap: 4px; padding: 10px 0; border-bottom: 2px solid #3b82f6; color: #3b82f6; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+                                    <i data-lucide="minus-circle" style="width: 14px; height: 14px;"></i> 应付
                                 </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 70px; text-align: right;">发票号</label>
-                                <input type="text" placeholder="请输入" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px;">
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="color: #475569; width: 70px; text-align: right;">开票日期</label>
-                                <input type="text" placeholder="选择日期" onfocus="(this.type='date')" onblur="(this.value==''?this.type='text':this.type='date')" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; color: #64748b;">
+
+                            <!-- 表格容器 -->
+                            <div style="flex: 1; overflow: auto; background: white;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap; table-layout: fixed;">
+                                    <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 1;">
+                                        <tr>
+                                            <th style="width: 40px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; text-align: center;">#</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">开票状态</th>
+                                            <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">* 计费日期</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">* 费用</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">* 币种</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">单价</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">* 数量</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">单位</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">* 金额</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">税率</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">税额</th>
+                                            <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">不含税金额</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">汇率</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">折合CNY</th>
+                                            <th style="width: 120px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">有付款需求</th>
+                                            <th style="width: 120px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">核销单号</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">已销数</th>
+                                            <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">未核销余额</th>
+                                            <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">发票号码</th>
+                                            <th style="width: 120px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">费用参考号</th>
+                                            <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">对账单号</th>
+                                            <th style="width: 150px; padding: 8px; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">结算公司</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 空状态占位 -->
+                                        <tr>
+                                            <td colspan="22" style="height: 300px; text-align: center; vertical-align: middle;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #94a3b8;">
+                                                    <div style="position: relative; width: 64px; height: 64px;">
+                                                        <i data-lucide="search" style="width: 64px; height: 64px; opacity: 0.1;"></i>
+                                                        <div style="position: absolute; bottom: 0; right: 0; background: white; border-radius: 50%; padding: 2px;">
+                                                            <i data-lucide="file-x" style="width: 20px; height: 20px; color: #cbd5e1;"></i>
+                                                        </div>
+                                                    </div>
+                                                    <span style="font-size: 0.85rem;">暂无数据</span>
+                                                    <button style="padding: 4px 16px; background: #3b82f6; color: white; border: none; border-radius: 4px; display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 0.8rem;">
+                                                        <i data-lucide="plus" style="width: 14px; height: 14px;"></i> 新增
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
-                        <!-- 列5 附件 -->
-                        <div style="display: flex; flex-direction: column; justify-content: flex-start; gap: 8px; font-size: 0.85rem; font-weight: 500;">
-                            <div style="display: flex; gap: 8px;">
-                                <span style="color: #475569;">发票文件</span>
-                                <span style="color: #3b82f6; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                                    <i data-lucide="paperclip" style="width: 14px; height: 14px;"></i> 附件
-                                </span>
+                        <!-- 分摊明细板块 -->
+                        <div style="background: white; border-radius: 4px; border: 1px solid #e2e8f0; flex-shrink: 0;">
+                            <div style="padding: 8px 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 6px;">
+                                <div style="width: 4px; height: 16px; background: #3b82f6; border-radius: 2px;"></div>
+                                <span style="font-size: 0.85rem; font-weight: 600; color: #1e293b;">分摊明细</span>
+                            </div>
+                            <div style="padding: 12px 24px; border-bottom: 1px solid #f1f5f9; background: #f8fafc;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #1e293b; font-weight: 500; cursor: pointer;">
+                                    <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: #3b82f6;"> 按人数均摊
+                                </label>
+                            </div>
+                            <div style="max-height: 200px; overflow: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                                    <thead style="background: #f8fafc;">
+                                        <tr>
+                                            <th style="width: 120px; padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">姓名</th>
+                                            <th style="width: 120px; padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">币别</th>
+                                            <th style="width: 120px; padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">金额</th>
+                                            <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="4" style="padding: 30px; text-align: center; color: #94a3b8;">
+                                                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                                                    <i data-lucide="ghost" style="width: 32px; height: 32px; opacity: 0.2;"></i>
+                                                    <span>暂无数据</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- 列表与操作区 -->
-                    <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden; height: 30px;">
-                                <input type="text" placeholder="费用单号/关联工作单位/费用参考号" style="width: 280px; height: 100%; border: none; padding: 0 12px; font-size: 0.85rem; outline: none;">
-                                <button style="height: 100%; padding: 0 16px; background: #3b82f6; color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
-                                    <i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询
-                                </button>
-                            </div>
-                            <span style="color: #3b82f6; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">更多(0) <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i></span>
-                            
-                            <div style="width: 1px; height: 16px; background: #e2e8f0; margin: 0 8px;"></div>
-                            
-                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #475569;"><input type="radio" name="filterShow" style="margin:0;"> 仅显示已勾选</label>
-                            <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #475569;"><input type="radio" name="filterShow" checked style="margin:0;"> 全部</label>
-                            <select style="height: 30px; padding: 0 8px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.85rem; color: #475569; cursor: pointer; outline: none;">
-                                <option>按费用明细</option>
-                                <option>按费用单</option>
-                            </select>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px; color: #94a3b8;">
-                            <i data-lucide="settings" style="width: 16px; height: 16px; cursor: pointer;"></i>
-                            <i data-lucide="maximize" style="width: 16px; height: 16px; cursor: pointer;"></i>
-                        </div>
-                    </div>
-
-                    <!-- 数据表格 -->
-                    <div style="flex: 1; overflow: auto; background: white;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; white-space: nowrap;">
-                            <thead style="background: #f8fafc; position: sticky; top: 0; z-index: 1;">
-                                <tr>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 40px;">#</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox"></th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">费用确认</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">费用单号</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">结算单位</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">关联账户</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">计费日期</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">费用</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">原币种</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #64748b; font-weight: 500;">数量</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #64748b; font-weight: 500;">单价</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #64748b; font-weight: 500;">金额</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #64748b; font-weight: 500;">未申请金额</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #64748b; font-weight: 500;">申请付款(原币)</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; color: #64748b; font-weight: 500;">申请付款(折合)</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">工作单日期</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">备注</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">关联工作单号</th>
-                                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; color: #64748b; font-weight: 500;">结算对象</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="19" style="padding: 120px 0; text-align: center; color: #94a3b8;">
-                                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-                                            <div style="position: relative;">
-                                                <i data-lucide="search" style="width: 32px; height: 32px; color: #e2e8f0;"></i>
-                                                <div style="position: absolute; bottom: 0; right: -12px; font-size: 0.6rem; color: #cbd5e1; background: white; padding: 2px;">No Data</div>
-                                            </div>
-                                            <span style="font-size: 0.85rem; color: #94a3b8;">暂无数据</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             `;
@@ -7227,7 +7366,7 @@ function renderTabs(activeTab) {
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="record-customer-weight" oninput="let target = document.getElementById('record-carrier-weight'); if(target) target.value = this.value;" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
@@ -7359,7 +7498,7 @@ function renderTabs(activeTab) {
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
-                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="record-carrier-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
@@ -7712,7 +7851,7 @@ function renderTabs(activeTab) {
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-customer-weight" oninput="let target = document.getElementById('expense-entry-carrier-weight'); if(target) target.value = this.value;" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
@@ -7828,7 +7967,7 @@ function renderTabs(activeTab) {
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
-                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="expense-entry-carrier-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
@@ -7837,7 +7976,7 @@ function renderTabs(activeTab) {
                                                 <!-- Row 2 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">油费:</label>
-                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="expense-entry-oil-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">到付车费:</label>
@@ -7854,7 +7993,7 @@ function renderTabs(activeTab) {
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">拦 标 价:</label>
-                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0; background: #f8fafc; cursor: not-allowed;">
                                                 </div>
                                             </div>
                                         </div>
@@ -8774,6 +8913,27 @@ The above content does NOT show the entire file contents. If you need to view an
 
             // Sync totals for mini tables
             window.updateOrderEntryTotals();
+        }
+
+        // Dynamically update statement badges based on actual table rows
+        if (activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账') {
+            const reminderBadge = document.getElementById('badge-reminder-count');
+            const listBadge = document.getElementById('badge-list-count');
+            const reminderRows = document.querySelectorAll('#reminder-table-wrapper tbody tr');
+            const listRows = document.querySelectorAll('#statement-list-table-wrapper tbody tr');
+
+            if (reminderBadge) {
+                // Determine length, if there is a 'no data' row, we should probably output 0
+                // For simplicity, just count tr elements
+                let count = reminderRows.length;
+                if (count === 1 && reminderRows[0].textContent.includes('暂无数据')) count = 0;
+                reminderBadge.textContent = count;
+            }
+            if (listBadge) {
+                let count = listRows.length;
+                if (count === 1 && listRows[0].textContent.includes('暂无数据')) count = 0;
+                listBadge.textContent = count;
+            }
         }
 
 
@@ -13176,7 +13336,7 @@ window.getFinancialPanelHTML = function () {
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">客户计费重:</label>
-                                <input id="entry-billable-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
+                                <input id="entry-billable-weight" oninput="document.getElementById('vehicle-carrier-weight').value = this.value;" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right;">
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569;">客户单价:</label>
@@ -14503,10 +14663,33 @@ window.saveExpenseEntryAndSyncToPanel = function () {
         });
     }
 
+    // Process fuel card generation for oil fee (新增需联动的油费下发规则)
+    const oilFeeInput = document.getElementById('expense-entry-oil-fee');
+    if (oilFeeInput && oilFeeInput.value && parseFloat(oilFeeInput.value) > 0) {
+        if (!window.fuelCardData) {
+            window.fuelCardData = [];
+        }
+        window.fuelCardData.unshift({
+            sysId: 'FC-FE' + Date.now().toString().slice(-6),
+            waybillNo: 'FE' + Date.now().toString().slice(-6),
+            waybillDate: today,
+            fuelCost: parseFloat(oilFeeInput.value).toFixed(2),
+            plateNo: '-',
+            contactPhone: '-',
+            remarks: '费用录单系统触发生成',
+            status: '待发放'
+        });
+        // 顺便触发一下角标更新函数以实现右上角红点的实时显示
+        if (typeof window.updatePendingFuelCardBadge === 'function') {
+            window.updatePendingFuelCardBadge();
+        }
+        hasData = true;
+    }
+
     if (hasData) {
-        alert('保存成功！数据已同步到费用面板。');
+        alert('保存成功！数据已同步至各项记录表列及油卡下发模块。');
     } else {
-        alert('请填写费用数据后再保存。');
+        alert('请填写明细数据后再保存。');
     }
 };
 
@@ -15460,4 +15643,144 @@ window.switchRedLetterTab = function (element) {
     element.style.borderBottom = '2px solid #4f46e5';
     element.style.color = '#4f46e5';
     element.style.fontWeight = '500';
+};
+
+// Global handlers for check all / uncheck all in Statement list
+window.toggleAllStatementCheckboxes = function (source) {
+    const checkboxes = document.querySelectorAll('.statement-row-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = source.checked;
+    });
+};
+
+window.updateStatementCheckAllState = function () {
+    const checkAll = document.getElementById('statement-check-all');
+    if (!checkAll) return;
+    const checkboxes = document.querySelectorAll('.statement-row-checkbox');
+    if (checkboxes.length === 0) return;
+
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+    checkAll.checked = allChecked;
+    // Set indeterminate state if some but not all are checked
+    checkAll.indeterminate = anyChecked && !allChecked;
+};
+
+// ==========================================
+// Custom Dropdown UI Handlers
+// ==========================================
+
+window.toggleDropdown = function (element) {
+    if (!element) return;
+    const relativeContainer = element.closest('.relative-container');
+    if (!relativeContainer) return;
+
+    // Close all other dropdowns on the page first to emulate native select behavior
+    document.querySelectorAll('.dropdown-menu-custom').forEach(menu => {
+        if (menu !== relativeContainer.querySelector('.dropdown-menu-custom')) {
+            menu.classList.add('hidden');
+        }
+    });
+
+    const menu = relativeContainer.querySelector('.dropdown-menu-custom');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+};
+
+window.selectOption = function (spanId, value) {
+    const span = document.getElementById(spanId);
+    if (span) {
+        span.innerText = value;
+        span.title = value; // update native hover title simultaneously
+    }
+
+    // Close the dropdown immediately after selection
+    if (span) {
+        const btn = span.closest('.relative-container');
+        if (btn) {
+            const menu = btn.querySelector('.dropdown-menu-custom');
+            if (menu) menu.classList.add('hidden');
+        }
+    }
+};
+
+// Global click event to close dropdowns when clicking outside
+document.addEventListener('click', function (event) {
+    // If the click is inside a custom dropdown relative container, ignore it
+    if (event.target.closest('.relative-container')) {
+        return;
+    }
+    // Otherwise forcibly hide all expanded dropdowns
+    document.querySelectorAll('.dropdown-menu-custom').forEach(menu => {
+        menu.classList.add('hidden');
+    });
+});
+
+
+// Append global modal and functions
+window.openBankAccountModal = function () {
+    let modal = document.getElementById('bank-account-selection-modal');
+    if (!modal) {
+        const modalHtml = `
+        <div id="bank-account-selection-modal" class="modal-overlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+            <div style="background: white; border-radius: 8px; width: 800px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+                <div style="padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0; font-size: 16px; font-weight: 500; color: #1e293b;">请选择</h3>
+                    <button onclick="window.closeBankAccountModal()" style="border: none; background: transparent; cursor: pointer; color: #64748b;"><i data-lucide="x"></i></button>
+                </div>
+                <div style="padding: 20px; overflow-y: auto; flex: 1;">
+                    <div style="border: 1px solid #e2e8f0; border-radius: 4px; overflow: hidden;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; color: #64748b;">
+                                    <th style="padding: 12px 16px; width: 40px; text-align: center; border-right: 1px solid #e2e8f0;">#</th>
+                                    <th style="padding: 12px 16px; width: 40px; text-align: center; border-right: 1px solid #e2e8f0;"><input type="checkbox" disabled></th>
+                                    <th style="padding: 12px 16px; border-right: 1px solid #e2e8f0;">账户名称/银行名称</th>
+                                    <th style="padding: 12px 16px; border-right: 1px solid #e2e8f0;">银行账号</th>
+                                    <th style="padding: 12px 16px; border-right: 1px solid #e2e8f0;">币制</th>
+                                    <th style="padding: 12px 16px;">备注</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" style="padding: 40px 0; text-align: center;">
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; color: #cbd5e1;">
+                                            <div style="position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; opacity: 0.3;">
+                                                <i data-lucide="search" style="width: 48px; height: 48px;"></i>
+                                                <i data-lucide="circle-alert" style="width: 16px; height: 16px; position: absolute; bottom: 8px; left: 8px; background: white; border-radius: 50%;"></i>
+                                            </div>
+                                            <span style="font-size: 14px;">暂无数据</span>
+                                            <span style="font-size: 11px; opacity: 0.7;">No data</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div style="padding: 16px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; background: #f8fafc;">
+                    <button onclick="window.closeBankAccountModal()" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 4px;">
+                        <i data-lucide="check" style="width: 16px; height: 16px;"></i> 确认
+                    </button>
+                </div>
+            </div>
+        </div>`;
+        const div = document.createElement('div');
+        div.innerHTML = modalHtml;
+        document.body.appendChild(div.firstElementChild);
+        modal = document.getElementById('bank-account-selection-modal');
+    }
+    modal.style.display = 'flex';
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+    }
+};
+
+window.closeBankAccountModal = function () {
+    const modal = document.getElementById('bank-account-selection-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 };
