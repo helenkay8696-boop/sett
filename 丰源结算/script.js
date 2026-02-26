@@ -1917,8 +1917,8 @@ function renderTabs(activeTab) {
                                             <th>结算日期类型</th>
                                             <th>对账单号提醒条件</th>
                                             <th>应对账日期</th>
-                                            <th>对账期起</th>
-                                            <th>对账期止</th>
+                                            <th>对账期间起</th>
+                                            <th>对账期间止</th>
                                             <th>所属公司</th>
                                             <th style="width: 80px; text-align: center;">操作</th>
                                         </tr>
@@ -1986,8 +1986,8 @@ function renderTabs(activeTab) {
                                             <th>结算单位简称</th>
                                             <th>对账月份</th>
                                             <th>结算规则</th>
-                                            <th>对账期起</th>
-                                            <th>对账期止</th>
+                                            <th>对账期间起</th>
+                                            <th>对账期间止</th>
                                             <th>对账方式</th>
                                             <th style="width: 140px; text-align: center;">操作</th>
                                         </tr>
@@ -2212,7 +2212,7 @@ function renderTabs(activeTab) {
                                     <table class="statement-table">
                                         <thead>
                                             <tr>
-                                                 <th style="width: 40px; text-align: center;"><input type="checkbox" /></th>
+                                                 <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="window.toggleAllStatementGenCheckboxes(this)" /></th>
                                                  <th style="width: 40px; text-align: center;">#</th>
                                                  <th>AR/AP</th>
                                                  <th>对账状态</th>
@@ -2229,11 +2229,11 @@ function renderTabs(activeTab) {
                                                  <th>原币金额</th>
                                                  <th>对账金额</th>
                                                  <th>折合金额</th>
-                                                 <th>账单日期截止日期</th>
+                                                 <th>账单创建日期</th>
                                                  <th>账单金额</th>
                                                  <th>未核销</th>
                                                  <th>所属公司</th>
-                                                 <th>出单单位</th>
+                                                 <th>结算单位</th>
                                                  <th>委托人/换单人</th>
                                             </tr>
                                         </thead>
@@ -3509,7 +3509,7 @@ function renderTabs(activeTab) {
                                 <table class="statement-table">
                                     <thead>
                                         <tr>
-                                             <th style="width: 40px; text-align: center;"><input type="checkbox" /></th>
+                                             <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="window.toggleAllStatementGenCheckboxes(this)" /></th>
                                              <th style="width: 40px; text-align: center;">#</th>
                                              <th>AR/AP</th>
                                              <th>对账状态</th>
@@ -3526,11 +3526,11 @@ function renderTabs(activeTab) {
                                              <th>原币金额</th>
                                              <th>对账金额</th>
                                              <th>折合金额</th>
-                                             <th>账单日期截止日期</th>
+                                             <th>账单创建日期</th>
                                              <th>账单金额</th>
                                              <th>未核销</th>
                                              <th>所属公司</th>
-                                             <th>出单单位</th>
+                                             <th>结算单位</th>
                                              <th>委托人/换单人</th>
                                         </tr>
                                     </thead>
@@ -3948,7 +3948,7 @@ function renderTabs(activeTab) {
                     <table class="statement-table" style="min-width: max-content;">
                         <thead>
                             <tr>
-                                 <th style="width: 40px; text-align: center;"><input type="checkbox" /></th>
+                                 <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="window.toggleAllPaymentCheckboxes(this)" /></th>
                                 <th style="width: 40px; text-align: center;">#</th>
                                 <th>收付方向</th>
                                 <th>票据类型</th>
@@ -4199,20 +4199,19 @@ function renderTabs(activeTab) {
                             <thead style="background: #f8fafc; color: #1e293b; position: sticky; top: 0; z-index: 10;">
                                 <tr>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 40px;">#</th>
-                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox"></th>
+                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" onclick="window.toggleAllPaymentCheckboxes(this)"></th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">工作单号</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">账单号</th>
-                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">费用号</th>
+                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">发票号</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">计费日期</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">费用</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">原币</th>
-                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">因收未收金额</th>
+                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销金额</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">核销金额(原币)</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">折算符</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">汇率</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">核销金额(折合)</th>
                                     <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核算币种</th>
-                                    <th style="padding: 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">抵盈/抵亏</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -4231,7 +4230,6 @@ function renderTabs(activeTab) {
                                     <td style="padding: 8px; text-align: right;">1.00</td>
                                     <td style="padding: 8px; text-align: right;">0.00</td>
                                     <td style="padding: 8px;">CNY</td>
-                                    <td style="padding: 8px; text-align: center;">-</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -4325,22 +4323,6 @@ function renderTabs(activeTab) {
                                     </select>
                                 </div>
 
-                                <!-- Fee Audit -->
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <label style="font-size: 0.8rem; font-weight: bold;">费用审核</label>
-                                    <div class="relative-container">
-                                        <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;" onclick="this.nextElementSibling.classList.toggle('hidden'); event.stopPropagation();">
-                                            <span id="customer-bill-fee-audit-status-selected">请选择</span>
-                                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
-                                        </div>
-                                        <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '未提交')">未提交</div>
-                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '审核中')">审核中</div>
-                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '审核通过')">审核通过</div>
-                                            <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('customer-bill-fee-audit-status-selected', '审核驳回')">审核驳回</div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #475569;">
                                     <input type="checkbox" id="bill-only-me" />
@@ -4633,7 +4615,7 @@ function renderTabs(activeTab) {
                                     <table class="statement-table">
                                         <thead>
                                             <tr>
-                                                 <th style="width: 40px; text-align: center;"><input type="checkbox" /></th>
+                                                 <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="window.toggleAllStatementGenCheckboxes(this)" /></th>
                                                  <th style="width: 40px; text-align: center;">#</th>
                                                  <th>AR/AP</th>
                                                  <th>对账状态</th>
@@ -4650,11 +4632,11 @@ function renderTabs(activeTab) {
                                                  <th>原币金额</th>
                                                  <th>对账金额</th>
                                                  <th>折合金额</th>
-                                                 <th>账单日期截止日期</th>
+                                                 <th>账单创建日期</th>
                                                  <th>账单金额</th>
                                                  <th>未核销</th>
                                                  <th>所属公司</th>
-                                                 <th>出单单位</th>
+                                                 <th>结算单位</th>
                                                  <th>委托人/换单人</th>
                                             </tr>
                                         </thead>
@@ -4794,9 +4776,19 @@ function renderTabs(activeTab) {
                           <!-- Bill Status -->
                          <div style="display: flex; align-items: center; gap: 8px;">
                              <label style="font-size: 0.8rem; color: #475569; font-weight: bold;">单据状态</label>
-                             <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;">
-                                <span style="color: #cbd5e1; font-size: 0.8rem;">请选择</span>
-                                <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                             <div class="relative-container">
+                                 <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                    <span id="invoice-app-status-selected" style="color: #64748b; font-size: 0.8rem;">请选择</span>
+                                    <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                </div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 50;">
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '草稿'); event.stopPropagation();">草稿</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '审核中'); event.stopPropagation();">审核中</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '已驳回'); event.stopPropagation();">已驳回</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '已退回'); event.stopPropagation();">已退回</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '已批准'); event.stopPropagation();">已批准</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '已取消'); event.stopPropagation();">已取消</div>
+                                </div>
                             </div>
                          </div>
 
@@ -4836,7 +4828,7 @@ function renderTabs(activeTab) {
                     <table class="statement-table">
                         <thead>
                             <tr>
-                                 <th style="width: 40px; text-align: center;"><input type="checkbox" /></th>
+                                 <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="window.toggleAllInvoiceAppCheckboxes(this)" /></th>
                                 <th style="width: 40px; text-align: center;">#</th>
                                 <th>状态</th>
                                 <th>发票号</th>
@@ -5233,7 +5225,7 @@ function renderTabs(activeTab) {
 
                         <!-- Checkbox -->
                         <label style="display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #475569; cursor: pointer;">
-                            <input type="checkbox"> 仅显示系统自动过的
+                            <input type="checkbox"> 仅显示我创建的
                         </label>
                         
                         <!-- Work No search -->
@@ -5443,16 +5435,16 @@ function renderTabs(activeTab) {
                             <thead>
                                 <tr>
                                     <th>信息表编码</th>
-                                    <th>正数发票号码</th>
-                                    <th>购买方名称</th>
-                                    <th>购买方税号</th>
+                                    <th>蓝字发票号码</th>
+                                    <th>购方名称</th>
+                                    <th>购方税号</th>
                                     <th>发票类型</th>
                                     <th>发票介质</th>
                                     <th>申请人</th>
                                     <th>申请时间</th>
-                                    <th>复核人</th>
-                                    <th>操作流水号/时间</th>
-                                    <th>操作成功时间</th>
+                                    <th>撤销人</th>
+                                    <th>撤销发起时间</th>
+                                    <th>撤销成功时间</th>
                                     <th>所属公司</th>
                                     <th>描述</th>
                                     <th>操作</th>
@@ -5491,9 +5483,18 @@ function renderTabs(activeTab) {
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <label style="font-size: 0.8rem; color: #475569; font-weight: 500;">性质</label>
                             <div class="relative-container">
-                                <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                                    <span style="color: #334155; font-size: 0.8rem;">全部</span>
+                                <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: white;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                    <span id="settlement-unit-nature-selected" style="color: #334155; font-size: 0.8rem;">全部</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                </div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 50;">
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '全部'); event.stopPropagation();">全部</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '客户'); event.stopPropagation();">客户</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '供应商'); event.stopPropagation();">供应商</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '公司'); event.stopPropagation();">公司</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '部门'); event.stopPropagation();">部门</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '员工'); event.stopPropagation();">员工</div>
+                                    <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '司机'); event.stopPropagation();">司机</div>
                                 </div>
                             </div>
                         </div>
@@ -5586,7 +5587,7 @@ function renderTabs(activeTab) {
                         <!-- Action Buttons -->
                         <div style="display: flex; gap: 8px; padding-bottom: 8px;">
                             <button class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer;">
-                                同步流水
+                                下载流水
                             </button>
                             <button class="primary-btn" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer;">
                                 导入
@@ -5766,7 +5767,7 @@ function renderTabs(activeTab) {
                          <table class="statement-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 40px; text-align: center;"><input type="checkbox"></th>
+                                    <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="window.toggleAllBankPaymentCheckboxes(this)"></th>
                                     <th style="width: 40px; text-align: center;">#</th>
                                     <th>付款申请单号</th>
                                     <th>付款申请人</th>
@@ -16016,5 +16017,39 @@ window.closeBankAccountModal = function () {
     const modal = document.getElementById('bank-account-selection-modal');
     if (modal) {
         modal.style.display = 'none';
+    }
+};
+
+// Added for Statement Generation check-all functionality
+window.toggleAllStatementGenCheckboxes = function (masterCheckbox) {
+    const table = masterCheckbox.closest('table');
+    if (table) {
+        const tbodyCheckboxes = table.querySelectorAll('tbody input[type="checkbox"]');
+        tbodyCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+};
+
+// Added for Payment/Receipt check-all functionality
+window.toggleAllPaymentCheckboxes = function (masterCheckbox) {
+    const table = masterCheckbox.closest('table');
+    if (table) {
+        const tbodyCheckboxes = table.querySelectorAll('tbody input[type="checkbox"]');
+        tbodyCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+};
+// Added for Invoice Application check-all functionality
+window.toggleAllInvoiceAppCheckboxes = function (masterCheckbox) {
+    const table = masterCheckbox.closest('table');
+    if (table) {
+        const tbodyCheckboxes = table.querySelectorAll('tbody input[type="checkbox"]');
+        tbodyCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+};
+// Added for Bank Payment flow check-all functionality
+window.toggleAllBankPaymentCheckboxes = function (masterCheckbox) {
+    const table = masterCheckbox.closest('table');
+    if (table) {
+        const tbodyCheckboxes = table.querySelectorAll('tbody input[type="checkbox"]');
+        tbodyCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
     }
 };
