@@ -1,4 +1,97 @@
 ﻿// @ts-nocheck
+
+window.handleAdvanceTotal = function () {
+    let advanceTotal = 0;
+    let receivableAdditionTotal = 0;
+
+    const tbody = document.getElementById('fee-entry-income-tbody');
+    if (tbody) {
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(row => {
+            const amountInput = row.querySelector('.income-fee-amount');
+            const categorySelect = row.querySelector('.income-fee-category');
+            if (amountInput && categorySelect) {
+                const val = parseFloat(amountInput.value);
+                if (!isNaN(val)) {
+                    if (categorySelect.value === '代垫') {
+                        advanceTotal += val;
+                    } else if (categorySelect.value === '应收') {
+                        receivableAdditionTotal += val;
+                    }
+                }
+            }
+        });
+    }
+
+    // Add custom configured fields in receivable grid to the addition total
+    const customReceivableInputs = document.querySelectorAll('#expense-entry-receivable-grid .custom-fee-input');
+    customReceivableInputs.forEach(input => {
+        const val = parseFloat(input.value);
+        if (!isNaN(val)) {
+            receivableAdditionTotal += val;
+        }
+    });
+
+    const deliveryFee = parseFloat(document.getElementById('expense-entry-delivery-fee')?.value) || 0;
+    const loadingFee = parseFloat(document.getElementById('expense-entry-loading-fee')?.value) || 0;
+    const unloadingFee = parseFloat(document.getElementById('expense-entry-unloading-fee')?.value) || 0;
+
+    const additionalFeeTotal = deliveryFee + loadingFee + unloadingFee + receivableAdditionTotal;
+    const additionalFeeInput = document.getElementById('expense-entry-additional-fee');
+    if (additionalFeeInput) {
+        additionalFeeInput.value = additionalFeeTotal > 0 ? additionalFeeTotal.toFixed(2) : '0.00';
+    }
+
+    // 收入合计 = 应收运费 + 附加费
+    const receivableFreight = parseFloat(document.getElementById('expense-entry-receivable-freight')?.value) || 0;
+    const incomeTotal = receivableFreight + additionalFeeTotal;
+    const incomeTotalInput = document.getElementById('expense-entry-income-total');
+    if (incomeTotalInput) {
+        incomeTotalInput.value = incomeTotal > 0 ? incomeTotal.toFixed(2) : '0.00';
+    }
+
+    const advanceTotalInput = document.getElementById('expense-entry-advance-total');
+    if (advanceTotalInput) advanceTotalInput.value = advanceTotal > 0 ? advanceTotal.toFixed(2) : '0.00';
+};
+
+window.handleFreightCalc = function (type, changed) {
+    const isRec = type === 'receivable';
+    const freightInput = document.getElementById(isRec ? 'expense-entry-receivable-freight' : 'expense-entry-payable-freight');
+    const weightInput = document.getElementById(isRec ? 'expense-entry-customer-weight' : 'expense-entry-carrier-weight');
+    const priceInput = document.getElementById(isRec ? 'expense-entry-customer-unit-price' : 'expense-entry-carrier-unit-price');
+
+    if (!freightInput || !weightInput || !priceInput) return;
+
+    let f = parseFloat(freightInput.value);
+    let w = parseFloat(weightInput.value);
+    let p = parseFloat(priceInput.value);
+
+    // Helper to check if it's a valid number. We allow strings to convert, NaN comes if empty.
+    const isValid = (val) => !isNaN(val) && val !== null;
+
+    if (changed === 'price') {
+        if (isValid(p) && isValid(w)) {
+            freightInput.value = (p * w).toFixed(2);
+            if (isRec) window.handleAdvanceTotal();
+        } else if (isValid(p) && isValid(f) && p !== 0) {
+            weightInput.value = (f / p).toFixed(4);
+        }
+    } else if (changed === 'weight') {
+        if (isValid(w) && isValid(p)) {
+            freightInput.value = (p * w).toFixed(2);
+            if (isRec) window.handleAdvanceTotal();
+        } else if (isValid(w) && isValid(f) && w !== 0) {
+            priceInput.value = (f / w).toFixed(2);
+        }
+    } else if (changed === 'freight') {
+        if (isValid(f) && isValid(w) && w !== 0) {
+            priceInput.value = (f / w).toFixed(2);
+        } else if (isValid(f) && isValid(p) && p !== 0) {
+            weightInput.value = (f / p).toFixed(4);
+        }
+    }
+};
+
 window.invoiceExpenseConfigs = [
     { code: "1060101010000000000", name: "运输服务", taxName: "运输服务", rate: "9", isTaxFree: "否" }
 ];
@@ -6299,7 +6392,7 @@ function renderTabs(activeTab) {
                                             <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">折合CNY</th>
                                             <th style="width: 120px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">有付款需求</th>
                                             <th style="width: 120px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">核销单号</th>
-                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">已销数</th>
+                                            <th style="width: 80px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">已销账</th>
                                             <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">未核销余额</th>
                                             <th style="width: 100px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">发票号码</th>
                                             <th style="width: 120px; padding: 8px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; color: #64748b; font-weight: 500;">费用参考号</th>
@@ -8132,41 +8225,41 @@ function renderTabs(activeTab) {
                                                     <!-- Grid Items -->
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应收运费:</label>
-                                                        <input id="expense-entry-receivable-freight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-receivable-freight" onchange="window.handleFreightCalc('receivable', 'freight'); window.handleAdvanceTotal()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户计费重:</label>
-                                                        <input id="expense-entry-customer-weight" oninput="let target = document.getElementById('expense-entry-carrier-weight'); if(target) target.value = this.value;" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-customer-weight" oninput="let target = document.getElementById('expense-entry-carrier-weight'); if(target) target.value = this.value;" onchange="window.handleFreightCalc('payable', 'weight'); window.handleFreightCalc('receivable', 'weight');" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">客户单价:</label>
-                                                        <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-customer-unit-price" onchange="window.handleFreightCalc('receivable', 'price')" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">送 货 费:</label>
-                                                        <input id="expense-entry-delivery-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-delivery-fee" onchange="window.handleAdvanceTotal()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">装 货 费:</label>
-                                                        <input id="expense-entry-loading-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-loading-fee" onchange="window.handleAdvanceTotal()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">卸 货 费:</label>
-                                                        <input id="expense-entry-unloading-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
+                                                        <input id="expense-entry-unloading-fee" onchange="window.handleAdvanceTotal()" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #000000; font-weight: 600; text-align: right; min-width: 0;">
                                                     </div>
                                                     
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">附 加 费:</label>
-                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                        <input id="expense-entry-additional-fee" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">收入合计:</label>
-                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #1e293b; font-weight: 700; text-align: right; background: #f1f5f9; cursor: not-allowed; min-width: 0;">
+                                                         <input id="expense-entry-income-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 4px;">
                                                         <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">待垫合计:</label>
-                                                        <input type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
+                                                        <input id="expense-entry-advance-total" type="text" readonly style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #4f46e5; font-weight: 600; text-align: right; background: #f8fafc; cursor: not-allowed; min-width: 0;">
                                                     </div>
                                                 </div>
                                             </div>
@@ -8248,15 +8341,15 @@ function renderTabs(activeTab) {
                                                 <!-- Row 1 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #ef4444; font-weight: 600; white-space: nowrap;">应付运费:</label>
-                                                    <input id="expense-entry-payable-freight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="expense-entry-payable-freight" onchange="window.handleFreightCalc('payable', 'freight')" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运计费重:</label>
-                                                    <input id="expense-entry-carrier-weight" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="expense-entry-carrier-weight" onchange="window.handleFreightCalc('payable', 'weight')" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">承运单价:</label>
-                                                    <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                                                    <input id="expense-entry-carrier-unit-price" onchange="window.handleFreightCalc('payable', 'price')" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <!-- Row 2 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
@@ -8402,7 +8495,7 @@ function renderTabs(activeTab) {
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
-                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销账</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
@@ -8477,7 +8570,7 @@ function renderTabs(activeTab) {
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
-                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销账</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
@@ -8593,7 +8686,7 @@ function renderTabs(activeTab) {
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">税率</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">本币金额</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: center;">关联状态</th>
-                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销数</th>
+                                        <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">已销账</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">未销余额</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: right;">实收实付</th>
                                         <th style="padding: 6px 8px; border-bottom: 1px solid #e2e8f0; text-align: left;">核销时间</th>
@@ -9243,7 +9336,7 @@ The above content does NOT show the entire file contents. If you need to view an
             // Render any previously saved expense entry data
             setTimeout(() => {
                 if (typeof window.renderExpensePanelFromSavedData === 'function') {
-                    window.renderExpensePanelFromSavedData();
+                    window.renderExpensePanelFromSavedData(activeTab);
                 }
             }, 100);
         }
@@ -13178,7 +13271,7 @@ window.addConfigField = function () {
         <div class="config-field-item" style="display: flex; align-items: center; gap: 4px;">
             <button onclick="this.parentElement.remove()" style="width: 20px; height: 20px; padding: 0; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; flex-shrink: 0;" title="删除此字段">−</button>
             <select style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; background: white; min-width: 0; cursor: pointer;">
-                <option value="">请选择字段</option>
+                <option value="">请选择费用</option>
                 <option value="保险费">保险费</option>
                 <option value="包装费">包装费</option>
                 <option value="仓储费">仓储费</option>
@@ -13242,28 +13335,76 @@ window.saveConfigFields = function () {
         return;
     }
 
+    // Capture current input values before overwriting
+    const currentValues = {};
+    const existingInputs = panelGrid.querySelectorAll('input');
+    existingInputs.forEach(input => {
+        const labelEl = input.closest('div')?.querySelector('label');
+        if (labelEl) {
+            const lblTxt = labelEl.textContent.replace(':', '').replace(/\s+/g, '');
+            currentValues[lblTxt] = input.value;
+        }
+    });
+
+    // Create a global map of native fields by parsing the ACTUAL DOM 
+    // to preserve readonly statuses, background colors, and native onchange handlers
+    if (!window.nativeFieldsMap) {
+        window.nativeFieldsMap = {};
+        const allNativeDivs = document.querySelectorAll('#expense-entry-receivable-grid > div, #expense-entry-payable-grid > div');
+        allNativeDivs.forEach(div => {
+            // Only cache elements that are TRULY native (not previously generated custom inputs)
+            const isCustom = div.querySelector('.custom-fee-input');
+            const lbl = div.querySelector('label');
+            if (lbl && !isCustom) {
+                const text = lbl.textContent.replace(':', '').replace(/\s+/g, '');
+                window.nativeFieldsMap[text] = div.innerHTML;
+            }
+        });
+    }
+
     // Build new panel HTML from the config fields
     let panelHtml = '';
-    const isFirst = true;
-
     fieldLabels.forEach((label, index) => {
         const isFirstField = index === 0;
         const labelColor = isFirstField ? '#ef4444' : '#475569';
         const fontWeight = isFirstField ? '600' : '400';
-
-        // Generate a simple ID based on label
         const fieldId = `expense-entry-${type}-field-${index}`;
+        const cleanLabel = label.replace(/\s+/g, '');
 
-        panelHtml += `
+        // Check if it's a native field with specific hardcoded attributes
+        if (window.nativeFieldsMap && window.nativeFieldsMap[cleanLabel]) {
+            panelHtml += `
+            <div style="display: flex; align-items: center; gap: 4px;">
+                ${window.nativeFieldsMap[cleanLabel]}
+            </div>`;
+        } else {
+            // It's a newly added custom field
+            panelHtml += `
             <div style="display: flex; align-items: center; gap: 4px;">
                 <label style="width: 80px; text-align: right; font-size: 0.8rem; color: ${labelColor}; font-weight: ${fontWeight}; white-space: nowrap;">${label}:</label>
-                <input id="${fieldId}" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
+                <input id="${fieldId}" class="custom-fee-input" type="text" onchange="window.handleAdvanceTotal()" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
             </div>
-        `;
+            `;
+        }
     });
 
-    // Update the panel grid
+    // Update the panel grid dom
     panelGrid.innerHTML = panelHtml;
+
+    // Restore previous values back into the newly rendered inputs
+    const newRenderedInputs = panelGrid.querySelectorAll('input');
+    newRenderedInputs.forEach(input => {
+        const labelEl = input.closest('div')?.querySelector('label');
+        if (labelEl) {
+            const lblTxt = labelEl.textContent.replace(':', '').replace(/\s+/g, '');
+            if (currentValues[lblTxt] !== undefined) {
+                input.value = currentValues[lblTxt];
+            }
+        }
+    });
+
+    // Trigger sum check
+    window.handleAdvanceTotal();
 
     // Close the modal
     window.closeConfigModal();
@@ -14094,7 +14235,7 @@ window.addExpenseRow = function (type) {
         <td style="padding: 6px 8px;"><input type="text" style="width: 100%; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px; text-align: right;"></td> <!-- 税率 -->
         <td style="padding: 6px 8px; text-align: right;">0.00</td> <!-- 本币金额 (Calculated?) -->
         <td style="padding: 6px 8px; text-align: center;">-</td> <!-- 关联状态 -->
-        <td style="padding: 6px 8px; text-align: right;">0</td> <!-- 已销数 -->
+        <td style="padding: 6px 8px; text-align: right;">0</td> <!-- 已销账 -->
         <td style="padding: 6px 8px; text-align: right;">0.00</td> <!-- 未销余额 -->
         <td style="padding: 6px 8px; text-align: right;">0.00</td> <!-- 实收实付 -->
         <td style="padding: 6px 8px;"></td> <!-- 核销时间 -->
@@ -14472,14 +14613,14 @@ window.addFeeEntryRow = function (type) {
                 ${expenseSelectOptions}
             </select>
         </td> <!-- 费用 -->
-        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"><input type="text" style="width: 100%; border: none; outline: none; background: transparent; text-align: right;"></td> <!-- 费用金额 -->
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"><input type="text" class="income-fee-amount" onchange="window.handleAdvanceTotal()" style="width: 100%; border: none; outline: none; background: transparent; text-align: right;"></td> <!-- 费用金额 -->
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
              <select style="width: 100%; border: none; outline: none; background: transparent;">
                 ${companySelectOptions}
             </select>
         </td> <!-- 结算公司 -->
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
-             <select style="width: 100%; border: none; outline: none; background: transparent;">
+             <select class="income-fee-category" onchange="window.handleAdvanceTotal()" style="width: 100%; border: none; outline: none; background: transparent;">
                 ${categorySelectOptions}
             </select>
         </td> <!-- 类别 -->
@@ -14489,7 +14630,7 @@ window.addFeeEntryRow = function (type) {
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><input type="text" style="width: 100%; border: none; outline: none; background: transparent;"></td> <!-- 备注 -->
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"></td> <!-- 状态 -->
         <td style="padding: 4px 8px; text-align: center;">
-            <button style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;" onclick="this.closest('tr').remove()">
+            <button style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;" onclick="this.closest('tr').remove(); window.handleAdvanceTotal()">
                 <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
             </button>
         </td>
@@ -14506,10 +14647,10 @@ window.addFeeEntryRow = function (type) {
 
 // --- Expense Panel to Statement Creation Jump ---
 window.jumpToStatementCreationFromExpensePanel = function () {
-    // 1. Switch Tab to '应收对账'
+    // 1. Switch Tab to '对账单'
     if (typeof window.addTab === 'function') {
-        // Trigger the tab logic which renders the HTML for '应收对账'
-        window.addTab('应收对账');
+        // Trigger the tab logic which renders the HTML for '对账单'
+        window.addTab('对账单');
     } else {
         console.error('addTab function not found');
         return;
@@ -14521,6 +14662,7 @@ window.jumpToStatementCreationFromExpensePanel = function () {
         // Note: The ID might be inside the mainContent rendered string, so it should exist after addTab execution.
         const listView = document.getElementById('statement-list-view');
         const createView = document.getElementById('statement-create-view');
+        const customerSidebar = document.querySelector('.customer-sidebar');
 
         if (listView && createView) {
             // 4. Toggle Visibility
@@ -14528,6 +14670,11 @@ window.jumpToStatementCreationFromExpensePanel = function () {
             createView.style.display = 'flex';
         } else {
             console.error('Views not found after switching tab');
+        }
+
+        // 5. Force hide customer sidebar if it persists from DOM caching
+        if (customerSidebar) {
+            customerSidebar.style.display = 'none';
         }
     }, 100);
 };
@@ -14618,53 +14765,137 @@ window.saveExpenseEntryAndSyncToPanel = function () {
         hasData = true;
     }
 
-    // Process income table data (上面面板 -> 费用面板应收)
+    // Process income table data (上面面板 -> 费用面板)
     const incomeTbody = document.getElementById('fee-entry-income-tbody');
     if (incomeTbody) {
         const rows = incomeTbody.querySelectorAll('tr');
         rows.forEach((row, index) => {
             const selects = row.querySelectorAll('select');
             const inputs = row.querySelectorAll('input');
-            // First select is fee name, first input is amount
+
+            // First select is fee name, second is company, third is category
             const feeName = selects[0] ? selects[0].value.trim() : '';
+            const company = selects[1] ? selects[1].value.trim() : '';
+            const category = selects[2] ? selects[2].value.trim() : '应收'; // 应该只有"应收"或"代垫"
+
+            // Array inputs based on addFeeEntryRow HTML structure
             const feeAmount = inputs[0] ? parseFloat(inputs[0].value) : 0;
+            const feeDate = inputs[1] && inputs[1].value ? inputs[1].value : today;
+            const contact = inputs[2] ? inputs[2].value.trim() : '';
+            const phone = inputs[3] ? inputs[3].value.trim() : '';
+            const remark = inputs[4] ? inputs[4].value.trim() : '';
+
             if (feeName && feeAmount > 0) {
-                window.expensePanelReceivableData.push({
-                    id: 'REC-TABLE-' + Date.now() + '-' + index,
+                const dataObj = {
+                    id: (category === '应收' ? 'REC-TABLE-' : 'PAY-TABLE-') + Date.now() + '-' + index,
                     name: feeName,
                     amount: feeAmount,
-                    date: today,
+                    date: feeDate,
                     currency: 'CNY',
-                    status: '未核销'
-                });
+                    status: '未核销',
+                    company: company,
+                    category: category,
+                    contact: contact,
+                    phone: phone,
+                    remark: remark
+                };
+
+                // 根据类别分流：代垫归入应付面板(Payable)
+                if (category === '应收') {
+                    window.expensePanelReceivableData.push(dataObj);
+                } else {
+                    window.expensePanelPayableData.push(dataObj);
+                }
                 hasData = true;
             }
         });
     }
 
-    // Process cost table data (下面面板 -> 费用面板应付)
+    // Process cost table data (下面面板 -> 费用面板)
     const costTbody = document.getElementById('fee-entry-cost-tbody');
     if (costTbody) {
         const rows = costTbody.querySelectorAll('tr');
         rows.forEach((row, index) => {
             const selects = row.querySelectorAll('select');
             const inputs = row.querySelectorAll('input');
-            // First select is fee name, first input is amount
+
+            // First select is fee name, second is company, third is category
             const feeName = selects[0] ? selects[0].value.trim() : '';
+            const company = selects[1] ? selects[1].value.trim() : '';
+            const category = selects[2] ? selects[2].value.trim() : '应付'; // 应该主要是"应付"
+
+            // Array inputs based on addFeeEntryRow HTML structure
             const feeAmount = inputs[0] ? parseFloat(inputs[0].value) : 0;
+            const feeDate = inputs[1] && inputs[1].value ? inputs[1].value : today;
+            const contact = inputs[2] ? inputs[2].value.trim() : '';
+            const phone = inputs[3] ? inputs[3].value.trim() : '';
+            const remark = inputs[4] ? inputs[4].value.trim() : '';
+
             if (feeName && feeAmount > 0) {
                 window.expensePanelPayableData.push({
                     id: 'PAY-TABLE-' + Date.now() + '-' + index,
                     name: feeName,
                     amount: feeAmount,
-                    date: today,
+                    date: feeDate,
                     currency: 'CNY',
-                    status: '未核销'
+                    status: '未核销',
+                    company: company,
+                    category: category,
+                    contact: contact,
+                    phone: phone,
+                    remark: remark
                 });
                 hasData = true;
             }
         });
     }
+
+    // Process newly added custom configured fields to sync to panel
+    const customRecInputs = document.querySelectorAll('#expense-entry-receivable-grid .custom-fee-input');
+    customRecInputs.forEach((input, index) => {
+        const val = parseFloat(input.value);
+        if (!isNaN(val) && val > 0) {
+            const labelEl = input.closest('div')?.querySelector('label');
+            const name = labelEl ? labelEl.textContent.replace(':', '').trim() : '自定义费用';
+            window.expensePanelReceivableData.push({
+                id: 'REC-CUSTOM-' + Date.now() + '-' + index,
+                name: name,
+                amount: val,
+                date: today,
+                currency: 'CNY',
+                status: '未核销',
+                company: '-',
+                category: '应收',
+                contact: '-',
+                phone: '-',
+                remark: '-'
+            });
+            hasData = true;
+        }
+    });
+
+    const customPayInputs = document.querySelectorAll('#expense-entry-payable-grid .custom-fee-input');
+    customPayInputs.forEach((input, index) => {
+        const val = parseFloat(input.value);
+        if (!isNaN(val) && val > 0) {
+            const labelEl = input.closest('div')?.querySelector('label');
+            const name = labelEl ? labelEl.textContent.replace(':', '').trim() : '自定义费用';
+            window.expensePanelPayableData.push({
+                id: 'PAY-CUSTOM-' + Date.now() + '-' + index,
+                name: name,
+                amount: val,
+                date: today,
+                currency: 'CNY',
+                status: '未核销',
+                company: '-',
+                category: '应付',
+                contact: '-',
+                phone: '-',
+                remark: '-'
+            });
+            hasData = true;
+        }
+    });
 
     // Process fuel card generation for oil fee (新增需联动的油费下发规则)
     const oilFeeInput = document.getElementById('expense-entry-oil-fee');
@@ -14748,14 +14979,14 @@ window.addFeeEntryRow = function (type) {
                 ${feeNameOptions}
             </select>
         </td>
-        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"><input type="text" placeholder="0.00" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; text-align: right;"></td>
+        <td style="padding: 4px 8px; border-right: 1px solid #f8fafc; text-align: right;"><input class="income-fee-amount" onchange="window.handleAdvanceTotal()" type="text" placeholder="0.00" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; text-align: right;"></td>
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
             <select style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; background: white;">
                 ${companyOptions}
             </select>
         </td>
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;">
-            <select style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; background: white;">
+            <select class="income-fee-category" onchange="window.handleAdvanceTotal()" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none; background: white;">
                 ${categoryOptions}
             </select>
         </td>
@@ -14765,7 +14996,7 @@ window.addFeeEntryRow = function (type) {
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><input type="text" placeholder="备注" style="width: 100%; height: 24px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 0 4px; font-size: 0.75rem; outline: none;"></td>
         <td style="padding: 4px 8px; border-right: 1px solid #f8fafc;"><span style="color: #f59e0b; font-size: 0.75rem;">未核销</span></td>
         <td style="padding: 4px 8px; text-align: center;">
-            <button onclick="this.closest('tr').remove()" style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
+            <button onclick="this.closest('tr').remove(); window.handleAdvanceTotal()" style="border: none; background: transparent; color: #ef4444; cursor: pointer; padding: 2px;">
                 <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
             </button>
         </td>
@@ -14872,7 +15103,7 @@ window.addExpenseRow = function (type) {
 };
 
 // Function to render expense panel data from saved expense entry
-window.renderExpensePanelFromSavedData = function () {
+window.renderExpensePanelFromSavedData = function (currentTab) {
     const receivableTbody = document.getElementById('expense-receivable-tbody');
     const payableTbody = document.getElementById('expense-payable-tbody');
 
@@ -14884,15 +15115,15 @@ window.renderExpensePanelFromSavedData = function () {
             row.innerHTML = `
                 <td style="padding: 6px 4px; border-bottom: 1px solid #f1f5f9; text-align: center;"><input type="checkbox"></td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">${index + 1}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">应收</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.category || '应收'}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.company || '-'}</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.name}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 600; color: #4f46e5;">${item.amount.toFixed(2)}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="${item.amount.toFixed(2)}" style="width: 70px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right; font-weight: 600; color: #4f46e5;"></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="${item.amount.toFixed(2)}" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="1" style="width: 40px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.date}</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.currency}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.remark || '-'}</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1.00</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0%</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
@@ -14923,22 +15154,22 @@ window.renderExpensePanelFromSavedData = function () {
     }
 
     // Render payable data
-    if (payableTbody && window.expensePanelPayableData && window.expensePanelPayableData.length > 0) {
+    if (currentTab !== '配载费用' && payableTbody && window.expensePanelPayableData && window.expensePanelPayableData.length > 0) {
         payableTbody.innerHTML = '';
         window.expensePanelPayableData.forEach((item, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td style="padding: 6px 4px; border-bottom: 1px solid #f1f5f9; text-align: center;"><input type="checkbox"></td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: center;">${index + 1}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">应付</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.category || '应付'}</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.company || '-'}</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.name}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right; font-weight: 600; color: #ef4444;">${item.amount.toFixed(2)}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="${item.amount.toFixed(2)}" style="width: 70px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right; font-weight: 600; color: #ef4444;"></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="${item.amount.toFixed(2)}" style="width: 60px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="1" style="width: 40px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.date}</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.currency}</td>
-                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">-</td>
+                <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${item.remark || '-'}</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1.00</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0%</td>
                 <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">${item.amount.toFixed(2)}</td>
