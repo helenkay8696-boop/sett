@@ -611,7 +611,7 @@ window.switchInvoiceApplicationTab = function (el) {
     // Simple way to get text node only or split checks, but here we can just pass the raw text and handle in render loosely
     // Or clean it up:
     const clone = el.cloneNode(true);
-    const badge = clone.querySelector('span');
+    const badge = clone.querySelector('.create-statement-company-head-span');
     if (badge) badge.remove();
     statusText = clone.textContent.trim();
 
@@ -1814,10 +1814,10 @@ function renderTabs(activeTab) {
                                             <span id="reconciliation-reminder-company" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px;" title="请选择">请选择</span>
                                             <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
                                         </div>
-                                        <div class="dropdown-menu-custom hidden" style="width: 280px; max-height: 250px; overflow-y: auto;">
-                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="selectOption('reconciliation-reminder-company', '深圳市远航达国际货运代理有限公司')">深圳市远航达国际货运代理有限公司</div>
-                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="马士基（中国）航运有限公司深圳分公司" onclick="selectOption('reconciliation-reminder-company', '马士基（中国）航运有限公司深圳分公司')">马士基（中国）航运有限公司深圳分公司</div>
-                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="欣旺达新能源动力汽车有限公司" onclick="selectOption('reconciliation-reminder-company', '欣旺达新能源动力汽车有限公司')">欣旺达新能源动力汽车有限公司</div>
+                                        <div class="dropdown-menu-custom hidden" style="width: 280px; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('reconciliation-reminder-company', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="马士基（中国）航运有限公司深圳分公司" onclick="window.selectOption('reconciliation-reminder-company', '马士基（中国）航运有限公司深圳分公司'); event.stopPropagation();">马士基（中国）航运有限公司深圳分公司</div>
+                                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="欣旺达新能源动力汽车有限公司" onclick="window.selectOption('reconciliation-reminder-company', '欣旺达新能源动力汽车有限公司'); event.stopPropagation();">欣旺达新能源动力汽车有限公司</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1861,11 +1861,11 @@ function renderTabs(activeTab) {
                                             <span id="statement-overdue-status">请选择</span>
                                             <i data-lucide="chevron-down"></i>
                                         </div>
-                                        <div class="dropdown-menu-custom hidden" style="width: 200px;">
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-overdue-status', '包含超期')">包含超期</div>
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-overdue-status', '只显示超期且有余额')">只显示超期且有余额</div>
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-overdue-status', '只显示超期且没有余额')">只显示超期且没有余额</div>
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-overdue-status', '不含超期')">不含超期</div>
+                                        <div class="dropdown-menu-custom hidden" style="width: 200px; z-index: 9999;">
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-overdue-status', '包含超期'); event.stopPropagation();">包含超期</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-overdue-status', '只显示超期且有余额'); event.stopPropagation();">只显示超期且有余额</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-overdue-status', '只显示超期且没有余额'); event.stopPropagation();">只显示超期且没有余额</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-overdue-status', '不含超期'); event.stopPropagation();">不含超期</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1876,10 +1876,10 @@ function renderTabs(activeTab) {
                                             <span id="statement-writeoff-status">请选择</span>
                                             <i data-lucide="chevron-down"></i>
                                         </div>
-                                         <div class="dropdown-menu-custom hidden" style="width: 200px;">
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-writeoff-status', '未核销')">未核销</div>
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-writeoff-status', '部分核销')">部分核销</div>
-                                            <div class="dropdown-item-custom" onclick="selectOption('statement-writeoff-status', '已核销')">已核销</div>
+                                         <div class="dropdown-menu-custom hidden" style="width: 200px; z-index: 9999;">
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-writeoff-status', '未核销'); event.stopPropagation();">未核销</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-writeoff-status', '部分核销'); event.stopPropagation();">部分核销</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-writeoff-status', '已核销'); event.stopPropagation();">已核销</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2068,14 +2068,14 @@ function renderTabs(activeTab) {
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">结算单位</label>
                                             <div style="flex: 1; display: flex; gap: 8px;">
                                                 <div class="relative-container" style="flex: 1;">
-                                                    <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                    <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
                                                         <span id="create-statement-settlement-unit" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
                                                         <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
                                                     </div>
-                                                    <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 50;">
-                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
-                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="广州市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
-                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="上海市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
+                                                    <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="广州市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
+                                                        <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-settlement-unit', '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
                                                     </div>
                                                 </div>
                                                 <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">NL</div>
@@ -2095,14 +2095,14 @@ function renderTabs(activeTab) {
                                          <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">对账方式</label>
                                             <div class="relative-container" style="flex: 1;">
-                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
                                                     <span id="create-statement-recon-type">按费用对账</span>
                                                     <i data-lucide="chevron-down"></i>
                                                 </div>
-                                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0; z-index: 50;">
-                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type', '按费用对账'); event.stopPropagation();">按费用对账</div>
-                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type', '按账单对账'); event.stopPropagation();">按账单对账</div>
-                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type', '按运单对账'); event.stopPropagation();">按运单对账</div>
+                                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 9999;">
+                                                    <div class="dropdown-item-custom" style="cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('create-statement-recon-type', '按费用对账'); event.stopPropagation();">按费用对账</div>
+                                                    <div class="dropdown-item-custom" style="cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('create-statement-recon-type', '按账单对账'); event.stopPropagation();">按账单对账</div>
+                                                    <div class="dropdown-item-custom" style="cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('create-statement-recon-type', '按运单对账'); event.stopPropagation();">按运单对账</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2128,14 +2128,14 @@ function renderTabs(activeTab) {
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">公司抬头</label>
                                             <div class="relative-container" style="flex: 1;">
-                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
                                                     <span id="create-statement-company-head" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
                                                     <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
                                                 </div>
-                                                <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 50;">
-                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-company-head', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
-                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="马士基（中国）航运有限公司深圳分公司" onclick="window.selectOption('create-statement-company-head', '马士基（中国）航运有限公司深圳分公司'); event.stopPropagation();">马士基（中国）航运有限公司深圳分公司</div>
-                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="欣旺达新能源动力汽车有限公司" onclick="window.selectOption('create-statement-company-head', '欣旺达新能源动力汽车有限公司'); event.stopPropagation();">欣旺达新能源动力汽车有限公司</div>
+                                                <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="window.selectOption('create-statement-company-head', '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="马士基（中国）航运有限公司深圳分公司" onclick="window.selectOption('create-statement-company-head', '马士基（中国）航运有限公司深圳分公司'); event.stopPropagation();">马士基（中国）航运有限公司深圳分公司</div>
+                                                    <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="欣旺达新能源动力汽车有限公司" onclick="window.selectOption('create-statement-company-head', '欣旺达新能源动力汽车有限公司'); event.stopPropagation();">欣旺达新能源动力汽车有限公司</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2467,10 +2467,10 @@ function renderTabs(activeTab) {
                                 <span id="expense-verification-status">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-verification-status', '未核销')">未核销</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-verification-status', '部分核销')">部分核销</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-verification-status', '已核销')">已核销</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-verification-status', '未核销'); event.stopPropagation();">未核销</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-verification-status', '部分核销'); event.stopPropagation();">部分核销</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-verification-status', '已核销'); event.stopPropagation();">已核销</div>
                             </div>
                         </div>
                     </div>
@@ -2483,9 +2483,9 @@ function renderTabs(activeTab) {
                                 <span id="expense-invoice-status">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-invoice-status', '未开票')">未开票</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-invoice-status', '已开票')">已开票</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-invoice-status', '未开票'); event.stopPropagation();">未开票</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-invoice-status', '已开票'); event.stopPropagation();">已开票</div>
                             </div>
                         </div>
                     </div>
@@ -2498,9 +2498,9 @@ function renderTabs(activeTab) {
                                 <span id="expense-bill-status">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-bill-status', '未出账单')">未出账单</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('expense-bill-status', '已出账单')">已出账单</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-bill-status', '未出账单'); event.stopPropagation();">未出账单</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('expense-bill-status', '已出账单'); event.stopPropagation();">已出账单</div>
                             </div>
                         </div>
                     </div>
@@ -2662,20 +2662,20 @@ function renderTabs(activeTab) {
                     <div class="relative-container" style="width: 140px; height: 42px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; cursor: pointer; position: relative;">
                         <span id="backend-status-select">所有状态</span>
                         <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
-                        <div class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50; overflow: hidden;">
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-status-select', '所有状态')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">所有状态</div>
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-status-select', '活跃账户')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">活跃账户</div>
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-status-select', '冻结账户')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">冻结账户</div>
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-status-select', '低余额账户')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">低余额账户</div>
+                        <div class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999; overflow: hidden;">
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '所有状态'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">所有状态</div>
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '活跃账户'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">活跃账户</div>
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '冻结账户'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">冻结账户</div>
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '低余额账户'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">低余额账户</div>
                         </div>
                     </div>
                     <div class="relative-container" style="width: 160px; height: 42px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; cursor: pointer; position: relative;">
                         <span id="backend-sort-select">余额从高到低</span>
                         <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
-                        <div class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50; overflow: hidden;">
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-sort-select', '余额从高到低')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">余额从高到低</div>
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-sort-select', '余额从低到高')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">余额从低到高</div>
-                            <div class="dropdown-item-custom" onclick="selectOption('backend-sort-select', '最近充值')" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">最近充值</div>
+                        <div class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999; overflow: hidden;">
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-sort-select', '余额从高到低'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">余额从高到低</div>
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-sort-select', '余额从低到高'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">余额从低到高</div>
+                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-sort-select', '最近充值'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">最近充值</div>
                         </div>
                     </div>
                      <button class="primary-btn" style="height: 42px; padding: 0 20px; border-radius: 8px; display: flex; align-items: center; gap: 8px; background: #3b82f6; color: white; border: none; font-weight: 500; cursor: pointer;">
@@ -2940,11 +2940,11 @@ function renderTabs(activeTab) {
                                 <div class="relative-container" style="width: 100%; height: 40px; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; cursor: pointer; position: relative;" onclick="document.getElementById('modal-payment-menu').classList.toggle('hidden'); event.stopPropagation();">
                                     <span id="modal-payment-select">支付宝</span>
                                     <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #94a3b8;"></i>
-                                    <div id="modal-payment-menu" class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50; overflow: hidden;">
-                                        <div class="dropdown-item-custom" onclick="selectOption('modal-payment-select', '支付宝')" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">支付宝</div>
-                                        <div class="dropdown-item-custom" onclick="selectOption('modal-payment-select', '微信支付')" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">微信支付</div>
-                                        <div class="dropdown-item-custom" onclick="selectOption('modal-payment-select', '银行转账')" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">银行转账</div>
-                                        <div class="dropdown-item-custom" onclick="selectOption('modal-payment-select', '手动调整')" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">手动调整</div>
+                                    <div id="modal-payment-menu" class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999; overflow: hidden;">
+                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '支付宝'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">支付宝</div>
+                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '微信支付'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">微信支付</div>
+                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '银行转账'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">银行转账</div>
+                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '手动调整'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">手动调整</div>
                                     </div>
                                 </div>
                             </div>
@@ -3032,7 +3032,7 @@ function renderTabs(activeTab) {
                             <span id="fuel-card-branch-val">所有网点</span>
                             <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                         </div>
-                        <div id="branch-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 1000; min-width: 120px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div id="branch-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 9999; min-width: 120px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '所有网点', 'branch-dropdown')">所有网点</div>
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '孝感总部', 'branch-dropdown')">孝感总部</div>
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-branch-val', '快省供应链', 'branch-dropdown')">快省供应链</div>
@@ -3051,7 +3051,7 @@ function renderTabs(activeTab) {
                             <span id="fuel-card-type-val">所有类型</span>
                             <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                         </div>
-                        <div id="type-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 1000; min-width: 120px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div id="type-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 9999; min-width: 120px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-type-val', '所有类型', 'type-dropdown')">所有类型</div>
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-type-val', '公司卡', 'type-dropdown')">公司卡</div>
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-type-val', '客户卡', 'type-dropdown')">客户卡</div>
@@ -3064,7 +3064,7 @@ function renderTabs(activeTab) {
                             <span id="fuel-card-status-val">所有状态</span>
                             <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                         </div>
-                        <div id="status-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 1000; min-width: 100px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div id="status-dropdown" class="dropdown-menu-custom hidden" style="position: absolute; top: 100%; left: 60px; z-index: 9999; min-width: 100px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '所有状态', 'status-dropdown')">所有状态</div>
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '在库', 'status-dropdown')">在库</div>
                             <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.8rem; cursor: pointer;" onclick="window.selectFuelCardOption('fuel-card-status-val', '已发放', 'status-dropdown')">已发放</div>
@@ -3208,10 +3208,10 @@ function renderTabs(activeTab) {
                                     <span id="receivables-verification-status-selected">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-verification-status-selected', '未核销')">未核销</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-verification-status-selected', '部分核销')">部分核销</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-verification-status-selected', '已核销')">已核销</div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-verification-status-selected', '未核销'); event.stopPropagation();">未核销</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-verification-status-selected', '部分核销'); event.stopPropagation();">部分核销</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-verification-status-selected', '已核销'); event.stopPropagation();">已核销</div>
                                 </div>
                             </div>
                         </div>
@@ -3222,9 +3222,9 @@ function renderTabs(activeTab) {
                                     <span id="receivables-invoice-status-selected">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-invoice-status-selected', '未开票')">未开票</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-invoice-status-selected', '已开票')">已开票</div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-invoice-status-selected', '未开票'); event.stopPropagation();">未开票</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-invoice-status-selected', '已开票'); event.stopPropagation();">已开票</div>
                                 </div>
                             </div>
                         </div>
@@ -3235,9 +3235,9 @@ function renderTabs(activeTab) {
                                     <span id="receivables-bill-status-selected">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-bill-status-selected', '未出账单')">未出账单</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-bill-status-selected', '已出账单')">已出账单</div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-bill-status-selected', '未出账单'); event.stopPropagation();">未出账单</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-bill-status-selected', '已出账单'); event.stopPropagation();">已出账单</div>
                                 </div>
                             </div>
                         </div>
@@ -3248,9 +3248,9 @@ function renderTabs(activeTab) {
                                     <span id="receivables-reconciliation-status-selected">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-reconciliation-status-selected', '未对账')">未对账</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-reconciliation-status-selected', '已对账')">已对账</div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-reconciliation-status-selected', '未对账'); event.stopPropagation();">未对账</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-reconciliation-status-selected', '已对账'); event.stopPropagation();">已对账</div>
                                 </div>
                             </div>
                         </div>
@@ -3261,11 +3261,11 @@ function renderTabs(activeTab) {
                                     <span id="receivables-fee-audit-status-selected">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '未提交')">未提交</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '审核中')">审核中</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '审核通过')">审核通过</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('receivables-fee-audit-status-selected', '审核驳回')">审核驳回</div>
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-fee-audit-status-selected', '未提交'); event.stopPropagation();">未提交</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-fee-audit-status-selected', '审核中'); event.stopPropagation();">审核中</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-fee-audit-status-selected', '审核通过'); event.stopPropagation();">审核通过</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('receivables-fee-audit-status-selected', '审核驳回'); event.stopPropagation();">审核驳回</div>
                                 </div>
                             </div>
                         </div>
@@ -3384,7 +3384,17 @@ function renderTabs(activeTab) {
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">结算单位</label>
                                         <div style="flex: 1; display: flex; gap: 8px;">
-                                            <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                            <div class="relative-container" style="flex: 1;">
+                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <span class="create-statement-settlement-unit-span" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                            </div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="广州市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
+                                            </div>
+                                        </div>
                                             <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">NL</div>
                                             <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">月结</div>
                                         </div>
@@ -3402,14 +3412,14 @@ function renderTabs(activeTab) {
                                      <div style="display: flex; align-items: center; gap: 8px;">
                                         <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">对账方式</label>
                                         <div class="relative-container" style="flex: 1;">
-                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="toggleDropdown(this)">
+                                            <div class="select-box" style="cursor: pointer; width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
                                                 <span id="create-statement-recon-type-receivables">按费用对账</span>
                                                 <i data-lucide="chevron-down"></i>
                                             </div>
-                                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0;">
-                                                <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type-receivables', '按费用对账')">按费用对账</div>
-                                                <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type-receivables', '按账单对账')">按账单对账</div>
-                                                <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type-receivables', '按运单对账')">按运单对账</div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0; z-index: 9999;">
+                                                <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type-receivables', '按费用对账'); event.stopPropagation();">按费用对账</div>
+                                                <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type-receivables', '按账单对账'); event.stopPropagation();">按账单对账</div>
+                                                <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type-receivables', '按运单对账'); event.stopPropagation();">按运单对账</div>
                                             </div>
                                         </div>
                                     </div>
@@ -3434,7 +3444,17 @@ function renderTabs(activeTab) {
                                     <!-- Row 4 -->
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">公司抬头</label>
-                                        <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                        <div class="relative-container" style="flex: 1;">
+                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <span class="create-statement-company-head-span" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                            </div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="马士基（中国）航运有限公司深圳分公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '马士基（中国）航运有限公司深圳分公司'); event.stopPropagation();">马士基（中国）航运有限公司深圳分公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="欣旺达新能源动力汽车有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '欣旺达新能源动力汽车有限公司'); event.stopPropagation();">欣旺达新能源动力汽车有限公司</div>
+                                            </div>
+                                        </div>
                                     </div>
                                      <div style="display: flex; align-items: center; gap: 8px;">
                                         <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">说明</label>
@@ -3619,10 +3639,10 @@ function renderTabs(activeTab) {
                                 <span id="payables-verification-status-selected">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-verification-status-selected', '未核销')">未核销</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-verification-status-selected', '部分核销')">部分核销</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-verification-status-selected', '已核销')">已核销</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-verification-status-selected', '未核销'); event.stopPropagation();">未核销</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-verification-status-selected', '部分核销'); event.stopPropagation();">部分核销</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-verification-status-selected', '已核销'); event.stopPropagation();">已核销</div>
                             </div>
                         </div>
                     </div>
@@ -3633,9 +3653,9 @@ function renderTabs(activeTab) {
                                 <span id="payables-invoice-status-selected">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-invoice-status-selected', '未开票')">未开票</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-invoice-status-selected', '已开票')">已开票</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-invoice-status-selected', '未开票'); event.stopPropagation();">未开票</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-invoice-status-selected', '已开票'); event.stopPropagation();">已开票</div>
                             </div>
                         </div>
                     </div>
@@ -3646,9 +3666,9 @@ function renderTabs(activeTab) {
                                 <span id="payables-bill-status-selected">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-bill-status-selected', '未出账单')">未出账单</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-bill-status-selected', '已出账单')">已出账单</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-bill-status-selected', '未出账单'); event.stopPropagation();">未出账单</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-bill-status-selected', '已出账单'); event.stopPropagation();">已出账单</div>
                             </div>
                         </div>
                     </div>
@@ -3659,9 +3679,9 @@ function renderTabs(activeTab) {
                                 <span id="payables-reconciliation-status-selected">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-reconciliation-status-selected', '未对账')">未对账</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-reconciliation-status-selected', '已对账')">已对账</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-reconciliation-status-selected', '未对账'); event.stopPropagation();">未对账</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-reconciliation-status-selected', '已对账'); event.stopPropagation();">已对账</div>
                             </div>
                         </div>
                     </div>
@@ -3672,11 +3692,11 @@ function renderTabs(activeTab) {
                                 <span id="payables-fee-audit-status-selected">请选择</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '未提交')">未提交</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '审核中')">审核中</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '审核通过')">审核通过</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payables-fee-audit-status-selected', '审核驳回')">审核驳回</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-fee-audit-status-selected', '未提交'); event.stopPropagation();">未提交</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-fee-audit-status-selected', '审核中'); event.stopPropagation();">审核中</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-fee-audit-status-selected', '审核通过'); event.stopPropagation();">审核通过</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payables-fee-audit-status-selected', '审核驳回'); event.stopPropagation();">审核驳回</div>
                             </div>
                         </div>
                     </div>
@@ -4022,10 +4042,17 @@ function renderTabs(activeTab) {
                         <div style="flex: 1; border: 1px solid #e2e8f0; border-radius: 4px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <label style="width: 60px; font-size: 0.75rem; color: #64748b;">结算单位</label>
-                                <div class="select-box" style="flex: 1; display: flex; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; align-items: center; justify-content: space-between; height: 28px;">
-                                    <span style="font-size: 0.75rem; color: #cbd5e1;">请选择</span>
-                                    <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
-                                </div>
+                                <div class="relative-container" style="flex: 1;">
+                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <span class="create-statement-settlement-unit-span" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                            </div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="广州市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
+                                            </div>
+                                        </div>
                                 <span style="background: #f1f5f9; padding: 2px 4px; border-radius: 2px; font-size: 0.7rem; color: #64748b;">NL</span>
                                 <span style="background: #f1f5f9; padding: 2px 4px; border-radius: 2px; font-size: 0.7rem; color: #64748b;">月结</span>
                             </div>
@@ -4490,7 +4517,17 @@ function renderTabs(activeTab) {
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">结算单位</label>
                                             <div style="flex: 1; display: flex; gap: 8px;">
-                                                <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                                <div class="relative-container" style="flex: 1;">
+                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <span class="create-statement-settlement-unit-span" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                            </div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="广州市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
+                                            </div>
+                                        </div>
                                                 <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">NL</div>
                                                 <div style="display: flex; align-items: center; background: #f1f5f9; border-radius: 4px; padding: 0 8px; font-size: 12px; color: #64748b; border: 1px solid #e2e8f0;">月结</div>
                                             </div>
@@ -4508,14 +4545,14 @@ function renderTabs(activeTab) {
                                          <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">对账方式</label>
                                             <div class="relative-container" style="flex: 1;">
-                                                <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="toggleDropdown(this)">
+                                                <div class="select-box" style="cursor: pointer; width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between;" onclick="window.toggleDropdown(this); event.stopPropagation();">
                                                     <span id="create-statement-recon-type-bill">按费用对账</span>
                                                     <i data-lucide="chevron-down"></i>
                                                 </div>
-                                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0;">
-                                                    <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type-bill', '按费用对账')">按费用对账</div>
-                                                    <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type-bill', '按账单对账')">按账单对账</div>
-                                                    <div class="dropdown-item-custom" onclick="selectOption('create-statement-recon-type-bill', '按运单对账')">按运单对账</div>
+                                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: 100%; left: 0; z-index: 9999;">
+                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type-bill', '按费用对账'); event.stopPropagation();">按费用对账</div>
+                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type-bill', '按账单对账'); event.stopPropagation();">按账单对账</div>
+                                                    <div class="dropdown-item-custom" onclick="window.selectOption('create-statement-recon-type-bill', '按运单对账'); event.stopPropagation();">按运单对账</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -4540,7 +4577,17 @@ function renderTabs(activeTab) {
                                         <!-- Row 4 -->
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 70px; text-align: right; color: #64748b; font-size: 13px;">公司抬头</label>
-                                            <div class="select-box" style="flex: 1; height: 32px;"><span>请选择</span><i data-lucide="chevron-down"></i></div>
+                                            <div class="relative-container" style="flex: 1;">
+                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <span class="create-statement-company-head-span" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                            </div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="马士基（中国）航运有限公司深圳分公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '马士基（中国）航运有限公司深圳分公司'); event.stopPropagation();">马士基（中国）航运有限公司深圳分公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="欣旺达新能源动力汽车有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '欣旺达新能源动力汽车有限公司'); event.stopPropagation();">欣旺达新能源动力汽车有限公司</div>
+                                            </div>
+                                        </div>
                                         </div>
                                          <div style="display: flex; align-items: center; gap: 8px;">
                                             <label style="width: 80px; text-align: right; color: #64748b; font-size: 13px;">说明</label>
@@ -4781,7 +4828,7 @@ function renderTabs(activeTab) {
                                     <span id="invoice-app-status-selected" style="color: #64748b; font-size: 0.8rem;">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 50;">
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 9999;">
                                     <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '草稿'); event.stopPropagation();">草稿</div>
                                     <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '审核中'); event.stopPropagation();">审核中</div>
                                     <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-app-status-selected', '已驳回'); event.stopPropagation();">已驳回</div>
@@ -4937,10 +4984,16 @@ function renderTabs(activeTab) {
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                     <label class="required" style="white-space: nowrap; font-size: 0.8rem; color: #475569;">发票类型</label>
-                                     <div class="select-box" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: white; cursor: pointer;">
-                                        <span>普通发票</span>
-                                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
-                                    </div>
+                                     <div class="relative-container" style="width: 100%;">
+                                         <div class="select-box" style="width: 100%; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; background: white; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                            <span id="invoice-create-type-selected">普通发票</span>
+                                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                                        </div>
+                                        <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 9999;">
+                                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-create-type-selected', '普通发票'); event.stopPropagation();">普通发票</div>
+                                            <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('invoice-create-type-selected', '增值税专用发票'); event.stopPropagation();">增值税专用发票</div>
+                                        </div>
+                                     </div>
                                 </div>
                                 <div class="input-group" style="display: flex; align-items: center; gap: 8px;">
                                     <label style="white-space: nowrap; font-size: 0.8rem; color: #475569;">发票介质</label>
@@ -5487,7 +5540,7 @@ function renderTabs(activeTab) {
                                     <span id="settlement-unit-nature-selected" style="color: #334155; font-size: 0.8rem;">全部</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 50;">
+                                <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; z-index: 9999;">
                                     <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '全部'); event.stopPropagation();">全部</div>
                                     <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '客户'); event.stopPropagation();">客户</div>
                                     <div class="dropdown-item-custom" style="padding: 8px 12px; font-size: 0.75rem;" onclick="window.selectOption('settlement-unit-nature-selected', '供应商'); event.stopPropagation();">供应商</div>
@@ -6497,10 +6550,10 @@ function renderTabs(activeTab) {
                                 <span id="batch-confirm-status">全部</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100px; position: absolute; top: 100%; left: 58px; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-confirm-status', '全部')">全部</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-confirm-status', '已确认')">已确认</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-confirm-status', '未确认')">未确认</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100px; position: absolute; top: 100%; left: 58px; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-confirm-status', '全部'); event.stopPropagation();">全部</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-confirm-status', '已确认'); event.stopPropagation();">已确认</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-confirm-status', '未确认'); event.stopPropagation();">未确认</div>
                             </div>
                         </div>
 
@@ -6511,13 +6564,13 @@ function renderTabs(activeTab) {
                                 <span id="batch-type">全部</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100px; position: absolute; top: 100%; left: 32px; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-type', '全部')">全部</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-type', '费用单')">费用单</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-type', '整车')">整车</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-type', '零担')">零担</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-type', '短驳')">短驳</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-type', '其他')">其他</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100px; position: absolute; top: 100%; left: 32px; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-type', '全部'); event.stopPropagation();">全部</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-type', '费用单'); event.stopPropagation();">费用单</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-type', '整车'); event.stopPropagation();">整车</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-type', '零担'); event.stopPropagation();">零担</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-type', '短驳'); event.stopPropagation();">短驳</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-type', '其他'); event.stopPropagation();">其他</div>
                             </div>
                         </div>
 
@@ -6528,10 +6581,10 @@ function renderTabs(activeTab) {
                                 <span id="batch-range">只看我负责的</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 130px; position: absolute; top: 100%; left: 32px; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-range', '只看我负责的')">只看我负责的</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-range', '只看有费用的')">只看有费用的</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('batch-range', '只看无费用的')">只看无费用的</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 130px; position: absolute; top: 100%; left: 32px; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-range', '只看我负责的'); event.stopPropagation();">只看我负责的</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-range', '只看有费用的'); event.stopPropagation();">只看有费用的</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('batch-range', '只看无费用的'); event.stopPropagation();">只看无费用的</div>
                             </div>
                         </div>
 
@@ -6733,11 +6786,11 @@ function renderTabs(activeTab) {
                                 <span id="audit-type-val" style="color: #334155;">全部</span>
                                 <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                             </div>
-                            <div class="dropdown-menu-custom hidden" style="width: 100px; position: absolute; top: 100%; left: 0; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-type-val', '全部')">全部</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-type-val', '整车')">整车</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-type-val', '零担')">零担</div>
-                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-type-val', '短驳')">短驳</div>
+                            <div class="dropdown-menu-custom hidden" style="width: 100px; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-type-val', '全部'); event.stopPropagation();">全部</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-type-val', '整车'); event.stopPropagation();">整车</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-type-val', '零担'); event.stopPropagation();">零担</div>
+                                <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-type-val', '短驳'); event.stopPropagation();">短驳</div>
                             </div>
                         </div>
                     </div>
@@ -6761,11 +6814,11 @@ function renderTabs(activeTab) {
                                     <span id="audit-status-val" style="color: #cbd5e1;">请选择</span>
                                     <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                 </div>
-                                <div class="dropdown-menu-custom hidden" style="width: 120px; position: absolute; top: 100%; left: 0; z-index: 100; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-status-val', '未提交')">未提交</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-status-val', '审核中')">审核中</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-status-val', '审核通过')">审核通过</div>
-                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('audit-status-val', '审核驳回')">审核驳回</div>
+                                <div class="dropdown-menu-custom hidden" style="width: 120px; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #e2e8f0; border-radius: 4px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-status-val', '未提交'); event.stopPropagation();">未提交</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-status-val', '审核中'); event.stopPropagation();">审核中</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-status-val', '审核通过'); event.stopPropagation();">审核通过</div>
+                                    <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('audit-status-val', '审核驳回'); event.stopPropagation();">审核驳回</div>
                                 </div>
                             </div>
                         </div>
@@ -7031,9 +7084,9 @@ function renderTabs(activeTab) {
                                         <span id="payment-doc-status-selected">请选择</span>
                                         <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
-                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-doc-status-selected', '审核中')">审核中</div>
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-doc-status-selected', '已审核')">已审核</div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-doc-status-selected', '审核中'); event.stopPropagation();">审核中</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-doc-status-selected', '已审核'); event.stopPropagation();">已审核</div>
                                     </div>
                                 </div>
                             </div>
@@ -7044,9 +7097,9 @@ function renderTabs(activeTab) {
                                         <span id="payment-slip-status-selected">全部</span>
                                         <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
-                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-slip-status-selected', '未上传')">未上传</div>
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-slip-status-selected', '已上传')">已上传</div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-slip-status-selected', '未上传'); event.stopPropagation();">未上传</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-slip-status-selected', '已上传'); event.stopPropagation();">已上传</div>
                                     </div>
                                 </div>
                             </div>
@@ -7057,9 +7110,9 @@ function renderTabs(activeTab) {
                                         <span id="payment-invoice-attachment-status-selected">全部</span>
                                         <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
-                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-attachment-status-selected', '未上传')">未上传</div>
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-attachment-status-selected', '已上传')">已上传</div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-invoice-attachment-status-selected', '未上传'); event.stopPropagation();">未上传</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-invoice-attachment-status-selected', '已上传'); event.stopPropagation();">已上传</div>
                                     </div>
                                 </div>
                             </div>
@@ -7070,10 +7123,10 @@ function renderTabs(activeTab) {
                                         <span id="payment-invoice-type-selected">请选择</span>
                                         <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i>
                                     </div>
-                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 50;">
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-type-selected', '先票后付')">先票后付</div>
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-type-selected', '先付后票')">先付后票</div>
-                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="selectOption('payment-invoice-type-selected', '不开票')">不开票</div>
+                                    <div class="dropdown-menu-custom hidden" style="width: 100%; top: calc(100% + 4px); left: 0; border-radius: 4px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999;">
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-invoice-type-selected', '先票后付'); event.stopPropagation();">先票后付</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-invoice-type-selected', '先付后票'); event.stopPropagation();">先付后票</div>
+                                        <div class="dropdown-item-custom" style="font-size: 0.75rem; padding: 8px 12px; cursor: pointer;" onclick="window.selectOption('payment-invoice-type-selected', '不开票'); event.stopPropagation();">不开票</div>
                                     </div>
                                 </div>
                             </div>
@@ -7188,7 +7241,17 @@ function renderTabs(activeTab) {
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="width: 70px; text-align: right; color: #64748b; font-size: 12px;"><span style="color: red">*</span> 结算单位</label>
                                     <div style="flex: 1; display: flex; gap: 4px;">
-                                        <div class="select-box" style="flex: 1; height: 28px; border: 1px solid #fee2e2; background: #fff1f2; border-radius: 2px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; font-size: 12px;"><span>请选择</span><i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8;"></i></div>
+                                        <div class="relative-container" style="flex: 1;">
+                                            <div class="select-box" style="width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                                                <span class="create-statement-settlement-unit-span" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;" title="请选择">请选择</span>
+                                                <i data-lucide="chevron-down" style="flex-shrink: 0;"></i>
+                                            </div>
+                                            <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '深圳市远航达国际货运代理有限公司'); event.stopPropagation();">深圳市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="广州市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '广州市远航达国际货运代理有限公司'); event.stopPropagation();">广州市远航达国际货运代理有限公司</div>
+                                                <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海市远航达国际货运代理有限公司" onclick="const span = this.closest('.relative-container').querySelector('.select-box span'); window.selectOption({id: null, element: span}, '上海市远航达国际货运代理有限公司'); event.stopPropagation();">上海市远航达国际货运代理有限公司</div>
+                                            </div>
+                                        </div>
                                         <span style="background: #f1f5f9; padding: 0 4px; border-radius: 2px; font-size: 11px; color: #64748b; display: flex; align-items: center;">NL</span>
                                         <span style="background: #f1f5f9; padding: 0 4px; border-radius: 2px; font-size: 11px; color: #64748b; display: flex; align-items: center;">月结</span>
                                     </div>
@@ -9496,7 +9559,7 @@ The above content does NOT show the entire file contents. If you need to view an
                     item.classList.add('active');
 
                     // Update main content based on selection (optional but good for UX)
-                    // const name = item.querySelector('span').textContent;
+                    // const name = item.querySelector('.create-statement-company-head-span').textContent;
                     // document.querySelector('.statement-main').innerHTML = ... (removed)
 
                 });
@@ -15924,8 +15987,13 @@ window.toggleDropdown = function (element) {
     }
 };
 
-window.selectOption = function (spanId, value) {
-    const span = document.getElementById(spanId);
+window.selectOption = function (spanIdOrObj, value) {
+    let span;
+    if (typeof spanIdOrObj === 'string') {
+        span = document.getElementById(spanIdOrObj);
+    } else if (spanIdOrObj && spanIdOrObj.element) {
+        span = spanIdOrObj.element;
+    }
     if (span) {
         span.innerText = value;
         span.title = value; // update native hover title simultaneously
