@@ -157,7 +157,7 @@ const reportMenuData = [
     {
         title: "业务报表",
         icon: "bar-chart-3",
-        items: ["货量利润表"]
+        items: ["货量利润表", "客户_毛利分析表"]
     }
 ];
 
@@ -1516,7 +1516,7 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板' || activeTab === '配载费用' || activeTab === '订单回显' || activeTab === '费用单' || activeTab === '费用申请' || activeTab === '新增费用申请') {
+    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '客户_毛利分析表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板' || activeTab === '配载费用' || activeTab === '订单回显' || activeTab === '费用单' || activeTab === '费用申请' || activeTab === '新增费用申请') {
 
 
         let mainContent = '';
@@ -1724,6 +1724,12 @@ function renderTabs(activeTab) {
             mainContent = `
                 <div id="workbench-content-area" style="height: 100%; overflow: auto; background: #fff;">
                     ${window.renderVolumeProfitReport()}
+                </div>
+            `;
+        } else if (activeTab === '客户_毛利分析表') {
+            mainContent = `
+                <div id="workbench-content-area" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
+                    ${window.renderCustomerMarginReport()}
                 </div>
             `;
         } else if (activeTab === '任务中心') {
@@ -3015,6 +3021,7 @@ function renderTabs(activeTab) {
                 <div style="border-bottom: 1px solid #e2e8f0; padding: 0 24px;">
                     <div class="status-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569; overflow-x: auto; align-items: center;">
                         <div class="status-tab" data-status="待发放" style="padding: 12px 0; cursor: pointer; position: relative;" onclick="switchFuelCardTab(this)">待发放<span id="pending-fuel-card-badge" style="position: absolute; top: 4px; right: -16px; background: #ef4444; color: white; font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; min-width: 16px; text-align: center; font-weight: 600;"></span></div>
+                        <div class="status-tab" data-status="待充值" style="padding: 12px 0; cursor: pointer; position: relative;" onclick="switchFuelCardTab(this)">待充值<span id="recharge-fuel-card-badge" style="position: absolute; top: 4px; right: -16px; background: #ef4444; color: white; font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; min-width: 16px; text-align: center; font-weight: 600;"></span></div>
                         <div style="width: 1px; height: 16px; background: #e2e8f0; margin: 0 -4px;"></div>
                         <div class="status-tab active" data-status="全部" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;" onclick="switchFuelCardTab(this)">全部</div>
                         <div class="status-tab" data-status="在库" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">在库</div>
@@ -3040,12 +3047,12 @@ function renderTabs(activeTab) {
                         </div>
                     </div>
                     <!-- 油卡编号 -->
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="fuel-card-filter-no" style="display: flex; align-items: center; gap: 8px;">
                         <label style="font-size: 0.8rem; color: #475569;">油卡编号</label>
                         <input type="text" placeholder="请输入" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none;">
                     </div>
                     <!-- 油卡类型 -->
-                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                    <div id="fuel-card-filter-type" style="display: flex; align-items: center; gap: 8px; position: relative;">
                         <label style="font-size: 0.8rem; color: #475569;">油卡类型</label>
                         <div class="select-box" style="width: 120px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="event.stopPropagation(); window.toggleFuelCardDropdown('type-dropdown')">
                             <span id="fuel-card-type-val">所有类型</span>
@@ -3058,7 +3065,7 @@ function renderTabs(activeTab) {
                         </div>
                     </div>
                     <!-- 油卡状态 -->
-                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                    <div id="fuel-card-filter-status" style="display: flex; align-items: center; gap: 8px; position: relative;">
                         <label style="font-size: 0.8rem; color: #475569;">油卡状态</label>
                         <div class="select-box" style="width: 100px; height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; cursor: pointer;" onclick="event.stopPropagation(); window.toggleFuelCardDropdown('status-dropdown')">
                             <span id="fuel-card-status-val">所有状态</span>
@@ -3072,7 +3079,7 @@ function renderTabs(activeTab) {
                         </div>
                     </div>
                     <!-- 登记日期 -->
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="fuel-card-filter-reg-date" style="display: flex; align-items: center; gap: 8px;">
                         <label style="font-size: 0.8rem; color: #475569;">登记日期</label>
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569;">
@@ -3081,7 +3088,7 @@ function renderTabs(activeTab) {
                         </div>
                     </div>
                     <!-- 注销日期 -->
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div id="fuel-card-filter-cancel-date" style="display: flex; align-items: center; gap: 8px;">
                         <label style="font-size: 0.8rem; color: #475569;">注销日期</label>
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; color: #475569;">
@@ -9251,7 +9258,7 @@ function renderTabs(activeTab) {
         } else {
             mainContent = `
                 <div style="background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e2e8f0; height: 100%;">
-The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
 
                 <h2 style="color: #1e293b; margin-bottom: 1rem;">${activeTab} Content</h2>
                 <p style="color: #64748b;">This is a demonstration of the ${activeTab} page view.</p>
@@ -9784,15 +9791,30 @@ function switchFuelCardTab(element) {
         window.renderFuelCardTableBody(status);
     }
 
-    // Toggle action bar visibility: hide for "待发放", show for others
+    // Toggle action bar visibility: hide for "待发放" and "待充值", show for others
     const actionBar = document.getElementById('fuel-card-action-bar');
     if (actionBar) {
-        if (status === '待发放') {
+        if (status === '待发放' || status === '待充值') {
             actionBar.style.display = 'none';
         } else {
             actionBar.style.display = 'flex';
         }
     }
+
+    // Toggle filter visibility specifically for "待充值"
+    const exclusiveFilters = [
+        'fuel-card-filter-type',
+        'fuel-card-filter-status',
+        'fuel-card-filter-reg-date',
+        'fuel-card-filter-cancel-date'
+    ];
+
+    exclusiveFilters.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.style.display = (status === '待充值') ? 'none' : 'flex';
+        }
+    });
 
     // Refresh icons just in case (though not strictly needed here as no icons are inside the tabs yet)
     if (window.lucide) window.lucide.createIcons();
@@ -9831,6 +9853,8 @@ window.fuelCardData = [
     { id: 'W1', sysId: 'SY-W001', waybillNo: 'YD20260121001', waybillDate: '2026-01-21', fuelCost: '800.00', plateNo: '鄂A·12345', contactPhone: '13811112222', remarks: '测试运单1', status: '待发放' },
     { id: 'W2', sysId: 'SY-W002', waybillNo: 'YD20260121002', waybillDate: '2026-01-21', fuelCost: '1200.00', plateNo: '鄂B·67890', contactPhone: '13933334444', remarks: '测试运单2', status: '待发放' },
     { id: 'W3', sysId: 'SY-W003', waybillNo: 'YD20260121003', waybillDate: '2026-01-21', fuelCost: '500.00', plateNo: '鄂C·54321', contactPhone: '13755556666', remarks: '测试运单3', status: '待发放' },
+    { id: 'RC1', sysId: 'SY-RC001', waybillNo: 'YD20260227001', waybillDate: '2026-02-27', fuelCost: '600.00', plateNo: '鄂A·55667', contactPhone: '13566667777', cardNo: '6228 4801 1111 5555', type: '公司卡', name: '丰源中石油', balance: '1,200.00', deposit: '0.00', regDate: '2026-02-10', remarks: '充值测试1', status: '待充值' },
+    { id: 'RC2', sysId: 'SY-RC002', waybillNo: 'YD20260227002', waybillDate: '2026-02-27', fuelCost: '950.00', plateNo: '鄂B·88990', contactPhone: '13688889999', cardNo: '6228 4801 2222 6666', type: '客户卡', name: '丰源中石化', balance: '3,500.00', deposit: '100.00', regDate: '2026-02-15', remarks: '充值测试2', status: '待充值' },
     { id: 1, sysId: 'SY20250101003', cardNo: '6228 4801 2345 6789', type: '客户卡', name: '丰源中石油', status: '在库', balance: '1,500.00', deposit: '0.00', regDate: '2025-01-01', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '暂无' },
     { id: 2, sysId: 'SY20250101004', cardNo: '6228 4801 9876 5432', type: '公司卡', name: '丰源中石化', status: '已发放', balance: '500.00', deposit: '100.00', regDate: '2025-01-02', issueDate: '2025-01-15', waybillNo: 'YD202501150001', plateNo: '鄂A·88888', contactPhone: '138 0000 0000', remarks: '-' },
     { id: 3, sysId: 'SY20250101005', cardNo: '6228 4801 1111 2222', type: '客户卡', name: '丰源特种油', status: '已注销', balance: '0.00', deposit: '0.00', regDate: '2024-12-20', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '已退押金' },
@@ -9840,16 +9864,22 @@ window.fuelCardData = [
 
 // Function to update the pending fuel card badge
 window.updatePendingFuelCardBadge = function () {
-    const badge = document.getElementById('pending-fuel-card-badge');
-    if (!badge || !window.fuelCardData) return;
+    const pendingBadge = document.getElementById('pending-fuel-card-badge');
+    const rechargeBadge = document.getElementById('recharge-fuel-card-badge');
+    if (!window.fuelCardData) return;
 
+    // Count '待发放'
     const pendingCount = window.fuelCardData.filter(item => item.status === '待发放').length;
+    if (pendingBadge) {
+        pendingBadge.textContent = pendingCount > 0 ? pendingCount : '';
+        pendingBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+    }
 
-    if (pendingCount > 0) {
-        badge.textContent = pendingCount;
-        badge.style.display = 'inline-block';
-    } else {
-        badge.style.display = 'none';
+    // Count '待充值'
+    const rechargeCount = window.fuelCardData.filter(item => item.status === '待充值').length;
+    if (rechargeBadge) {
+        rechargeBadge.textContent = rechargeCount > 0 ? rechargeCount : '';
+        rechargeBadge.style.display = rechargeCount > 0 ? 'inline-block' : 'none';
     }
 };
 
@@ -9874,6 +9904,19 @@ window.renderFuelCardTableBody = function (status) {
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油费</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">联系电话</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
+                </tr>
+            `;
+        } else if (status === '待充值') {
+            thead.innerHTML = `
+                <tr>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" id="fuel-card-select-all" onchange="window.toggleAllFuelCardCheckboxes(this)"></th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">运单号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡编号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">充值金额</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
                 </tr>
@@ -9920,6 +9963,21 @@ window.renderFuelCardTableBody = function (status) {
                 <td style="padding: 10px 8px; color: #94a3b8;">${item.remarks || '-'}</td>
                 <td style="padding: 10px 8px; text-align: center;">
                     <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showIssueSelectionModal('${item.waybillNo}')">发放</a>
+                </td>
+            </tr>
+        `).join('');
+    } else if (status === '待充值') {
+        tbody.innerHTML = filteredData.map((item, index) => `
+            <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
+                <td style="padding: 10px 8px; text-align: center;"><input type="checkbox" class="fuel-card-checkbox" data-sysid="${item.sysId}"></td>
+                <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
+                <td style="padding: 10px 8px;">${item.waybillNo || '-'}</td>
+                <td style="padding: 10px 8px;">${item.cardNo || '-'}</td>
+                <td style="padding: 10px 8px;">${item.plateNo || '-'}</td>
+                <td style="padding: 10px 8px; text-align: right; font-weight: 500; color: #f59e0b;">¥ ${item.fuelCost || '-'}</td>
+                <td style="padding: 10px 8px; color: #94a3b8;">${item.remarks || '-'}</td>
+                <td style="padding: 10px 8px; text-align: center;">
+                    <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showFuelCardRechargeModal('${item.sysId}', '${item.fuelCost}')">充值</a>
                 </td>
             </tr>
         `).join('');
@@ -11663,7 +11721,7 @@ window.restoreFuelCards = function () {
 /**
  * Shows the "Fuel Card Recharge" modal.
  */
-window.showFuelCardRechargeModal = function (targetSysId) {
+window.showFuelCardRechargeModal = function (targetSysId, amount) {
     let sysId = targetSysId;
 
     if (!sysId) {
@@ -11679,7 +11737,7 @@ window.showFuelCardRechargeModal = function (targetSysId) {
 
         sysId = checkedCheckboxes[0].dataset.sysid;
     }
-    const card = window.fuelCardData.find(c => c.sysId === sysId);
+    const card = window.fuelCardData.find(c => c.sysId === sysId || c.cardNo === sysId);
     if (!card) return;
 
     const now = new Date();
@@ -11689,9 +11747,13 @@ window.showFuelCardRechargeModal = function (targetSysId) {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'fuel-card-recharge-modal';
-        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 10001; font-family: "Microsoft YaHei", sans-serif;';
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10001; font-family: "Microsoft YaHei", sans-serif;';
         document.body.appendChild(modal);
+    } else {
+        modal.style.display = 'flex';
     }
+
+    const rechargeVal = amount || (card.fuelCost && card.status === '待充值' ? card.fuelCost : '0.00');
 
     modal.innerHTML = `
         <div style="background: #fff; width: 600px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
@@ -11710,16 +11772,16 @@ window.showFuelCardRechargeModal = function (targetSysId) {
                     <input type="text" value="${card.cardNo}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
                     
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right;">油卡名称:</label>
-                    <input type="text" value="${card.name}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
+                    <input type="text" value="${card.name || card.sysId}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
                     
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right;">油卡余额:</label>
-                    <input type="text" value="${card.balance}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; text-align: right; outline: none;">
+                    <input type="text" value="${card.status === '待充值' ? '' : (card.balance || '0.00')}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; text-align: right; outline: none;">
                     
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right;">充值时间:</label>
                     <input type="text" value="${timeStr}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
                     
                     <label style="font-size: 0.85rem; color: #1e293b; text-align: right; font-weight: 600;">充值金额:</label>
-                    <input type="number" id="recharge-amount" style="width: 100%; padding: 6px 10px; border: 1px solid #3b82f6; border-radius: 4px; background: #fff; color: #1e293b; font-size: 1.1rem; text-align: right; outline: none; font-weight: 600;" value="0.00" onfocus="this.select()">
+                    <input type="number" id="recharge-amount" style="width: 100%; padding: 6px 10px; border: 1px solid #3b82f6; border-radius: 4px; background: #fff; color: #1e293b; font-size: 1.1rem; text-align: right; outline: none; font-weight: 600;" value="${rechargeVal}" onfocus="this.select()">
                     
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right; align-self: start; margin-top: 8px;">备注信息:</label>
                     <textarea id="recharge-remarks" style="grid-column: span 3; width: 100%; height: 80px; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; color: #1e293b; font-size: 0.85rem; resize: none; outline: none; transition: border-color 0.2s;" placeholder="请输入充值备注..."></textarea>
@@ -16119,5 +16181,204 @@ window.toggleAllBankPaymentCheckboxes = function (masterCheckbox) {
     if (table) {
         const tbodyCheckboxes = table.querySelectorAll('tbody input[type="checkbox"]');
         tbodyCheckboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    }
+};
+
+
+/**
+ * Returns the HTML for the Customer Margin Report.
+ */
+window.renderCustomerMarginReport = function () {
+    return `
+        <div style="height: 100%; display: flex; flex-direction: column; background: #fff; overflow: hidden;">
+            <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+                <h2 style="font-size: 1.1rem; font-weight: 600; color: #1e293b;">客户_毛利分析表</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="download" style="width: 14px; height: 14px;"></i> 导出报表</button>
+                </div>
+            </div>
+            
+            <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; flex-shrink: 0;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">时间范围</label>
+                    <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                </div>
+                <span style="padding-bottom: 8px;">至</span>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.75rem; color: #64748b;">&nbsp;</label>
+                    <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">发货客户</label>
+                    <div class="relative-container" style="width: 150px;">
+                        <div class="select-box" style="height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; background: white;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                            <span id="report-customer-margin-client" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="全选">全选</span>
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8; flex-shrink: 0;"></i>
+                        </div>
+                        <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="全选" onclick="window.selectOption({element: document.getElementById('report-customer-margin-client')}, '全选'); event.stopPropagation();">全选</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳市远航达国际货运代理" onclick="window.selectOption({element: document.getElementById('report-customer-margin-client')}, '深圳市远航达国际货运代理'); event.stopPropagation();">深圳市远航达国际货运代理</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="马士基（中国）航运有限公司" onclick="window.selectOption({element: document.getElementById('report-customer-margin-client')}, '马士基（中国）航运有限公司'); event.stopPropagation();">马士基（中国）航运有限公司</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="欣旺达新能源动力汽车" onclick="window.selectOption({element: document.getElementById('report-customer-margin-client')}, '欣旺达新能源动力汽车'); event.stopPropagation();">欣旺达新能源动力汽车</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">始发网点</label>
+                    <div class="relative-container" style="width: 130px;">
+                        <div class="select-box" style="height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; background: white;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                            <span id="report-customer-margin-start-node" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="请选择">请选择</span>
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8; flex-shrink: 0;"></i>
+                        </div>
+                        <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="深圳网点" onclick="window.selectOption({element: document.getElementById('report-customer-margin-start-node')}, '深圳网点'); event.stopPropagation();">深圳网点</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="广州网点" onclick="window.selectOption({element: document.getElementById('report-customer-margin-start-node')}, '广州网点'); event.stopPropagation();">广州网点</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海网点" onclick="window.selectOption({element: document.getElementById('report-customer-margin-start-node')}, '上海网点'); event.stopPropagation();">上海网点</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">目的网点</label>
+                    <div class="relative-container" style="width: 130px;">
+                        <div class="select-box" style="height: 32px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; background: white;" onclick="window.toggleDropdown(this); event.stopPropagation();">
+                            <span id="report-customer-margin-end-node" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="请选择">请选择</span>
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px; color: #94a3b8; flex-shrink: 0;"></i>
+                        </div>
+                        <div class="dropdown-menu-custom hidden" style="width: 100%; max-height: 250px; overflow-y: auto; z-index: 9999;">
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="北京网点" onclick="window.selectOption({element: document.getElementById('report-customer-margin-end-node')}, '北京网点'); event.stopPropagation();">北京网点</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="武汉网点" onclick="window.selectOption({element: document.getElementById('report-customer-margin-end-node')}, '武汉网点'); event.stopPropagation();">武汉网点</div>
+                            <div class="dropdown-item-custom" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; padding: 8px 12px; font-size: 0.75rem;" title="上海网点" onclick="window.selectOption({element: document.getElementById('report-customer-margin-end-node')}, '上海网点'); event.stopPropagation();">上海网点</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">目的区域</label>
+                    <input type="text" placeholder="所属区域" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 120px;">
+                </div>
+                <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #64748b;">重置</button>
+            </div>
+            
+            <div style="flex-grow: 1; overflow: auto; padding: 0 20px 20px 20px; position: relative;">
+                <table style="border-collapse: collapse; font-size: 0.85rem; min-width: 2500px; margin-top: 16px;">
+                    <thead style="background: #f8fafc; color: #64748b; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 120px; background: #f8fafc; position: sticky; left: 0; z-index: 11; box-shadow: 1px 0 0 #e2e8f0;">运单编号</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 120px;">手工单号</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 120px;">客户单号</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 100px;">运单类型</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 120px;">始发网点</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 120px;">目的网点</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 80px;">目的区域</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; min-width: 150px;">发货客户</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 80px;">件数</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px;">重量合计</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px;">体积合计</th>
+                            <!-- 收入部分 -->
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 120px; background: #eff6ff;">收入合计</th>
+                            
+                            <!-- 成本部分 -->
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">整车成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">零担成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">短驳成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">超区送货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">装卸费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">进仓费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">压车等待费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">耗材成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">保险成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">其他成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">回扣金额</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">异常差额</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 100px; color: #ef4444;">税费成本</th>
+                            
+                            <!-- 利润汇总 -->
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 120px; color: #10b981; font-weight: 600; background: #ecfdf5;">剩余毛利</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; min-width: 80px; color: #10b981; font-weight: 600; background: #ecfdf5;">毛利率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 演示用的一条空占位/或静态样例 -->
+                        <tr style="border-bottom: 1px solid #f1f5f9; background: white;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                            <td style="padding: 12px; font-weight: 500; color: #4f46e5; position: sticky; left: 0; background: inherit; box-shadow: 1px 0 0 #f1f5f9;">YD20240101001</td>
+                            <td style="padding: 12px;">M233010</td>
+                            <td style="padding: 12px;">PO-99120</td>
+                            <td style="padding: 12px;">陆运整车</td>
+                            <td style="padding: 12px;">深圳宝安转运中心</td>
+                            <td style="padding: 12px;">上海闵行集散点</td>
+                            <td style="padding: 12px;">华东区</td>
+                            <td style="padding: 12px;">深圳市远航达国际货运代理</td>
+                            <td style="padding: 12px; text-align: right;">120</td>
+                            <td style="padding: 12px; text-align: right;">5.2 T</td>
+                            <td style="padding: 12px; text-align: right;">15.0 CBM</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; background: #fbfdff;">¥ 8,500.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 4,500.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">¥ 150.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">¥ 50.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 20.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">¥ 510.00</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; color: #059669; background: #f8fafc;">¥ 3,270.00</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; color: #059669; background: #f8fafc;">38.5%</td>
+                        </tr>
+                        
+                        <!-- 汇总行 -->
+                        <tr style="border-bottom: 1px solid #f1f5f9; background: #f8fafc; font-weight: 600;">
+                            <td style="padding: 12px; position: sticky; left: 0; background: #f8fafc; box-shadow: 1px 0 0 #f1f5f9;">本页合计</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px;">-</td>
+                            <td style="padding: 12px; text-align: right;">120</td>
+                            <td style="padding: 12px; text-align: right;">5.2 T</td>
+                            <td style="padding: 12px; text-align: right;">15.0 CBM</td>
+                            <td style="padding: 12px; text-align: right; background: #eff6ff;">¥ 8,500.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 4,500.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 150.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 50.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 20.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 0.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 510.00</td>
+                            <td style="padding: 12px; text-align: right; color: #059669; background: #ecfdf5;">¥ 3,270.00</td>
+                            <td style="padding: 12px; text-align: right; color: #059669; background: #ecfdf5;">38.5%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页 -->
+            <div style="padding: 12px 24px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b; flex-shrink: 0;">
+                <div>共 1 条记录，每页 20 条</div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                     <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; cursor: pointer;"><i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i></button>
+                     <span style="padding: 4px 12px; background: #4f46e5; color: white; border-radius: 4px;">1</span>
+                     <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #fff; cursor: pointer;"><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></button>
+                </div>
+            </div>
+        </div>
+    `;
+};
+
+window.toggleAllInvoiceAppCheckboxes = function (source) {
+    const checkboxes = document.querySelectorAll('#invoice-application-list-view tbody input[type="checkbox"]');
+    for (let checkbox of checkboxes) {
+        checkbox.checked = source.checked;
     }
 };
