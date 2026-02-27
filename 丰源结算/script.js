@@ -1,4 +1,12 @@
 ﻿// @ts-nocheck
+const style = document.createElement('style');
+style.textContent = `
+    .sub-sidebar { overflow-x: hidden !important; overflow-y: hidden !important; }
+    #secondary-content { overflow: hidden !important; }
+    .menu-grid { overflow: visible !important; }
+`;
+document.head.appendChild(style);
+
 
 window.handleAdvanceTotal = function () {
     let advanceTotal = 0;
@@ -157,7 +165,7 @@ const reportMenuData = [
     {
         title: "业务报表",
         icon: "bar-chart-3",
-        items: ["货量利润表", "客户_毛利分析表"]
+        items: ["货量利润表", "客户_毛利分析表", "运单_毛利分析表"]
     }
 ];
 
@@ -1516,7 +1524,18 @@ function renderTabs(activeTab) {
         item.addEventListener('click', () => renderTabs(tab));
         list.appendChild(item);
     });
-    if (activeTab === '运营概览' || activeTab === '任务中心' || activeTab === '对账单' || activeTab === '应收对账' || activeTab === '应付对账' || activeTab === '客户账单' || activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '应收明细' || activeTab === '应付明细' || activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '付款申请' || activeTab === '发票管理' || activeTab === '开票申请' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' || activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' || activeTab === '批量确认' || activeTab === '费用审核' || activeTab === '结算设置' || activeTab === '储值管理' || activeTab === '油卡管理' || activeTab === '录入订单' || activeTab === '订单管理' || activeTab === '货量利润表' || activeTab === '客户_毛利分析表' || activeTab === '录入运单' || activeTab === '运单管理' || activeTab === '运单录入(新)' || activeTab === '费用录入' || activeTab === '费用面板' || activeTab === '配载费用' || activeTab === '订单回显' || activeTab === '费用单' || activeTab === '费用申请' || activeTab === '新增费用申请') {
+    if (activeTab === '运营概览' || activeTab === '对账单' || activeTab === '费用面板' || activeTab === '费用录入' ||
+        activeTab === '配载单' || activeTab === '批量配载' || activeTab === '配载记录' || activeTab === '网点对账' ||
+        activeTab === '储值卡充值' || activeTab === '货量利润表' || activeTab === '客户_毛利分析表' || activeTab === '运单_毛利分析表' ||
+        activeTab === '任务中心' || activeTab === '对账单详情' || activeTab === '订单管理' || activeTab === '运单管理' ||
+        activeTab === '接收账单' || activeTab === '费用明细' || activeTab === '客户账单' || activeTab === '应收对账' ||
+        activeTab === '应付对账' || activeTab === '发票管理' || activeTab === '开票费用配置' || activeTab === '红字申请确认单' ||
+        activeTab === '储值管理' || activeTab === '油卡管理' || activeTab === '应收明细' || activeTab === '应付明细' ||
+        activeTab === '业务员成本明细' || activeTab === '代收代付明细' || activeTab === '收付款' || activeTab === '开票申请' ||
+        activeTab === '结算单位' || activeTab === '银行收款流水' || activeTab === '银行付款流水' || activeTab === '银企直连配置' ||
+        activeTab === '费用单' || activeTab === '费用申请' || activeTab === '新增费用申请' || activeTab === '批量确认' ||
+        activeTab === '费用审核' || activeTab === '付款申请' || activeTab === '结算设置' || activeTab === '录入运单' ||
+        activeTab === '录入订单' || activeTab === '运单录入(新)' || activeTab === '配载费用' || activeTab === '订单回显') {
 
 
         let mainContent = '';
@@ -1730,6 +1749,12 @@ function renderTabs(activeTab) {
             mainContent = `
                 <div id="workbench-content-area" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
                     ${window.renderCustomerMarginReport()}
+                </div>
+            `;
+        } else if (activeTab === '运单_毛利分析表') {
+            mainContent = `
+                <div id="workbench-content-area" style="height: 100%; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
+                    ${window.renderWaybillMarginReport()}
                 </div>
             `;
         } else if (activeTab === '任务中心') {
@@ -16376,9 +16401,220 @@ window.renderCustomerMarginReport = function () {
     `;
 };
 
-window.toggleAllInvoiceAppCheckboxes = function (source) {
-    const checkboxes = document.querySelectorAll('#invoice-application-list-view tbody input[type="checkbox"]');
-    for (let checkbox of checkboxes) {
-        checkbox.checked = source.checked;
-    }
+window.renderWaybillMarginReport = function () {
+    return `
+        <div class="report-view-container" style="display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; background: white;">
+            <!-- Filter Bar -->
+            <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; flex-shrink: 0;">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">运单日期</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                        <span style="color: #94a3b8;">至</span>
+                        <input type="date" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">始发网点</label>
+                    <input type="text" placeholder="全部网点" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 130px;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">始发区域</label>
+                    <input type="text" placeholder="始发城市/区" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 130px;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">目的省份</label>
+                    <input type="text" placeholder="省份名称" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 110px;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">目的区域</label>
+                    <input type="text" placeholder="城市/县区" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 130px;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">运单类型</label>
+                    <select style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 110px; background: white; outline: none; cursor: pointer;">
+                        <option value="">全部类型</option>
+                        <option value="陆运整车">陆运整车</option>
+                        <option value="零担">零担</option>
+                        <option value="短驳">短驳</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">发货客户</label>
+                    <input type="text" placeholder="客户名称/代号" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 140px;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="font-size: 0.75rem; color: #64748b;">关键字</label>
+                    <input type="text" placeholder="运单号/客户单号" style="height: 32px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.85rem; width: 160px;">
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
+                    <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #64748b;">重置</button>
+                </div>
+                <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #4f46e5; margin-left: auto;"><i data-lucide="download" style="width: 14px; height: 14px;"></i> 导出报表</button>
+            </div>
+            
+            <!-- Table Content Area -->
+            <div style="flex-grow: 1; overflow: auto; padding: 0 20px 20px 20px; position: relative;">
+                <table style="border-collapse: collapse; font-size: 0.85rem; min-width: 6500px; margin-top: 16px;">
+                    <thead style="background: #f8fafc; color: #64748b; position: sticky; top: 0; z-index: 10;">
+                        <tr>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 150px; background: #f8fafc; position: sticky; left: 0; z-index: 11; box-shadow: 2px 0 5px rgba(0,0,0,0.05);">运单编号</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 150px;">客户单号</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 120px;">始发网点</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 120px;">始发区域</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 120px;">目的省份</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 120px;">目的区域</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 120px;">运单日期</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 100px;">运单类型</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 180px;">发货客户</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 120px;">货物名称</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 80px;">件数</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">重量</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">体积</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">运费单价</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 120px;">运费金额</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">接货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">送货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">其他费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">附加费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 130px; background: #eff6ff; font-weight: 600;">收入总计</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 120px;">到付结算金额</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 200px;">配载信息</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 200px;">外包信息</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 150px;">备注信息</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; min-width: 100px;">结算方式</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">整车成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">零担成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">短驳成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">超区送货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">装卸费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">进仓费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">压车等待费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">耗材成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">保险成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">其他成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">回扣金额</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px; color: #ef4444;">异常差额</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 120px; font-weight: 600; color: #ef4444;">成本合计</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 120px; color: #10b981; font-weight: 600; background: #ecfdf5;">剩余毛利</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 80px; color: #10b981; font-weight: 600; background: #ecfdf5;">毛利率</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">司机信息费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">税费成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">停车费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">进仓费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">等待费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">代垫车费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">派送费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">打单费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">理货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">倒货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">放空费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">二次派送费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">压车费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">交仓费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">提货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">装货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">卸货费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">快递费扣减</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">货损货差</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">超时</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">纸箱</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">返款</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">贴标费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">代驾费</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">KPI</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">其它</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">回扣成本</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">税点</th>
+                            <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e2e8f0; min-width: 100px;">分品费</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #f1f5f9; background: white;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                            <td style="padding: 12px;">WB20260227001</td>
+                            <td style="padding: 12px;">CUST-9921</td>
+                            <td style="padding: 12px;">深圳宝安网点</td>
+                            <td style="padding: 12px;">华南大区</td>
+                            <td style="padding: 12px;">广东省</td>
+                            <td style="padding: 12px;">紫金县</td>
+                            <td style="padding: 12px;">2026-02-27</td>
+                            <td style="padding: 12px;">陆运整车</td>
+                            <td style="padding: 12px;">深圳市丰源电子科技有限公司</td>
+                            <td style="padding: 12px;">电子配件</td>
+                            <td style="padding: 12px; text-align: right;">500</td>
+                            <td style="padding: 12px; text-align: right;">2500 kg</td>
+                            <td style="padding: 12px; text-align: right;">8.5 CBM</td>
+                            <td style="padding: 12px; text-align: right;">¥ 1.20</td>
+                            <td style="padding: 12px; text-align: right;">¥ 3,000.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 200.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 150.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">¥ 50.00</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; background: #fbfdff;">¥ 3,400.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px;">粤B·88888 (王师傅)</td>
+                            <td style="padding: 12px;">自有车辆运营</td>
+                            <td style="padding: 12px;">加急件</td>
+                            <td style="padding: 12px;">月结30天</td>
+                            <td style="padding: 12px; text-align: right;">¥ 1,800.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">¥ 100.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">¥ 20.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 30.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; color: #ef4444;">¥ 1,950.00</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; color: #059669; background: #f8fafc;">¥ 1,450.00</td>
+                            <td style="padding: 12px; text-align: right; font-weight: 600; color: #059669; background: #f8fafc;">42.6%</td>
+                            <td style="padding: 12px; text-align: right;">¥ 50.00</td>
+                            <td style="padding: 12px; text-align: right;">¥ 180.00</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                            <td style="padding: 12px; text-align: right;">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div style="padding: 12px 24px; background: white; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #64748b; flex-shrink: 0;">
+                <div>共 1 条记录，每页 20 条</div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                     <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #f8fafc; cursor: pointer;"><i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i></button>
+                     <span style="padding: 4px 12px; background: #4f46e5; color: white; border-radius: 4px;">1</span>
+                     <button style="padding: 4px 8px; border: 1px solid #e2e8f0; border-radius: 4px; background: #fff; cursor: pointer;"><i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></button>
+                </div>
+            </div>
+        </div>
+    `;
 };
