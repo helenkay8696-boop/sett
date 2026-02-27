@@ -3046,7 +3046,6 @@ function renderTabs(activeTab) {
                 <div style="border-bottom: 1px solid #e2e8f0; padding: 0 24px;">
                     <div class="status-tabs" style="display: flex; gap: 24px; font-size: 0.85rem; color: #475569; overflow-x: auto; align-items: center;">
                         <div class="status-tab" data-status="待发放" style="padding: 12px 0; cursor: pointer; position: relative;" onclick="switchFuelCardTab(this)">待发放<span id="pending-fuel-card-badge" style="position: absolute; top: 4px; right: -16px; background: #ef4444; color: white; font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; min-width: 16px; text-align: center; font-weight: 600;"></span></div>
-                        <div class="status-tab" data-status="待充值" style="padding: 12px 0; cursor: pointer; position: relative;" onclick="switchFuelCardTab(this)">待充值<span id="recharge-fuel-card-badge" style="position: absolute; top: 4px; right: -16px; background: #ef4444; color: white; font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; min-width: 16px; text-align: center; font-weight: 600;"></span></div>
                         <div style="width: 1px; height: 16px; background: #e2e8f0; margin: 0 -4px;"></div>
                         <div class="status-tab active" data-status="全部" style="padding: 12px 0; border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 500; cursor: pointer;" onclick="switchFuelCardTab(this)">全部</div>
                         <div class="status-tab" data-status="在库" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">在库</div>
@@ -9816,17 +9815,17 @@ function switchFuelCardTab(element) {
         window.renderFuelCardTableBody(status);
     }
 
-    // Toggle action bar visibility: hide for "待发放" and "待充值", show for others
+    // Toggle action bar visibility: hide for "待发放", show for others
     const actionBar = document.getElementById('fuel-card-action-bar');
     if (actionBar) {
-        if (status === '待发放' || status === '待充值') {
+        if (status === '待发放') {
             actionBar.style.display = 'none';
         } else {
             actionBar.style.display = 'flex';
         }
     }
 
-    // Toggle filter visibility specifically for "待充值"
+    // Refresh icons just in case
     const exclusiveFilters = [
         'fuel-card-filter-type',
         'fuel-card-filter-status',
@@ -9837,7 +9836,7 @@ function switchFuelCardTab(element) {
     exclusiveFilters.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.style.display = (status === '待充值') ? 'none' : 'flex';
+            el.style.display = 'flex';
         }
     });
 
@@ -9875,11 +9874,9 @@ window.selectFuelCardOption = function (targetId, value, dropdownId) {
 
 // Mock Data for Fuel Cards
 window.fuelCardData = [
-    { id: 'W1', sysId: 'SY-W001', waybillNo: 'YD20260121001', waybillDate: '2026-01-21', fuelCost: '800.00', plateNo: '鄂A·12345', contactPhone: '13811112222', remarks: '测试运单1', status: '待发放' },
-    { id: 'W2', sysId: 'SY-W002', waybillNo: 'YD20260121002', waybillDate: '2026-01-21', fuelCost: '1200.00', plateNo: '鄂B·67890', contactPhone: '13933334444', remarks: '测试运单2', status: '待发放' },
-    { id: 'W3', sysId: 'SY-W003', waybillNo: 'YD20260121003', waybillDate: '2026-01-21', fuelCost: '500.00', plateNo: '鄂C·54321', contactPhone: '13755556666', remarks: '测试运单3', status: '待发放' },
-    { id: 'RC1', sysId: 'SY-RC001', waybillNo: 'YD20260227001', waybillDate: '2026-02-27', fuelCost: '600.00', plateNo: '鄂A·55667', contactPhone: '13566667777', cardNo: '6228 4801 1111 5555', type: '公司卡', name: '丰源中石油', balance: '1,200.00', deposit: '0.00', regDate: '2026-02-10', remarks: '充值测试1', status: '待充值' },
-    { id: 'RC2', sysId: 'SY-RC002', waybillNo: 'YD20260227002', waybillDate: '2026-02-27', fuelCost: '950.00', plateNo: '鄂B·88990', contactPhone: '13688889999', cardNo: '6228 4801 2222 6666', type: '客户卡', name: '丰源中石化', balance: '3,500.00', deposit: '100.00', regDate: '2026-02-15', remarks: '充值测试2', status: '待充值' },
+    { id: 'W1', sysId: 'SY-W001', waybillNo: 'YD20260121001', waybillDate: '2026-01-21', fuelCost: '800.00', cardNo: '13811112222', plateNo: '鄂A·12345', contactPhone: '13811112222', remarks: '测试运单1', status: '待发放' },
+    { id: 'W2', sysId: 'SY-W002', waybillNo: 'YD20260121002', waybillDate: '2026-01-21', fuelCost: '1200.00', cardNo: '6228 4801 0001 2222', plateNo: '鄂B·67890', contactPhone: '13933334444', remarks: '测试运单2', status: '待发放' },
+    { id: 'W3', sysId: 'SY-W003', waybillNo: 'YD20260121003', waybillDate: '2026-01-21', fuelCost: '500.00', cardNo: '6228 4801 0001 3333', plateNo: '鄂C·54321', contactPhone: '13755556666', remarks: '测试运单3', status: '待发放' },
     { id: 1, sysId: 'SY20250101003', cardNo: '6228 4801 2345 6789', type: '客户卡', name: '丰源中石油', status: '在库', balance: '1,500.00', deposit: '0.00', regDate: '2025-01-01', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '暂无' },
     { id: 2, sysId: 'SY20250101004', cardNo: '6228 4801 9876 5432', type: '公司卡', name: '丰源中石化', status: '已发放', balance: '500.00', deposit: '100.00', regDate: '2025-01-02', issueDate: '2025-01-15', waybillNo: 'YD202501150001', plateNo: '鄂A·88888', contactPhone: '138 0000 0000', remarks: '-' },
     { id: 3, sysId: 'SY20250101005', cardNo: '6228 4801 1111 2222', type: '客户卡', name: '丰源特种油', status: '已注销', balance: '0.00', deposit: '0.00', regDate: '2024-12-20', issueDate: '-', waybillNo: '-', plateNo: '-', contactPhone: '-', remarks: '已退押金' },
@@ -9890,7 +9887,6 @@ window.fuelCardData = [
 // Function to update the pending fuel card badge
 window.updatePendingFuelCardBadge = function () {
     const pendingBadge = document.getElementById('pending-fuel-card-badge');
-    const rechargeBadge = document.getElementById('recharge-fuel-card-badge');
     if (!window.fuelCardData) return;
 
     // Count '待发放'
@@ -9898,13 +9894,6 @@ window.updatePendingFuelCardBadge = function () {
     if (pendingBadge) {
         pendingBadge.textContent = pendingCount > 0 ? pendingCount : '';
         pendingBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
-    }
-
-    // Count '待充值'
-    const rechargeCount = window.fuelCardData.filter(item => item.status === '待充值').length;
-    if (rechargeBadge) {
-        rechargeBadge.textContent = rechargeCount > 0 ? rechargeCount : '';
-        rechargeBadge.style.display = rechargeCount > 0 ? 'inline-block' : 'none';
     }
 };
 
@@ -9927,21 +9916,9 @@ window.renderFuelCardTableBody = function (status) {
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">运单号</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">运单日期</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油费</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">联系电话</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
-                </tr>
-            `;
-        } else if (status === '待充值') {
-            thead.innerHTML = `
-                <tr>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" id="fuel-card-select-all" onchange="window.toggleAllFuelCardCheckboxes(this)"></th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">运单号</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡编号</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">车牌号</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">充值金额</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">联系电话</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">操作</th>
                 </tr>
@@ -9983,26 +9960,13 @@ window.renderFuelCardTableBody = function (status) {
                 <td style="padding: 10px 8px;">${item.waybillNo || '-'}</td>
                 <td style="padding: 10px 8px; text-align: center;">${item.waybillDate || '-'}</td>
                 <td style="padding: 10px 8px; text-align: right;">${item.fuelCost || '-'}</td>
+                <td style="padding: 10px 8px;">${item.cardNo || '-'}</td>
                 <td style="padding: 10px 8px;">${item.plateNo || '-'}</td>
                 <td style="padding: 10px 8px;">${item.contactPhone || '-'}</td>
                 <td style="padding: 10px 8px; color: #94a3b8;">${item.remarks || '-'}</td>
-                <td style="padding: 10px 8px; text-align: center;">
+                <td style="padding: 10px 8px; text-align: center; display: flex; gap: 8px; justify-content: center;">
                     <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showIssueSelectionModal('${item.waybillNo}')">发放</a>
-                </td>
-            </tr>
-        `).join('');
-    } else if (status === '待充值') {
-        tbody.innerHTML = filteredData.map((item, index) => `
-            <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
-                <td style="padding: 10px 8px; text-align: center;"><input type="checkbox" class="fuel-card-checkbox" data-sysid="${item.sysId}"></td>
-                <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
-                <td style="padding: 10px 8px;">${item.waybillNo || '-'}</td>
-                <td style="padding: 10px 8px;">${item.cardNo || '-'}</td>
-                <td style="padding: 10px 8px;">${item.plateNo || '-'}</td>
-                <td style="padding: 10px 8px; text-align: right; font-weight: 500; color: #f59e0b;">¥ ${item.fuelCost || '-'}</td>
-                <td style="padding: 10px 8px; color: #94a3b8;">${item.remarks || '-'}</td>
-                <td style="padding: 10px 8px; text-align: center;">
-                    <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showFuelCardRechargeModal('${item.sysId}', '${item.fuelCost}')">充值</a>
+                    <a href="javascript:void(0)" style="color: #4f46e5; text-decoration: none; font-size: 0.75rem;" onclick="window.showFuelCardRechargeModal('${item.sysId}')">充值</a>
                 </td>
             </tr>
         `).join('');
@@ -11778,7 +11742,7 @@ window.showFuelCardRechargeModal = function (targetSysId, amount) {
         modal.style.display = 'flex';
     }
 
-    const rechargeVal = amount || (card.fuelCost && card.status === '待充值' ? card.fuelCost : '0.00');
+    const rechargeVal = amount || '0.00';
 
     modal.innerHTML = `
         <div style="background: #fff; width: 600px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
@@ -11800,7 +11764,7 @@ window.showFuelCardRechargeModal = function (targetSysId, amount) {
                     <input type="text" value="${card.name || card.sysId}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
                     
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right;">油卡余额:</label>
-                    <input type="text" value="${card.status === '待充值' ? '' : (card.balance || '0.00')}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; text-align: right; outline: none;">
+                    <input type="text" value="${card.status === '待发放' ? '' : (card.balance || '0.00')}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; text-align: right; outline: none;">
                     
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right;">充值时间:</label>
                     <input type="text" value="${timeStr}" disabled style="width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
