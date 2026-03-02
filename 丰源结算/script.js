@@ -1672,6 +1672,7 @@ function renderTabs(activeTab) {
                             <button class="primary-btn" style="height: 32px; padding: 0 16px;"><i data-lucide="search" style="width: 14px; height: 14px;"></i> 查询</button>
                             <button style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.85rem; cursor: pointer; color: #64748b;">重置</button>
                             <button class="primary-btn" onclick="window.showBatchAddTaxRateModal()" style="height: 32px; padding: 0 16px; margin-left: 8px;">批量添加平台税金</button>
+                            <button class="primary-btn" onclick="window.showBatchModifyPaymentMethodModal()" style="height: 32px; padding: 0 16px; margin-left: 8px; background-color: #f59e0b; border-color: #f59e0b;">批量修改付款方式</button>
                         </div>
 
                     </div>
@@ -1917,6 +1918,20 @@ function renderTabs(activeTab) {
                                             <div class="dropdown-item-custom" onclick="window.selectOption('statement-writeoff-status', '未核销'); event.stopPropagation();">未核销</div>
                                             <div class="dropdown-item-custom" onclick="window.selectOption('statement-writeoff-status', '部分核销'); event.stopPropagation();">部分核销</div>
                                             <div class="dropdown-item-custom" onclick="window.selectOption('statement-writeoff-status', '已核销'); event.stopPropagation();">已核销</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="internal-input-group">
+                                    <label>回单状态</label>
+                                    <div class="relative-container">
+                                        <div class="select-box" style="width: 200px; height: 34px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                                            <span id="statement-receipt-status">全部</span>
+                                            <i data-lucide="chevron-down"></i>
+                                        </div>
+                                         <div class="dropdown-menu-custom hidden" style="width: 200px; z-index: 9999;">
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-receipt-status', '全部'); event.stopPropagation();">全部</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-receipt-status', '已签收'); event.stopPropagation();">已签收</div>
+                                            <div class="dropdown-item-custom" onclick="window.selectOption('statement-receipt-status', '未签收'); event.stopPropagation();">未签收</div>
                                         </div>
                                     </div>
                                 </div>
@@ -3938,7 +3953,7 @@ function renderTabs(activeTab) {
                     </button>
                     <div class="relative-container">
                         <button class="primary-btn" style="height: 32px; padding: 0 12px; background: #e0f2fe; border: none; border-radius: 4px; color: #0369a1; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
-                            批量销账<i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                            批量锁单<i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
                         </button>
                     </div>
                     <button class="primary-btn" style="height: 32px; padding: 0 12px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; color: #475569; display: flex; align-items: center; gap: 4px; font-size: 0.85rem;">
@@ -8402,16 +8417,30 @@ function renderTabs(activeTab) {
                                 <!-- Settlement Module (Bottom) -->
                                 <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                                        <div style="display: flex; align-items: center; gap: 6px;">
-                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
-                                            <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
-                                                <select id="settlement-mode-select" onchange="window.handleSettlementModeChange()" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
-                                                    <option value="现付">现付</option>
-                                                    <option value="到付">到付</option>
-                                                    <option value="双付">双付</option>
-                                                    <option value="月结">月结</option>
-                                                    <option value="回单付">回单付</option>
-                                                </select>
+                                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                                <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
+                                                    <select id="settlement-mode-select" onchange="window.handleSettlementModeChange()" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
+                                                        <option value="现付">现付</option>
+                                                        <option value="到付">到付</option>
+                                                        <option value="双付">双付</option>
+                                                        <option value="月结">月结</option>
+                                                        <option value="回单付">回单付</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 付款方式:</label>
+                                                <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
+                                                    <select id="payment-mode-select" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
+                                                        <option value="银行转账">银行转账</option>
+                                                        <option value="网货平台">网货平台</option>
+                                                        <option value="油卡">油卡</option>
+                                                        <option value="现金">现金</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                         
@@ -8460,7 +8489,7 @@ function renderTabs(activeTab) {
                                                 </div>
                                                 <!-- Row 2 -->
                                                 <div style="display: flex; align-items: center; gap: 4px;">
-                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">油费:</label>
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">油 费:</label>
                                                     <input id="expense-entry-oil-fee" type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
@@ -8471,7 +8500,11 @@ function renderTabs(activeTab) {
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">回付车费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
                                                 </div>
-                                                 <!-- Row 3 -->
+                                                <!-- Row 3 -->
+                                                <div style="display: flex; align-items: center; gap: 4px;">
+                                                    <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">油 卡 号:</label>
+                                                    <input id="expense-entry-fuel-card-no" type="text" placeholder="请输入油卡号" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; background: #fff;">
+                                                </div>
                                                 <div style="display: flex; align-items: center; gap: 4px;">
                                                     <label style="width: 80px; text-align: right; font-size: 0.8rem; color: #475569; white-space: nowrap;">信 息 费:</label>
                                                     <input type="text" style="flex: 1; height: 30px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; font-size: 0.8rem; outline: none; text-align: right; min-width: 0;">
@@ -14264,6 +14297,12 @@ window.showBatchAddTaxRateModal = function () {
     modal.id = 'batch-add-tax-rate-modal';
     modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 10003; font-family: sans-serif;';
 
+    const taxRates = {
+        '路歌': 7.9,
+        'A歌': 7.8,
+        'B歌': 8
+    };
+
     modal.innerHTML = `
         <div style="background: white; width: 400px; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); display: flex; flex-direction: column;">
             <div style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc;">
@@ -14281,7 +14320,7 @@ window.showBatchAddTaxRateModal = function () {
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <label style="font-size: 0.85rem; color: #475569;">税率 (%)</label>
-                    <input type="number" id="batch-add-tax-rate-input" placeholder="请输入税率" style="height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-size: 0.85rem;">
+                    <input type="number" id="batch-add-tax-rate-input" placeholder="请输入税率" disabled style="height: 36px; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0 8px; outline: none; font-size: 0.85rem; background-color: #f8fafc; color: #64748b; cursor: not-allowed;">
                 </div>
             </div>
             <div style="padding: 16px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc;">
@@ -14292,6 +14331,18 @@ window.showBatchAddTaxRateModal = function () {
     `;
 
     document.body.appendChild(modal);
+
+    const platformSelect = document.getElementById('batch-add-platform-select');
+    const taxRateInput = document.getElementById('batch-add-tax-rate-input');
+
+    const updateTaxRate = () => {
+        const platform = platformSelect.value;
+        taxRateInput.value = taxRates[platform] || '';
+    };
+
+    platformSelect.onchange = updateTaxRate;
+    updateTaxRate(); // Initialize with first selection
+
     if (window.lucide) window.lucide.createIcons();
 };
 
@@ -14819,8 +14870,17 @@ window.saveExpenseEntryAndSyncToPanel = function () {
     const loadingFee = document.getElementById('expense-entry-loading-fee');
     const unloadingFee = document.getElementById('expense-entry-unloading-fee');
     const payableFreight = document.getElementById('expense-entry-payable-freight');
+    const fuelCardNo = document.getElementById('expense-entry-fuel-card-no')?.value.trim();
 
     const today = new Date().toISOString().split('T')[0];
+    const oilFee = receivableFreight && receivableFreight.id === 'expense-entry-oil-fee' ? receivableFreight.value : (document.getElementById('expense-entry-oil-fee')?.value || 0);
+
+    // Mandatory Validation: Fuel Card No requires Oil Fee
+    if (fuelCardNo && parseFloat(oilFee || 0) <= 0) {
+        alert('检测到已填写油卡号，请务必填写对应的“油费”金额！');
+        return;
+    }
+
     let hasData = false;
 
     // Clear previous data for new sync (or append, depending on requirement)
@@ -15035,9 +15095,10 @@ window.saveExpenseEntryAndSyncToPanel = function () {
             waybillNo: 'FE' + Date.now().toString().slice(-6),
             waybillDate: today,
             fuelCost: parseFloat(oilFeeInput.value).toFixed(2),
+            cardNo: fuelCardNo || '-',
             plateNo: '-',
             contactPhone: '-',
-            remarks: '费用录单系统触发生成',
+            remarks: fuelCardNo ? `油卡号: ${fuelCardNo} (费用录单触发)` : '费用录单系统触发生成',
             status: '待发放'
         });
         // 顺便触发一下角标更新函数以实现右上角红点的实时显示
@@ -16955,7 +17016,12 @@ window.renderAddCommissionAccrual = function () {
     if (!window.accrualRulesMap) {
         window.accrualRulesMap = {
             '分段式': [{ min: 0, max: '', rate: '' }],
-            '进阶式': [{ minInvoiced: 0, maxInvoiced: '', minNotInvoiced: 0, maxNotInvoiced: '', minCash: 0, maxCash: '', rate: '' }],
+            '进阶式': [{
+                minInvoiced: 0, maxInvoiced: '',
+                minNotInvoiced: 0, maxNotInvoiced: '',
+                minCash: 0, maxCash: '',
+                rate: ''
+            }],
             '回款周期': [{ min: 0, max: '', rate: '' }]
         };
     }
@@ -17307,4 +17373,85 @@ window.closeSalesmanModal = function () {
     if (modal) {
         modal.innerHTML = '';
     }
+};
+
+// --- Batch Modify Payment Method Modal ---
+window.showBatchModifyPaymentMethodModal = function () {
+    const selectedCheckboxes = document.querySelectorAll('.waybill-row-checkbox:checked');
+    if (selectedCheckboxes.length === 0) {
+        alert('请先勾选需要修改的运单！');
+        return;
+    }
+
+    let modal = document.getElementById('batch-payment-modal-wrapper');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'batch-payment-modal-wrapper';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center; font-family: 'Microsoft YaHei', sans-serif;">
+            <div style="width: 400px; background: white; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden;">
+                <!-- Header -->
+                <div style="padding: 16px 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fff8f1;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="edit-3" style="width: 18px; height: 18px; color: #f59e0b;"></i>
+                        <span style="font-size: 1rem; font-weight: 600; color: #92400e;">批量修改付款方式</span>
+                    </div>
+                    <i data-lucide="x" onclick="window.closeBatchModifyPaymentMethodModal()" style="width: 20px; height: 20px; color: #64748b; cursor: pointer;"></i>
+                </div>
+
+                <!-- Body -->
+                <div style="padding: 24px 20px; display: flex; flex-direction: column; gap: 16px;">
+                    <div style="font-size: 0.9rem; color: #4b5563;">已选中 <span style="font-weight: 700; color: #f59e0b;">${selectedCheckboxes.length}</span> 条运单数据</div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: #374151;">选择新付款方式:</label>
+                        <div style="position: relative;">
+                            <select id="batch-new-payment-method" style="width: 100%; height: 36px; border: 1px solid #d1d5db; border-radius: 6px; padding: 0 12px; font-size: 0.9rem; outline: none; appearance: none; background: white; cursor: pointer;">
+                                <option value="银行转账">银行转账</option>
+                                <option value="网货平台">网货平台</option>
+                                <option value="油卡">油卡</option>
+                                <option value="现金">现金</option>
+                            </select>
+                            <i data-lucide="chevron-down" style="position: absolute; right: 10px; top: 10px; width: 16px; height: 16px; color: #9ca3af; pointer-events: none;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div style="padding: 12px 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 12px; background: #f9fafb;">
+                    <button onclick="window.closeBatchModifyPaymentMethodModal()" style="height: 32px; padding: 0 16px; background: white; border: 1px solid #d1d5db; border-radius: 6px; color: #4b5563; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">取消</button>
+                    <button onclick="window.confirmBatchModifyPaymentMethod()" style="height: 32px; padding: 0 20px; background: #f59e0b; border: none; border-radius: 6px; color: white; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                        <i data-lucide="check" style="width: 16px; height: 16px;"></i> 确认修改
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+};
+
+window.closeBatchModifyPaymentMethodModal = function () {
+    const modal = document.getElementById('batch-payment-modal-wrapper');
+    if (modal) {
+        modal.innerHTML = '';
+    }
+};
+
+window.confirmBatchModifyPaymentMethod = function () {
+    const newMethod = document.getElementById('batch-new-payment-method').value;
+    const selectedCount = document.querySelectorAll('.waybill-row-checkbox:checked').length;
+
+    // Simulate updating the data
+    alert(`成功将 ${selectedCount} 条运单的付款方式修改为：${newMethod}`);
+
+    window.closeBatchModifyPaymentMethodModal();
+
+    // Clear selections
+    document.querySelectorAll('.waybill-row-checkbox:checked').forEach(cb => cb.checked = false);
+    const mainCheck = document.querySelector('input[onchange="window.toggleAllWaybills(this)"]');
+    if (mainCheck) mainCheck.checked = false;
 };
