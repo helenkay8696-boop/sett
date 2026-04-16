@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 const style = document.createElement('style');
 style.textContent = `
     .sub-sidebar { overflow-x: hidden !important; overflow-y: hidden !important; }
@@ -7855,7 +7855,7 @@ function renderTabs(activeTab) {
                     <div style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
                                 <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 36px; min-width: 120px;">
                                     <select id="settlementMethod" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 12px; cursor: pointer;">
                                         <option value="现付">现付</option>
@@ -7864,6 +7864,18 @@ function renderTabs(activeTab) {
                                         <option value="月结">月结</option>
                                         <option value="回单付">回单付</option>
                                     </select>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                <div style="display: flex; align-items: center; gap: 16px; margin-left: 4px;">
+                                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                        <input type="radio" name="edit-driver-settlement-mode" value="到付" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;"> 到付
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                        <input type="radio" name="edit-driver-settlement-mode" value="现付" style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;"> 现付
+                                    </label>
                                 </div>
                             </div>
                             
@@ -8005,7 +8017,7 @@ function renderTabs(activeTab) {
                                 <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
-                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
                                             <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
                                                 <select style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
                                                     <option value="现付">现付</option>
@@ -8014,6 +8026,18 @@ function renderTabs(activeTab) {
                                                     <option value="月结">月结</option>
                                                     <option value="回单付">回单付</option>
                                                 </select>
+                                            </div>
+                                        </div>
+
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                            <div style="display: flex; align-items: center; gap: 12px; margin-left: 4px;">
+                                                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                                    <input type="radio" name="record-driver-settlement-mode" value="到付" checked style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 到付
+                                                </label>
+                                                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                                    <input type="radio" name="record-driver-settlement-mode" value="现付" style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 现付
+                                                </label>
                                             </div>
                                         </div>
                                         
@@ -8475,7 +8499,7 @@ function renderTabs(activeTab) {
                                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                                         <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                             <div style="display: flex; align-items: center; gap: 6px;">
-                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
                                                 <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
                                                     <select id="settlement-mode-select" onchange="window.handleSettlementModeChange()" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
                                                         <option value="现付">现付</option>
@@ -8484,6 +8508,18 @@ function renderTabs(activeTab) {
                                                         <option value="月结">月结</option>
                                                         <option value="回单付">回单付</option>
                                                     </select>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex; align-items: center; gap: 6px;">
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                                <div style="display: flex; align-items: center; gap: 12px; margin-left: 4px;">
+                                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                                        <input type="radio" name="driver-settlement-mode-entry" value="到付" checked style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 到付
+                                                    </label>
+                                                    <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                                        <input type="radio" name="driver-settlement-mode-entry" value="现付" style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 现付
+                                                    </label>
                                                 </div>
                                             </div>
 
@@ -12035,8 +12071,17 @@ window.showIssueFuelCardModal = function () {
                     <label style="font-size: 0.85rem; color: #64748b; text-align: right;">发放日期:</label>
                     <input type="text" value="${dateStr}" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f1f5f9; color: #64748b; font-size: 0.85rem; outline: none;">
                     
-                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">发放运单号:</label>
-                    <input type="text" id="issue-waybill" placeholder="请输入运单号" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
+                    <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">发放承运商:</label>
+                    <select id="issue-carrier" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none; appearance: auto; background: white; cursor: pointer;">
+                        <option value="">请选择承运商</option>
+                        <option value="顺丰速运">顺丰速运</option>
+                        <option value="京东物流">京东物流</option>
+                        <option value="中通快递">中通快递</option>
+                        <option value="圆通速递">圆通速递</option>
+                        <option value="深圳市远航达国际货运代理">深圳市远航达国际货运代理</option>
+                        <option value="深圳市路路通运输有限公司">深圳市路路通运输有限公司</option>
+                        <option value="其他">其他</option>
+                    </select>
                     
                     <label style="font-size: 0.85rem; color: #1e293b; text-align: right;">车牌号码:</label>
                     <input type="text" id="issue-plate" placeholder="请输入车牌号码" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.85rem; outline: none;">
@@ -12064,10 +12109,10 @@ window.showIssueFuelCardModal = function () {
     modal.style.display = 'flex';
     if (window.lucide) window.lucide.createIcons();
 
-    // Focus waybill input
+    // Focus carrier select
     setTimeout(() => {
-        const waybillInput = document.getElementById('issue-waybill');
-        if (waybillInput) waybillInput.focus();
+        const carrierSelect = document.getElementById('issue-carrier');
+        if (carrierSelect) carrierSelect.focus();
     }, 100);
 
     // Modal click out to close
@@ -12080,13 +12125,13 @@ window.showIssueFuelCardModal = function () {
  * Saves fuel card issuance data.
  */
 window.saveIssueFuelCard = function (sysId) {
-    const waybill = document.getElementById('issue-waybill').value.trim();
+    const carrier = document.getElementById('issue-carrier').value;
     const plate = document.getElementById('issue-plate').value.trim();
     const phone = document.getElementById('issue-phone').value.trim();
     const remarks = document.getElementById('issue-remarks').value.trim();
 
-    if (!waybill) {
-        alert('请输入发放运单号');
+    if (!carrier) {
+        alert('请选择发放承运商');
         return;
     }
 
@@ -12097,7 +12142,7 @@ window.saveIssueFuelCard = function (sysId) {
     const now = new Date();
     card.status = '已发放';
     card.issueDate = now.toLocaleDateString('zh-CN').replace(/\//g, '-');
-    card.waybillNo = waybill;
+    card.carrier = carrier;
     card.plateNo = plate;
     card.contactPhone = phone;
     card.remarks = remarks;
@@ -13854,7 +13899,7 @@ window.getFinancialPanelHTML = function () {
                     <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 结算方式:</label>
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
                                 <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 36px; min-width: 120px;">
                                     <select id="settlementMethod" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 12px; cursor: pointer;">
                                         <option value="现付">现付</option>
@@ -13865,6 +13910,17 @@ window.getFinancialPanelHTML = function () {
                                     </select>
                                 </div>
                             </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                <div style="display: flex; align-items: center; gap: 16px; margin-left: 4px;">
+                                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                        <input type="radio" name="entry-driver-settlement-mode" value="到付" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;"> 到付
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
+                                        <input type="radio" name="entry-driver-settlement-mode" value="现付" style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;"> 现付
+                                    </label>
+                                </div>
                             
                             <div style="display: flex; align-items: center; gap: 24px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
