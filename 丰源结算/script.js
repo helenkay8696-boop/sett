@@ -104,7 +104,7 @@ window.handleFreightCalc = function (type, changed) {
             weightInput.value = (f / p).toFixed(4);
         }
     }
-    
+
     // Refresh profit summary
     if (typeof window.saveExpensePanelData === 'function') {
         window.saveExpensePanelData(false);
@@ -3041,7 +3041,7 @@ function renderTabs(activeTab) {
                         <div class="status-tab" data-status="已发放" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">已发放</div>
                         <div class="status-tab" data-status="已注销" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">已注销</div>
                         <div style="width: 1px; height: 16px; background: #e2e8f0; margin: 0 8px;"></div>
-                        <div class="status-tab" onclick="window.showFuelCardRecordModal()" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #4f46e5;">
+                        <div class="status-tab" data-status="油卡记录" onclick="switchFuelCardTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #4f46e5;">
                             <i data-lucide="history" style="width: 14px; height: 14px;"></i> 油卡记录查询
                         </div>
                     </div>
@@ -7824,7 +7824,7 @@ function renderTabs(activeTab) {
                     <div style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 应收结算方式:</label>
                                 <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 36px; min-width: 120px;">
                                     <select id="settlementMethod" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 12px; cursor: pointer;">
                                         <option value="预付">预付</option>
@@ -7837,7 +7837,7 @@ function renderTabs(activeTab) {
                             </div>
 
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 应付结算方式:</label>
                                 <div style="display: flex; align-items: center; gap: 16px; margin-left: 4px;">
                                     <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
                                         <input type="radio" name="edit-driver-settlement-mode" value="到付" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;"> 到付
@@ -7989,7 +7989,7 @@ function renderTabs(activeTab) {
                                 <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                                         <div style="display: flex; align-items: center; gap: 6px;">
-                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
+                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 应收结算方式:</label>
                                             <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
                                                 <select style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
                                                     <option value="预付">预付</option>
@@ -8002,7 +8002,7 @@ function renderTabs(activeTab) {
                                         </div>
 
                                         <div style="display: flex; align-items: center; gap: 6px;">
-                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                            <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 应付结算方式:</label>
                                             <div style="display: flex; align-items: center; gap: 12px; margin-left: 4px;">
                                                 <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
                                                     <input type="radio" name="record-driver-settlement-mode" value="到付" checked style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 到付
@@ -8388,7 +8388,7 @@ function renderTabs(activeTab) {
                                         <!-- Left Settlement (Receivable) -->
                                         <div style="flex: 1; background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                                             <div style="display: flex; align-items: center; gap: 6px;">
-                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 应收结算方式:</label>
                                                 <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 30px; min-width: 100px;">
                                                     <select id="settlement-mode-select" onchange="window.handleSettlementModeChange()" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 8px; cursor: pointer; font-size: 0.85rem;">
                                                         <option value="预付">预付</option>
@@ -8418,10 +8418,11 @@ function renderTabs(activeTab) {
                                                 <button class="primary-btn" onclick="window.saveExpenseEntryAndSyncToPanel()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600;">
                                                     <i data-lucide="save" style="width: 14px; height: 14px;"></i> 保存
                                                 </button>
+                                                <button onclick="window.submitSurcharges()" style="height: 32px; padding: 0 16px; background: #ea580c; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600;">提交附加费</button>
                                                 <button onclick="window.completeExpensePanel()" style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; cursor: pointer; color: #475569; font-size: 0.85rem; font-weight: 600;">完结</button>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 6px;">
-                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 应付结算方式:</label>
                                                 <div style="display: flex; align-items: center; gap: 12px; margin-left: 4px;">
                                                     <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
                                                         <input type="radio" name="driver-settlement-mode-entry" value="到付" checked style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 到付
@@ -8435,7 +8436,7 @@ function renderTabs(activeTab) {
                                                 </div>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 6px;">
-                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 司机付款方式:</label>
+                                                <label style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">* 付款方式:</label>
                                                 <div class="payment-mode-radio-group" style="display: flex; align-items: center; gap: 12px; margin-left: 4px;">
                                                     <label style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
                                                         <input type="radio" name="expense-payment-mode" value="银行转账" checked style="width: 15px; height: 15px; cursor: pointer; accent-color: #4f46e5;"> 银行转账
@@ -8557,6 +8558,7 @@ function renderTabs(activeTab) {
                                      <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: flex-end; font-size: 0.85rem;">
                                          <div style="display: flex; align-items: center; gap: 12px; display: none;">
                                              <button class="primary-btn" onclick="window.saveExpensePanelData()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">保存</button>
+                                             <button onclick="window.submitSurcharges()" style="height: 32px; padding: 0 16px; background: #ea580c; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">提交附加费</button>
                                              <button onclick="window.completeExpensePanel()" style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; cursor: pointer; color: #475569;">完结</button>
                                          </div>
                                          <div style="display: flex; gap: 32px; text-align: center;">
@@ -8760,6 +8762,7 @@ function renderTabs(activeTab) {
                         <div style="padding: 12px 24px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <button class="primary-btn" onclick="window.saveExpensePanelData()" style="height: 32px; padding: 0 16px; background: #4f46e5; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">保存</button>
+                                <button onclick="window.submitSurcharges()" style="height: 32px; padding: 0 16px; background: #ea580c; color: white; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px;">提交附加费</button>
                                 <button onclick="window.completeExpensePanel()" style="height: 32px; padding: 0 16px; background: white; border: 1px solid #e2e8f0; border-radius: 4px; cursor: pointer; color: #475569;">完结</button>
                             </div>
                             <div style="display: flex; gap: 32px; text-align: center;">
@@ -9878,10 +9881,10 @@ function switchFuelCardTab(element) {
         window.renderFuelCardTableBody(status);
     }
 
-    // Toggle action bar visibility: hide for "待发放", show for others
+    // Toggle action bar visibility: hide for "待发放" and "油卡记录", show for others
     const actionBar = document.getElementById('fuel-card-action-bar');
     if (actionBar) {
-        if (status === '待发放') {
+        if (status === '待发放' || status === '油卡记录') {
             actionBar.style.display = 'none';
         } else {
             actionBar.style.display = 'flex';
@@ -9971,7 +9974,21 @@ window.renderFuelCardTableBody = function (status) {
     const table = tbody.closest('table');
     const thead = table ? table.querySelector('thead') : null;
     if (thead) {
-        if (status === '待发放') {
+        if (status === '油卡记录') {
+            thead.innerHTML = `
+                <tr>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox"></th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡编号</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">油卡状态</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油卡余额</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">发放日期</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">发放人员</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">回收日期</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">回收人员</th>
+                </tr>
+            `;
+        } else if (status === '待发放') {
             thead.innerHTML = `
                 <tr>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox" id="fuel-card-select-all" onchange="window.toggleAllFuelCardCheckboxes(this)"></th>
@@ -10010,6 +10027,35 @@ window.renderFuelCardTableBody = function (status) {
                 </tr>
             `;
         }
+    }
+
+    if (status === '油卡记录') {
+        const recordData = window.fuelCardRecordMockData || [];
+        if (recordData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="padding: 30px; text-align: center; color: #94a3b8;">暂无记录</td></tr>`;
+        } else {
+            tbody.innerHTML = recordData.map((item, index) => `
+                <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
+                    <td style="padding: 10px 8px; text-align: center;"><input type="checkbox"></td>
+                    <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
+                    <td style="padding: 10px 8px;">${item.cardNo}</td>
+                    <td style="padding: 10px 8px; text-align: center;">
+                        <span style="background: ${item.status === '在库' ? '#ecfdf5' : item.status === '发放中' ? '#eff6ff' : '#fff1f2'};
+                                     color: ${item.status === '在库' ? '#059669' : item.status === '发放中' ? '#2563eb' : '#e11d48'};
+                                     padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td style="padding: 10px 8px; text-align: right; font-weight: 500;">${item.balance}</td>
+                    <td style="padding: 10px 8px; text-align: center;">${item.issueDate}</td>
+                    <td style="padding: 10px 8px;">${item.issuer}</td>
+                    <td style="padding: 10px 8px; text-align: center;">${item.recoverDate}</td>
+                    <td style="padding: 10px 8px;">${item.recoverer}</td>
+                </tr>
+            `).join('');
+        }
+        if (window.lucide) window.lucide.createIcons();
+        return;
     }
 
     const cardStatuses = ['在库', '已发放', '已注销'];
@@ -12665,7 +12711,7 @@ window.renderTaskCenter = function () {
             <!-- Inner Sidebar -->
             <div style="width: 200px; border-right: 1px solid #e2e8f0; padding: 16px 0;">
                 <div style="padding: 0 16px; margin-bottom: 12px; font-weight: 600; color: #1e293b; font-size: 0.9rem;">业务功能</div>
-                <div class="task-menu-item active" onclick="window.switchBusinessFunction(this, 'payment')">付款申请</div>
+                <div class="task-menu-item active" onclick="window.switchBusinessFunction(this, 'payment')">附加费申请</div>
                 <div class="task-menu-item" onclick="window.switchBusinessFunction(this, 'invoice')">开票申请</div>
                 <div class="task-menu-item" onclick="window.switchBusinessFunction(this, 'expense')">费用申请</div>
             </div>
@@ -12779,6 +12825,183 @@ window.switchTaskTab = function (el, status) {
 };
 
 /**
+ * Shows the Task Process Modal for approval
+ */
+window.showTaskProcessModal = function (taskId, taskType, applicant, applyTime) {
+    // Remove existing modal if any
+    const existing = document.getElementById('task-process-modal');
+    if (existing) existing.remove();
+
+    // Build fee items for the modal
+    const feeItems = taskType === 'surcharge'
+        ? (() => {
+            const task = (window.surchargeTasks || []).find(t => t.id === taskId);
+            if (!task) return [];
+            // Support batch feeItems array or fallback to single item
+            if (task.feeItems && task.feeItems.length > 0) return task.feeItems;
+            return [{
+                feeType: task.category || '附加费',
+                currency: 'CNY',
+                amount: parseFloat(task.amount) || 0,
+                verified: 0,
+                pc: 'PP',
+                unit: '丰源物流'
+            }];
+        })()
+        : (() => {
+            const req = (window.pendingRechargeRequests || []).find(r => r.id === taskId);
+            if (!req) return [];
+            return [{
+                feeType: '油卡充值费',
+                currency: 'CNY',
+                amount: parseFloat(req.amount) || 0,
+                verified: 0,
+                pc: 'PP',
+                unit: req.cardName || '-'
+            }];
+        })();
+
+    const totalAmount = feeItems.reduce((s, i) => s + i.amount, 0);
+    const totalVerified = feeItems.reduce((s, i) => s + i.verified, 0);
+
+    const feeRows = feeItems.map((item, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 12px;">${idx + 1}</td>
+            <td style="padding: 8px 12px;">${item.feeType}</td>
+            <td style="padding: 8px 12px;">${item.currency}</td>
+            <td style="padding: 8px 12px; text-align: right; font-weight: 500;">${item.amount.toFixed(2)}</td>
+            <td style="padding: 8px 12px; text-align: right;">${item.verified.toFixed(2)}</td>
+            <td style="padding: 8px 12px;">${item.pc}</td>
+            <td style="padding: 8px 12px;">${item.unit}</td>
+        </tr>
+    `).join('');
+
+    const now = new Date();
+    const timeStr = `${now.getMonth()+1}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+    const modal = document.createElement('div');
+    modal.id = 'task-process-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = `
+        <div style="background:#fff;border-radius:8px;width:820px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+            <!-- Header -->
+            <div style="padding:16px 24px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                    <span style="font-weight:700;font-size:1rem;color:#1e293b;">审批处理</span>
+                    <span style="margin-left:12px;font-size:0.8rem;color:#64748b;">${taskId}</span>
+                </div>
+                <button onclick="document.getElementById('task-process-modal').remove()" style="background:none;border:none;cursor:pointer;color:#64748b;font-size:1.2rem;line-height:1;">×</button>
+            </div>
+
+            <!-- Fee List -->
+            <div style="flex:1;overflow-y:auto;padding:16px 24px 0;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                    <thead>
+                        <tr style="background:#f8fafc;color:#64748b;font-size:0.78rem;">
+                            <th style="padding:8px 12px;text-align:left;width:40px;">序号</th>
+                            <th style="padding:8px 12px;text-align:left;">费用</th>
+                            <th style="padding:8px 12px;text-align:left;width:60px;">币制</th>
+                            <th style="padding:8px 12px;text-align:right;width:90px;">金额</th>
+                            <th style="padding:8px 12px;text-align:right;width:80px;">已核销</th>
+                            <th style="padding:8px 12px;text-align:left;width:50px;">P/C</th>
+                            <th style="padding:8px 12px;text-align:left;">结算单位</th>
+                        </tr>
+                    </thead>
+                    <tbody>${feeRows}</tbody>
+                </table>
+                <!-- 空白占位，让列表有高度 -->
+                <div style="height:80px;"></div>
+            </div>
+
+            <!-- Total -->
+            <div style="padding:8px 24px;border-top:1px solid #e2e8f0;font-size:0.85rem;color:#475569;">
+                金额合计：
+                <span style="margin-left:16px;font-weight:600;color:#1e293b;">CNY &nbsp; ${totalVerified.toFixed(2)} / ${totalAmount.toFixed(2)}</span>
+            </div>
+
+            <!-- Bottom: approval flow + opinion -->
+            <div style="display:flex;gap:0;border-top:1px solid #e2e8f0;min-height:220px;">
+                <!-- Left: Approval Flow -->
+                <div style="width:320px;border-right:1px solid #e2e8f0;padding:16px 20px;flex-shrink:0;">
+                    <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+                        <span style="width:3px;height:14px;background:#4f46e5;border-radius:2px;display:inline-block;"></span>
+                        审批进程
+                    </div>
+                    <!-- Step 1: Initiator -->
+                    <div style="display:flex;gap:12px;margin-bottom:12px;">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+                            <div style="width:36px;height:36px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#4f46e5;font-weight:600;flex-shrink:0;">${applicant ? applicant.charAt(0) : '申'}</div>
+                            <div style="width:2px;flex:1;background:#e2e8f0;margin:4px 0;min-height:24px;"></div>
+                        </div>
+                        <div style="padding-top:4px;">
+                            <div style="font-size:0.75rem;color:#94a3b8;">发起人</div>
+                            <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-top:2px;">${applicant || '当前用户'}</div>
+                        </div>
+                        <div style="margin-left:auto;font-size:0.75rem;color:#94a3b8;padding-top:4px;">${applyTime || timeStr}</div>
+                    </div>
+                    <!-- Step 2: Current handler -->
+                    <div style="display:flex;gap:12px;margin-bottom:12px;">
+                        <div style="display:flex;flex-direction:column;align-items:center;">
+                            <div style="width:36px;height:36px;border-radius:50%;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#d97706;font-weight:600;flex-shrink:0;">财</div>
+                            <div style="width:2px;flex:1;background:#e2e8f0;margin:4px 0;min-height:24px;"></div>
+                        </div>
+                        <div style="padding-top:4px;">
+                            <div style="font-size:0.75rem;color:#94a3b8;">放货</div>
+                            <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-top:2px;">财务主管 <span style="font-size:0.75rem;color:#ea580c;background:#ffedd5;padding:1px 6px;border-radius:4px;">处理中</span></div>
+                        </div>
+                        <div style="margin-left:auto;font-size:0.75rem;color:#94a3b8;padding-top:4px;">${timeStr}</div>
+                    </div>
+                    <!-- Step 3: End -->
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div style="padding-top:8px;font-size:0.8rem;color:#94a3b8;">审批进行中</div>
+                    </div>
+                </div>
+
+                <!-- Right: Opinion -->
+                <div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+                    <div style="font-size:0.85rem;font-weight:600;color:#1e293b;margin-bottom:2px;display:flex;align-items:center;gap:6px;">
+                        <span style="width:3px;height:14px;background:#4f46e5;border-radius:2px;display:inline-block;"></span>
+                        审核意见
+                    </div>
+                    <textarea id="task-process-opinion" placeholder="请输入..." style="flex:1;width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:10px;font-size:0.85rem;resize:none;outline:none;color:#334155;min-height:120px;box-sizing:border-box;"></textarea>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div style="padding:12px 24px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:flex-end;gap:10px;">
+                <button onclick="document.getElementById('task-process-modal').remove()" style="height:34px;padding:0 20px;background:white;border:1px solid #e2e8f0;border-radius:6px;cursor:pointer;color:#475569;font-size:0.85rem;">关闭</button>
+                <button onclick="window._handleTaskDecision('${taskId}','${taskType}','reject')" style="height:34px;padding:0 20px;background:#ef4444;color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;">拒绝</button>
+                <button onclick="window._handleTaskDecision('${taskId}','${taskType}','approve')" style="height:34px;padding:0 20px;background:#4f46e5;color:white;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;">同意</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+};
+
+window._handleTaskDecision = function (taskId, taskType, decision) {
+    const opinion = document.getElementById('task-process-opinion')?.value || '';
+    if (taskType === 'surcharge') {
+        if (decision === 'approve') {
+            window.handleSurchargeTask(taskId, 'approve');
+        } else {
+            window.handleSurchargeTask(taskId, 'reject');
+        }
+    } else {
+        if (decision === 'approve') {
+            window.approveRechargeRequest(taskId);
+        } else {
+            window.rejectRechargeRequest(taskId);
+        }
+    }
+    document.getElementById('task-process-modal')?.remove();
+    const label = decision === 'approve' ? '同意' : '拒绝';
+    alert(`已${label}处理申请 ${taskId}${opinion ? '\n意见：' + opinion : ''}`);
+};
+
+/**
  * Returns the HTML for the task table body based on status.
  */
 window.renderTaskTableBody = function (status) {
@@ -12868,9 +13091,8 @@ window.renderTaskTableBody = function (status) {
                     <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.applicant}</td>
                     <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${req.applyTime}</td>
                     <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
-                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 8px;">
-                        <a href="javascript:void(0)" onclick="window.approveRechargeRequest('${req.id}')" style="color: #10b981; text-decoration: none;">同意</a>
-                        <a href="javascript:void(0)" onclick="window.rejectRechargeRequest('${req.id}')" style="color: #ef4444; text-decoration: none;">驳回</a>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                        <a href="javascript:void(0)" onclick="window.showTaskProcessModal('${req.id}', 'recharge', '${req.applicant}', '${req.applyTime}')" style="color: #4f46e5; text-decoration: none; font-weight: 600;">处理</a>
                     </td>
                 </tr>
             `;
@@ -12893,9 +13115,8 @@ window.renderTaskTableBody = function (status) {
                     <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${task.applicant}</td>
                     <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">${task.applyTime}</td>
                     <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">-</td>
-                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 8px;">
-                        <a href="javascript:void(0)" onclick="window.handleSurchargeTask('${task.id}', 'approve')" style="color: #10b981; text-decoration: none;">同意</a>
-                        <a href="javascript:void(0)" onclick="window.handleSurchargeTask('${task.id}', 'reject')" style="color: #ef4444; text-decoration: none;">驳回</a>
+                    <td style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9;">
+                        <a href="javascript:void(0)" onclick="window.showTaskProcessModal('${task.id}', 'surcharge', '${task.applicant}', '${task.applyTime}')" style="color: #4f46e5; text-decoration: none; font-weight: 600;">处理</a>
                     </td>
                 </tr>
             `;
@@ -13864,7 +14085,7 @@ window.getFinancialPanelHTML = function () {
                     <div id="financial-settlement-module" style="background: #fdf2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 12px 24px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.02);">
                         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 客户结算方式:</label>
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 应收结算方式:</label>
                                 <div style="display: flex; align-items: center; background: white; border: 1px solid #4f46e5; border-radius: 4px; padding: 0; height: 36px; min-width: 120px;">
                                     <select id="settlementMethod" style="width: 100%; height: 100%; border: none; outline: none; background: transparent; color: #4f46e5; font-weight: 600; padding: 0 12px; cursor: pointer;">
                                         <option value="预付">预付</option>
@@ -13877,7 +14098,7 @@ window.getFinancialPanelHTML = function () {
                             </div>
                             
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 司机结算方式:</label>
+                                <label style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">* 应付结算方式:</label>
                                 <div style="display: flex; align-items: center; gap: 16px; margin-left: 4px;">
                                     <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #4f46e5; font-weight: 600; cursor: pointer;">
                                         <input type="radio" name="entry-driver-settlement-mode" value="到付" checked style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;"> 到付
@@ -14804,7 +15025,7 @@ window.saveBatchModify = function (type) {
 
 
 
-window.saveExpensePanelData = function (showAlert = true, doSubmit = true) {
+window.saveExpensePanelData = function (showAlert = true) {
     let totalReceivable = 0;
     let totalPayable = 0;
 
@@ -14814,7 +15035,7 @@ window.saveExpensePanelData = function (showAlert = true, doSubmit = true) {
     const recDelivery = parseFloat(document.getElementById('expense-entry-delivery-fee')?.value) || 0;
     const recLoading = parseFloat(document.getElementById('expense-entry-loading-fee')?.value) || 0;
     const recUnloading = parseFloat(document.getElementById('expense-entry-unloading-fee')?.value) || 0;
-    
+
     const topReceivable = recFreight + recDelivery + recLoading + recUnloading;
 
     // 应付：应付模块的费用 (应付车费 + 信息费 + 拦标价)
@@ -14840,67 +15061,86 @@ window.saveExpensePanelData = function (showAlert = true, doSubmit = true) {
         if (amountInput) totalPayable += parseFloat(amountInput.value) || 0;
     });
 
-    // --- 3. Process Surcharges for Task Center ---
-    let submittedCount = 0;
-    if (doSubmit) {
-        const allRows = document.querySelectorAll('#expense-receivable-tbody tr, #expense-payable-tbody tr');
-        allRows.forEach(row => {
-            if (row.getAttribute('data-row-id')?.startsWith('ROW-') && row.getAttribute('data-submitted') === 'false') {
-                const type = row.getAttribute('data-type');
-                const company = row.querySelector('.surcharge-company')?.value || '-';
-                const feeType = row.querySelector('.surcharge-fee-type')?.value || '附加费';
-                const amount = row.querySelector('.surcharge-amount')?.value || '0.00';
-                const remark = row.querySelector('.surcharge-remark')?.value || '';
-
-                if (parseFloat(amount) > 0) {
-                    window.surchargeTasks.push({
-                        id: 'EXP-SC-' + Date.now() + '-' + submittedCount,
-                        category: type === 'receivable' ? '应收附加费' : '应付附加费',
-                        description: `${feeType}: ${remark} (${company})`,
-                        amount: amount,
-                        applicant: '当前用户',
-                        applyTime: new Date().toLocaleString(),
-                        status: 'pending'
-                    });
-                    row.setAttribute('data-submitted', 'true');
-                    const statusCell = row.querySelector('.status-cell');
-                    if (statusCell) statusCell.innerHTML = '<span style="color: #ea580c; background: #ffedd5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">待审批</span>';
-                    submittedCount++;
-                }
-            }
-        });
-    }
-
-    // Final Combined Values
+    // --- 3. Update Summary UI ---
     const finalReceivable = topReceivable + totalReceivable;
     const finalPayable = topPayable + totalPayable;
-    
     const profit = finalReceivable - finalPayable;
     let margin = 0;
-    if (finalReceivable !== 0) {
-        margin = (profit / finalReceivable) * 100;
-    }
+    if (finalReceivable !== 0) margin = (profit / finalReceivable) * 100;
 
-    // Update Summary UI
     if (document.getElementById('summary-receivable')) document.getElementById('summary-receivable').textContent = finalReceivable.toFixed(2);
     if (document.getElementById('summary-payable')) document.getElementById('summary-payable').textContent = finalPayable.toFixed(2);
     if (document.getElementById('summary-profit')) document.getElementById('summary-profit').textContent = profit.toFixed(2);
     if (document.getElementById('summary-gross-margin')) document.getElementById('summary-gross-margin').textContent = margin.toFixed(2) + '%';
 
-    if (showAlert) {
-        if (submittedCount > 0) {
-            alert(`保存成功！数据已更新，并已提交 ${submittedCount} 项附加费申请至任务中心。`);
-        } else {
-            alert('保存成功！数据已更新。');
-        }
-    }
+    if (showAlert) alert('保存成功！数据已更新。');
 
     // Refresh task center if visible
     const taskTbody = document.getElementById('task-table-body');
-    if (taskTbody) {
-        taskTbody.innerHTML = window.renderTaskTableBody('pending');
-    }
+    if (taskTbody) taskTbody.innerHTML = window.renderTaskTableBody('pending');
 };
+
+/**
+ * 提交附加费到任务中心审批
+ */
+window.submitSurcharges = function () {
+    if (!window.surchargeTasks) window.surchargeTasks = [];
+    const batchItems = [];
+    const allRows = document.querySelectorAll('#expense-receivable-tbody tr, #expense-payable-tbody tr');
+    allRows.forEach(row => {
+        if (row.getAttribute('data-row-id')?.startsWith('ROW-') && row.getAttribute('data-submitted') === 'false') {
+            const type = row.getAttribute('data-type');
+            const company = row.querySelector('.surcharge-company')?.value || '-';
+            const feeType = row.querySelector('.surcharge-fee-type')?.value || '附加费';
+            const amount = row.querySelector('.surcharge-amount')?.value || '0.00';
+            const remark = row.querySelector('.surcharge-remark')?.value || '';
+            if (parseFloat(amount) > 0) {
+                batchItems.push({
+                    feeType: (type === 'receivable' ? '应收' : '应付') + feeType,
+                    currency: 'CNY',
+                    amount: parseFloat(amount),
+                    verified: 0,
+                    pc: 'PP',
+                    unit: company || '丰源物流',
+                    remark: remark,
+                    rowEl: row
+                });
+            }
+        }
+    });
+
+    if (batchItems.length === 0) {
+        alert('没有可提交的附加费记录。请先新增附加费并填写金额后再提交。');
+        return;
+    }
+
+    // Create ONE batch task containing all items
+    const batchId = 'EXP-SC-' + Date.now() + '-0';
+    const totalAmt = batchItems.reduce((s, i) => s + i.amount, 0);
+    window.surchargeTasks.push({
+        id: batchId,
+        category: '附加费申请',
+        description: `批量附加费 (${batchItems.length}项)`,
+        amount: totalAmt.toFixed(2),
+        applicant: '当前用户',
+        applyTime: new Date().toLocaleString(),
+        status: 'pending',
+        feeItems: batchItems.map(i => ({ feeType: i.feeType, currency: i.currency, amount: i.amount, verified: i.verified, pc: i.pc, unit: i.unit }))
+    });
+
+    // Mark all rows as submitted
+    batchItems.forEach(i => {
+        i.rowEl.setAttribute('data-submitted', 'true');
+        const statusCell = i.rowEl.querySelector('.status-cell');
+        if (statusCell) statusCell.innerHTML = '<span style="color: #ea580c; background: #ffedd5; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">待审批</span>';
+    });
+
+    alert(`提交成功！已将 ${batchItems.length} 项附加费合并为 1 条申请提交至任务中心。`);
+
+    const taskTbody = document.getElementById('task-table-body');
+    if (taskTbody) taskTbody.innerHTML = window.renderTaskTableBody('pending');
+};
+
 
 window.completeExpensePanel = function () {
     // 1. Disable lower table action buttons
@@ -15631,7 +15871,7 @@ window.handleSurchargeTask = function (taskId, action) {
     }
 
     alert(action === 'approve' ? '已同意该附加费申请' : '已拒绝该附加费申请');
-    
+
     // Refresh task center if open
     const tbody = document.getElementById('task-table-body');
     if (tbody) {
