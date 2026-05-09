@@ -2672,19 +2672,19 @@ function renderTabs(activeTab) {
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr) 1fr; gap: 20px; margin-bottom: 24px;">
+                <div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 24px;">
                     <!-- Balance -->
                     <div class="stats-card" style="flex-direction: row; align-items: center; justify-content: space-between; padding: 24px;">
                         <div>
                             <div class="card-label" style="margin-bottom: 12px;">总账户余额</div>
-                            <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <div style="display: flex; align-items: baseline; gap: 12px;">
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">人民币</span>
-                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">¥1,248,500</span>
+                            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 150px;">
+                                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">CNY</span>
+                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); text-align: right; flex-grow: 1;">1,248,500.00</span>
                                 </div>
-                                <div style="display: flex; align-items: baseline; gap: 12px;">
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">美元</span>
-                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">$185,200</span>
+                                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">USD</span>
+                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); text-align: right; flex-grow: 1;">185,200.00</span>
                                 </div>
                             </div>
                         </div>
@@ -2696,39 +2696,19 @@ function renderTabs(activeTab) {
                     <div class="stats-card" style="flex-direction: row; align-items: center; justify-content: space-between; padding: 24px;">
                         <div>
                             <div class="card-label" style="margin-bottom: 12px;">今日充值总额</div>
-                            <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <div style="display: flex; align-items: baseline; gap: 12px;">
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">人民币</span>
-                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: #22c55e;">¥42,800</span>
+                            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 150px;">
+                                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">CNY</span>
+                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: #22c55e; text-align: right; flex-grow: 1;">42,800.00</span>
                                 </div>
-                                <div style="display: flex; align-items: baseline; gap: 12px;">
-                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">美元</span>
-                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: #22c55e;">$6,000</span>
+                                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary); min-width: 40px;">USD</span>
+                                    <span class="card-value" style="font-size: 1.5rem; font-weight: 700; color: #22c55e; text-align: right; flex-grow: 1;">6,000.00</span>
                                 </div>
                             </div>
                         </div>
                         <div class="icon-box" style="width: 56px; height: 56px; background: #dcfce7; color: #22c55e; border-radius: 12px;">
                             <i data-lucide="trending-up" style="width: 28px; height: 28px;"></i>
-                        </div>
-                    </div>
-                    <!-- Active Users -->
-                    <div class="stats-card" style="flex-direction: row; align-items: center; justify-content: space-between; padding: 24px;">
-                        <div>
-                            <div class="card-label" style="margin-bottom: 8px;">活跃账户数</div>
-                            <div class="card-value" style="font-size: 1.8rem;">1,248</div>
-                        </div>
-                        <div class="icon-box" style="width: 56px; height: 56px; background: #ffedd5; color: #f97316; border-radius: 12px;">
-                            <i data-lucide="users" style="width: 28px; height: 28px;"></i>
-                        </div>
-                    </div>
-                    <!-- Low Balance -->
-                    <div class="stats-card" style="flex-direction: row; align-items: center; justify-content: space-between; padding: 24px;">
-                        <div>
-                            <div class="card-label" style="margin-bottom: 8px;">低余额账户</div>
-                            <div class="card-value" style="font-size: 1.8rem;">24</div>
-                        </div>
-                        <div class="icon-box" style="width: 56px; height: 56px; background: #f3e8ff; color: #a855f7; border-radius: 12px;">
-                            <i data-lucide="alert-circle" style="width: 28px; height: 28px;"></i>
                         </div>
                     </div>
                 </div>
@@ -2778,13 +2758,12 @@ function renderTabs(activeTab) {
                                     <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">用户ID</th>
                                     <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">公司</th>
                                     <th colspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: center; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; z-index: 11;">账户余额</th>
-                                    <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">账户状态</th>
                                     <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">最后充值时间</th>
                                     <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">操作</th>
                                 </tr>
                                 <tr style="background: #f8fafc;">
-                                    <th style="position: sticky; top: 54px; background: #f8fafc; padding: 10px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11; box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1);">人民币</th>
-                                    <th style="position: sticky; top: 54px; background: #f8fafc; padding: 10px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11; box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1);">美元</th>
+                                    <th style="position: sticky; top: 54px; background: #f8fafc; padding: 10px 24px; text-align: right; font-weight: 600; color: #64748b; z-index: 11; box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1);">CNY</th>
+                                    <th style="position: sticky; top: 54px; background: #f8fafc; padding: 10px 24px; text-align: right; font-weight: 600; color: #64748b; z-index: 11; box-shadow: 0 1px 2px -1px rgba(0,0,0,0.1);">USD</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2792,18 +2771,15 @@ function renderTabs(activeTab) {
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0582</td>
                                     <td style="padding: 16px 24px; color: #64748b;">创新科技有限公司</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥8,450</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$1,200</td>
-                                    <td style="padding: 16px 24px;">
-                                        <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
-                                    </td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">8,450.00</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">1,200.00</td>
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-15</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button class="btn-recharge" onclick="window.openBackendRechargeModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button class="btn-recharge" onclick="window.openBackendRechargeModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button class="btn-view-details" onclick="window.openBackendDetailsModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button class="btn-view-details" onclick="window.openBackendDetailsModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2816,18 +2792,15 @@ function renderTabs(activeTab) {
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0421</td>
                                     <td style="padding: 16px 24px; color: #64748b;">未来科技有限公司</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥15,200</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$2,500</td>
-                                    <td style="padding: 16px 24px;">
-                                        <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
-                                    </td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">15,200.00</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">2,500.00</td>
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-14</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button class="btn-recharge" onclick="window.openBackendRechargeModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button class="btn-recharge" onclick="window.openBackendRechargeModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2840,18 +2813,15 @@ function renderTabs(activeTab) {
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0367</td>
                                     <td style="padding: 16px 24px; color: #64748b;">智云网络有限公司</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥3,200</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$500</td>
-                                    <td style="padding: 16px 24px;">
-                                        <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
-                                    </td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">3,200.00</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">500.00</td>
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-12</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2864,18 +2834,15 @@ function renderTabs(activeTab) {
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0198</td>
                                     <td style="padding: 16px 24px; color: #64748b;">星辰信息技术</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">¥120</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">$0</td>
-                                    <td style="padding: 16px 24px;">
-                                        <span style="background: #fef3c7; color: #b45309; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">低余额</span>
-                                    </td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">120.00</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">0.00</td>
                                     <td style="padding: 16px 24px; color: #64748b;">2023-09-28</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0198', '赵六', '星辰信息技术', '120')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0198', '赵六', '星辰信息技术', '120.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0198', '赵六', '星辰信息技术', '120')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0198', '赵六', '星辰信息技术', '120.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2888,18 +2855,15 @@ function renderTabs(activeTab) {
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0789</td>
                                     <td style="padding: 16px 24px; color: #64748b;">华通集团</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">¥25,600</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem;">$3,800</td>
-                                    <td style="padding: 16px 24px;">
-                                        <span style="background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">活跃</span>
-                                    </td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">25,600.00</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">3,800.00</td>
                                     <td style="padding: 16px 24px; color: #64748b;">2023-10-16</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0789', '刘七', '华通集团', '25,600')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0789', '刘七', '华通集团', '25,600.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0789', '刘七', '华通集团', '25,600')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0789', '刘七', '华通集团', '25,600.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2912,18 +2876,15 @@ function renderTabs(activeTab) {
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0654</td>
                                     <td style="padding: 16px 24px; color: #64748b;">易联科技有限公司</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">¥0</td>
-                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem;">$0</td>
-                                    <td style="padding: 16px 24px;">
-                                        <span style="background: #fee2e2; color: #b91c1c; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">冻结</span>
-                                    </td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">0.00</td>
+                                    <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">0.00</td>
                                     <td style="padding: 16px 24px; color: #64748b;">2023-08-15</td>
                                     <td style="padding: 16px 24px;">
                                         <div style="display: flex; gap: 8px;">
-                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendRechargeModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0f2fe; color: #0ea5e9; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <button onclick="window.openBackendDetailsModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
@@ -2964,13 +2925,11 @@ function renderTabs(activeTab) {
                             <div>
                                 <label style="display: block; font-size: 0.85rem; font-weight: 500; color: #64748b; margin-bottom: 8px;">支付方式</label>
                                 <div class="relative-container" style="width: 100%; height: 40px; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; cursor: pointer; position: relative;" onclick="document.getElementById('modal-payment-menu').classList.toggle('hidden'); event.stopPropagation();">
-                                    <span id="modal-payment-select">支付宝</span>
+                                    <span id="modal-payment-select">银行存款</span>
                                     <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #94a3b8;"></i>
                                     <div id="modal-payment-menu" class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999; overflow: hidden;">
-                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '支付宝'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">支付宝</div>
-                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '微信支付'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">微信支付</div>
-                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '银行转账'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">银行转账</div>
-                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '手动调整'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">手动调整</div>
+                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '银行存款'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">银行存款</div>
+                                        <div class="dropdown-item-custom" onclick="window.selectOption('modal-payment-select', '现金'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.9rem; color: #1e293b; cursor: pointer;">现金</div>
                                     </div>
                                 </div>
                             </div>
@@ -3041,8 +3000,8 @@ function renderTabs(activeTab) {
                         <div class="status-tab" data-status="已发放" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">已发放</div>
                         <div class="status-tab" data-status="已注销" style="padding: 12px 0; cursor: pointer;" onclick="switchFuelCardTab(this)">已注销</div>
                         <div style="width: 1px; height: 16px; background: #e2e8f0; margin: 0 8px;"></div>
-                        <div class="status-tab" data-status="油卡记录" onclick="switchFuelCardTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #4f46e5;">
-                            <i data-lucide="history" style="width: 14px; height: 14px;"></i> 油卡记录查询
+                        <div class="status-tab" data-status="充值记录" onclick="switchFuelCardTab(this)" style="padding: 12px 0; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #4f46e5;">
+                            <i data-lucide="history" style="width: 14px; height: 14px;"></i> 充值记录查询
                         </div>
                     </div>
                 </div>
@@ -9884,7 +9843,7 @@ function switchFuelCardTab(element) {
     // Toggle action bar visibility: hide for "待发放" and "油卡记录", show for others
     const actionBar = document.getElementById('fuel-card-action-bar');
     if (actionBar) {
-        if (status === '待发放' || status === '油卡记录') {
+        if (status === '待发放' || status === '充值记录') {
             actionBar.style.display = 'none';
         } else {
             actionBar.style.display = 'flex';
@@ -9974,18 +9933,17 @@ window.renderFuelCardTableBody = function (status) {
     const table = tbody.closest('table');
     const thead = table ? table.querySelector('thead') : null;
     if (thead) {
-        if (status === '油卡记录') {
+        if (status === '充值记录') {
             thead.innerHTML = `
                 <tr>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 40px;"><input type="checkbox"></th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center; width: 50px;">序号</th>
                     <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">油卡编号</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">油卡状态</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">油卡余额</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">发放日期</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">发放人员</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">回收日期</th>
-                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">回收人员</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">充值日期</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: right;">充值金额</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">充值人员</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: left;">备注</th>
+                    <th style="padding: 12px 8px; border-bottom: 2px solid #e2e8f0; text-align: center;">状态</th>
                 </tr>
             `;
         } else if (status === '待发放') {
@@ -10029,28 +9987,25 @@ window.renderFuelCardTableBody = function (status) {
         }
     }
 
-    if (status === '油卡记录') {
+    if (status === '充值记录') {
         const recordData = window.fuelCardRecordMockData || [];
         if (recordData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" style="padding: 30px; text-align: center; color: #94a3b8;">暂无记录</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="padding: 30px; text-align: center; color: #94a3b8;">暂无记录</td></tr>`;
         } else {
             tbody.innerHTML = recordData.map((item, index) => `
                 <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
                     <td style="padding: 10px 8px; text-align: center;"><input type="checkbox"></td>
                     <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
                     <td style="padding: 10px 8px;">${item.cardNo}</td>
+                    <td style="padding: 10px 8px; text-align: center;">${item.date}</td>
+                    <td style="padding: 10px 8px; text-align: right; font-weight: 500; color: #10b981;">+${item.amount}</td>
+                    <td style="padding: 10px 8px;">${item.person}</td>
+                    <td style="padding: 10px 8px; color: #64748b; font-size: 0.75rem;">${item.remarks}</td>
                     <td style="padding: 10px 8px; text-align: center;">
-                        <span style="background: ${item.status === '在库' ? '#ecfdf5' : item.status === '发放中' ? '#eff6ff' : '#fff1f2'};
-                                     color: ${item.status === '在库' ? '#059669' : item.status === '发放中' ? '#2563eb' : '#e11d48'};
-                                     padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">
+                        <span style="background: #ecfdf5; color: #059669; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">
                             ${item.status}
                         </span>
                     </td>
-                    <td style="padding: 10px 8px; text-align: right; font-weight: 500;">${item.balance}</td>
-                    <td style="padding: 10px 8px; text-align: center;">${item.issueDate}</td>
-                    <td style="padding: 10px 8px;">${item.issuer}</td>
-                    <td style="padding: 10px 8px; text-align: center;">${item.recoverDate}</td>
-                    <td style="padding: 10px 8px;">${item.recoverer}</td>
                 </tr>
             `).join('');
         }
@@ -12244,11 +12199,11 @@ window.closeRecoverFuelCardModal = function () {
 
 // Mock Data for Fuel Card Records
 window.fuelCardRecordMockData = [
-    { cardNo: '5Y20250101001', status: '已回收', balance: '1500.00', issueDate: '2025-01-01', issuer: '张三', recoverDate: '2025-01-15', recoverer: '李四' },
-    { cardNo: '5Y20250101002', status: '发放中', balance: '500.00', issueDate: '2025-01-10', issuer: '王五', recoverDate: '-', recoverer: '-' },
-    { cardNo: '5Y20250101003', status: '已回收', balance: '0.00', issueDate: '2024-12-20', issuer: '赵六', recoverDate: '2025-01-05', recoverer: '孙七' },
-    { cardNo: '5Y20250101004', status: '在库', balance: '2800.00', issueDate: '-', issuer: '-', recoverDate: '-', recoverer: '-' },
-    { cardNo: '5Y20250101005', status: '发放中', balance: '1200.00', issueDate: '2025-01-18', issuer: '张三', recoverDate: '-', recoverer: '-' }
+    { cardNo: '6228 4801 2345 6789', date: '2025-05-01 10:30', amount: '1,000.00', person: '张三', remarks: '常规充值', status: '已完成' },
+    { cardNo: '6228 4801 2345 6789', date: '2025-05-05 14:20', amount: '500.00', person: '李四', remarks: '补给充值', status: '已完成' },
+    { cardNo: '6228 4801 2345 6790', date: '2025-05-06 09:15', amount: '2,000.00', person: '张三', remarks: '批量充值', status: '已完成' },
+    { cardNo: '6228 4801 2345 6791', date: '2025-05-08 16:40', amount: '800.00', person: '王五', remarks: '月度充值', status: '已完成' },
+    { cardNo: '6228 4801 2345 6792', date: '2025-05-09 11:00', amount: '1,200.00', person: '张三', remarks: '常规充值', status: '已完成' }
 ];
 
 /**
@@ -12267,7 +12222,7 @@ window.showFuelCardRecordModal = function () {
         <div style="background: #fff; width: 900px; height: 600px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
             <!-- Header -->
             <div style="background: #f8fafc; padding: 18px 0; border-bottom: 1px solid #e2e8f0; text-align: center;">
-                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">油卡记录查询</h2>
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #1e293b; letter-spacing: 8px; margin: 0;">充值记录查询</h2>
             </div>
             
             <!-- Search Area -->
@@ -12414,61 +12369,54 @@ window.showFuelCardDetailModal = function (sysId) {
         <div style="background: #fff; width: 800px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
             <!-- Modal Header -->
             <div style="background: #fff; padding: 20px 0; text-align: center; position: relative; border-bottom: 2px solid #5fa55a;">
-                 <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; letter-spacing: 4px; margin: 0;">油 卡 信 息 查 看</h2>
+                 <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; letter-spacing: 4px; margin: 0;">充 值 记 录 查 询</h2>
                   <button onclick="window.closeFuelCardDetailModal()" style="position: absolute; right: 10px; top: 10px; background: none; border: none; cursor: pointer; color: #64748b;">
                     <i data-lucide="x" style="width: 20px; height: 20px;"></i>
                 </button>
             </div>
             
-            <div style="padding: 24px;">
-                <!-- Section 1: Basic Info -->
-                <div style="background: #84cc7f; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px 4px 0 0; display: inline-block;">基本信息</div>
-                <div style="border: 2px solid #84cc7f; margin-top: -2px; margin-bottom: 24px;">
-                     <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem;">
-                        <tr>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">油卡编号</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; width: 35%;">${card.cardNo}</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">油卡名称</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f; width: 35%;">${card.name}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">当前状态</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; color: ${statusColor}; font-weight: bold;">${card.status}</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">油卡余额</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f;">${card.balance}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">登记日期</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f;">${card.regDate}</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">登记人员</td>
-                            <td style="padding: 10px;">张三</td> <!-- Hardcoded as example/placeholder -->
-                        </tr>
-                     </table>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Card Info Summary -->
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div style="display: flex; gap: 24px;">
+                        <div><span style="color: #64748b; font-size: 0.85rem;">油卡编号:</span> <span style="font-weight: 600; color: #1e293b;">${card.cardNo}</span></div>
+                        <div><span style="color: #64748b; font-size: 0.85rem;">当前余额:</span> <span style="font-weight: 600; color: #10b981;">¥${card.balance}</span></div>
+                    </div>
+                    <div style="background: ${statusColor}15; color: ${statusColor}; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${card.status}</div>
                 </div>
 
-                <!-- Section 2: Last Usage -->
-                <div style="background: #84cc7f; color: white; font-weight: bold; padding: 8px 16px; border-radius: 4px 4px 0 0; display: inline-block;">上次使用</div>
-                <div style="border: 2px solid #84cc7f; margin-top: -2px;">
-                     <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem;">
-                        <tr>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">充值时间</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; width: 35%;">- - : :</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff; width: 15%;">充值金额</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f; width: 35%;"></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">发放时间</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f;">${card.issueDate || '- - : :'}</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; border-bottom: 1px solid #84cc7f; background: #eef2ff;">发放对象</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #84cc7f;">${card.plateNo || ''}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">回收时间</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f;">- - : :</td>
-                            <td style="padding: 10px; border-right: 1px solid #84cc7f; background: #eef2ff;">回收余额</td>
-                            <td style="padding: 10px;"></td>
-                        </tr>
-                     </table>
+                <!-- Recharge History Table -->
+                <div style="flex: 1; overflow: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead style="position: sticky; top: 0; background: #f1f5f9; z-index: 10;">
+                            <tr>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 2px solid #e2e8f0; width: 50px;">序号</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 2px solid #e2e8f0;">充值日期</th>
+                                <th style="padding: 12px 8px; text-align: right; border-bottom: 2px solid #e2e8f0;">充值金额</th>
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #e2e8f0; padding-left: 20px;">充值人员</th>
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #e2e8f0;">备注</th>
+                                <th style="padding: 12px 8px; text-align: center; border-bottom: 2px solid #e2e8f0;">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(() => {
+                                const history = (window.fuelCardRecordMockData || []).filter(r => r.cardNo === card.cardNo);
+                                if (history.length === 0) return `<tr><td colspan="6" style="padding: 40px; text-align: center; color: #94a3b8;">暂无充值记录</td></tr>`;
+                                return history.map((item, index) => `
+                                    <tr style="border-bottom: 1px solid #f1f5f9; ${index % 2 === 1 ? 'background: #fbfcfe;' : ''}">
+                                        <td style="padding: 10px 8px; text-align: center;">${index + 1}</td>
+                                        <td style="padding: 10px 8px; text-align: center;">${item.date}</td>
+                                        <td style="padding: 10px 8px; text-align: right; font-weight: 600; color: #10b981;">+${item.amount}</td>
+                                        <td style="padding: 10px 8px; padding-left: 20px;">${item.person}</td>
+                                        <td style="padding: 10px 8px; color: #64748b;">${item.remarks}</td>
+                                        <td style="padding: 10px 8px; text-align: center;">
+                                            <span style="background: #ecfdf5; color: #059669; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">${item.status}</span>
+                                        </td>
+                                    </tr>
+                                `).join('');
+                            })()}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -12877,7 +12825,7 @@ window.showTaskProcessModal = function (taskId, taskType, applicant, applyTime) 
     `).join('');
 
     const now = new Date();
-    const timeStr = `${now.getMonth()+1}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const timeStr = `${now.getMonth() + 1}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
     const modal = document.createElement('div');
     modal.id = 'task-process-modal';
@@ -14534,7 +14482,7 @@ window.openBackendRechargeModal = function (userId, userName, company, balance) 
 
     // Reset inputs
     if (document.getElementById('recharge-amount-input')) document.getElementById('recharge-amount-input').value = '1000';
-    if (document.getElementById('modal-payment-select')) document.getElementById('modal-payment-select').textContent = '支付宝';
+    if (document.getElementById('modal-payment-select')) document.getElementById('modal-payment-select').textContent = '银行存款';
     const textarea = modal.querySelector('textarea');
     if (textarea) textarea.value = '';
 
@@ -15073,6 +15021,36 @@ window.saveExpensePanelData = function (showAlert = true) {
     if (document.getElementById('summary-profit')) document.getElementById('summary-profit').textContent = profit.toFixed(2);
     if (document.getElementById('summary-gross-margin')) document.getElementById('summary-gross-margin').textContent = margin.toFixed(2) + '%';
 
+    // --- 4. Persist all rows to global data arrays ---
+    const persistRows = (tbodyId, targetArray) => {
+        const rows = document.querySelectorAll(`#${tbodyId} tr`);
+        const newData = [];
+        rows.forEach(row => {
+            if (row.cells.length < 10) return; // Skip empty rows
+            const id = row.getAttribute('data-row-id');
+            const category = row.cells[2]?.querySelector('select')?.value || row.cells[2]?.textContent.trim() || '';
+            const company = row.querySelector('.surcharge-company')?.value || row.cells[3]?.textContent.trim() || '';
+            const name = row.querySelector('.surcharge-fee-type')?.value || row.cells[4]?.textContent.trim() || '';
+            const amount = parseFloat(row.cells[5]?.querySelector('input')?.value) || 0;
+            const date = row.cells[8]?.textContent.trim();
+            const remark = row.querySelector('.surcharge-remark')?.value || row.cells[10]?.textContent.trim() || '';
+            const statusCellHtml = row.querySelector('.status-cell')?.innerHTML || row.cells[21]?.innerHTML || '';
+            
+            let status = '未核销';
+            if (statusCellHtml.includes('审批中') || statusCellHtml.includes('待审批')) status = '审批中';
+            else if (statusCellHtml.includes('已审批') || statusCellHtml.includes('已审核')) status = '已审批';
+            else if (statusCellHtml.includes('已拒绝')) status = '已拒绝';
+            
+            newData.push({
+                id, category, company, name, amount, date, currency: 'CNY', remark, status
+            });
+        });
+        return newData;
+    };
+
+    window.expensePanelReceivableData = persistRows('expense-receivable-tbody', window.expensePanelReceivableData);
+    window.expensePanelPayableData = persistRows('expense-payable-tbody', window.expensePanelPayableData);
+
     if (showAlert) alert('保存成功！数据已更新。');
 
     // Refresh task center if visible
@@ -15334,9 +15312,9 @@ window.saveExpenseEntryAndSyncToPanel = function () {
 
     let hasData = false;
 
-    // Clear previous data for new sync (or append, depending on requirement)
-    window.expensePanelReceivableData = [];
-    window.expensePanelPayableData = [];
+    // Filter and preserve manual surcharge rows (IDs starting with ROW-)
+    window.expensePanelReceivableData = (window.expensePanelReceivableData || []).filter(item => item.id && item.id.startsWith('ROW-'));
+    window.expensePanelPayableData = (window.expensePanelPayableData || []).filter(item => item.id && item.id.startsWith('ROW-'));
 
     // Process receivable car fee (应收车费 -> 费用面板应收: 车费)
     if (receivableFreight && receivableFreight.value && parseFloat(receivableFreight.value) > 0) {
@@ -15794,12 +15772,12 @@ window.addSurchargeRow = function (type) {
             </select>
         </td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
-            <select class="surcharge-company" style="width: 150px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
+            <select class="surcharge-company" onchange="window.saveExpensePanelData(false)" style="width: 150px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
                 ${companyOptions}
             </select>
         </td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">
-            <select class="surcharge-fee-type" style="width: 80px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
+            <select class="surcharge-fee-type" onchange="window.saveExpensePanelData(false)" style="width: 80px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; background: white;">
                 ${expenseOptions}
             </select>
         </td>
@@ -15808,7 +15786,7 @@ window.addSurchargeRow = function (type) {
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;"><input type="text" value="1" style="width: 40px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem; text-align: right;"></td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">${today}</td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;">CNY</td>
-        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input class="surcharge-remark" type="text" placeholder="附加费备注" style="width: 80px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
+        <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9;"><input class="surcharge-remark" type="text" onchange="window.saveExpensePanelData(false)" placeholder="附加费备注" style="width: 80px; border: 1px solid #e2e8f0; border-radius: 2px; padding: 2px 4px; font-size: 0.75rem;"></td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">1.00</td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0%</td>
         <td style="padding: 6px 8px; border-bottom: 1px solid #f1f5f9; text-align: right;">0.00</td>
