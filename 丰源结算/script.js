@@ -2720,25 +2720,6 @@ function renderTabs(activeTab) {
                         <input type="text" placeholder="搜索用户ID、用户名或公司名称..." style="width: 100%; height: 42px; padding: 0 12px 0 36px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; outline: none; background: white;">
                     </div>
                      <div style="flex-grow: 1;"></div>
-                    <div class="relative-container" style="width: 140px; height: 42px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; cursor: pointer; position: relative;">
-                        <span id="backend-status-select">所有状态</span>
-                        <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
-                        <div class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999; overflow: hidden;">
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '所有状态'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">所有状态</div>
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '活跃账户'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">活跃账户</div>
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '冻结账户'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">冻结账户</div>
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-status-select', '低余额账户'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">低余额账户</div>
-                        </div>
-                    </div>
-                    <div class="relative-container" style="width: 160px; height: 42px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; cursor: pointer; position: relative;">
-                        <span id="backend-sort-select">余额从高到低</span>
-                        <i data-lucide="chevron-down" style="width: 16px; height: 16px; color: #64748b;"></i>
-                        <div class="dropdown-menu-custom hidden" style="position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 9999; overflow: hidden;">
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-sort-select', '余额从高到低'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">余额从高到低</div>
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-sort-select', '余额从低到高'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">余额从低到高</div>
-                            <div class="dropdown-item-custom" onclick="window.selectOption('backend-sort-select', '最近充值'); event.stopPropagation();" style="padding: 10px 12px; font-size: 0.85rem; color: #1e293b; cursor: pointer;">最近充值</div>
-                        </div>
-                    </div>
                      <button class="primary-btn" style="height: 42px; padding: 0 20px; border-radius: 8px; display: flex; align-items: center; gap: 8px; background: #3b82f6; color: white; border: none; font-weight: 500; cursor: pointer;">
                         <i data-lucide="file-down" style="width: 18px; height: 18px;"></i> 导出数据
                     </button>
@@ -2755,7 +2736,6 @@ function renderTabs(activeTab) {
                         <table class="data-table" style="width: 100%; position: relative;">
                             <thead style="position: sticky; top: 0; z-index: 10;">
                                 <tr style="background: #f8fafc;">
-                                    <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">用户ID</th>
                                     <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">公司</th>
                                     <th colspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: center; font-weight: 600; color: #64748b; border-bottom: 1px solid #e2e8f0; z-index: 11;">账户余额</th>
                                     <th rowspan="2" style="position: sticky; top: 0; background: #f8fafc; padding: 16px 24px; text-align: left; font-weight: 600; color: #64748b; z-index: 11;">最后充值时间</th>
@@ -2769,7 +2749,6 @@ function renderTabs(activeTab) {
                             <tbody>
                                 <!-- Row 1 -->
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0582</td>
                                     <td style="padding: 16px 24px; color: #64748b;">创新科技有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">8,450.00</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">1,200.00</td>
@@ -2782,15 +2761,11 @@ function renderTabs(activeTab) {
                                             <button class="btn-view-details" onclick="window.openBackendDetailsModal('ERP-2023-0582', '张三', '创新科技有限公司', '8,450.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                                <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <!-- Row 2 -->
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0421</td>
                                     <td style="padding: 16px 24px; color: #64748b;">未来科技有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">15,200.00</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">2,500.00</td>
@@ -2803,15 +2778,11 @@ function renderTabs(activeTab) {
                                             <button onclick="window.openBackendDetailsModal('ERP-2023-0421', '李四', '未来科技有限公司', '15,200.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                                <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <!-- Row 3 -->
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0367</td>
                                     <td style="padding: 16px 24px; color: #64748b;">智云网络有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">3,200.00</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">500.00</td>
@@ -2824,15 +2795,11 @@ function renderTabs(activeTab) {
                                             <button onclick="window.openBackendDetailsModal('ERP-2023-0367', '王五', '智云网络有限公司', '3,200.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                                <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
                                  <!-- Row 4 -->
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0198</td>
                                     <td style="padding: 16px 24px; color: #64748b;">星辰信息技术</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">120.00</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">0.00</td>
@@ -2845,15 +2812,11 @@ function renderTabs(activeTab) {
                                             <button onclick="window.openBackendDetailsModal('ERP-2023-0198', '赵六', '星辰信息技术', '120.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                                <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <!-- Row 5 -->
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0789</td>
                                     <td style="padding: 16px 24px; color: #64748b;">华通集团</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">25,600.00</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #10b981; font-size: 1rem; text-align: right;">3,800.00</td>
@@ -2866,15 +2829,11 @@ function renderTabs(activeTab) {
                                             <button onclick="window.openBackendDetailsModal('ERP-2023-0789', '刘七', '华通集团', '25,600.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                                <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
                                 <!-- Row 6 -->
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td style="padding: 16px 24px; color: #64748b;">ERP-2023-0654</td>
                                     <td style="padding: 16px 24px; color: #64748b;">易联科技有限公司</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">0.00</td>
                                     <td style="padding: 16px 24px; font-weight: 700; color: #ef4444; font-size: 1rem; text-align: right;">0.00</td>
@@ -2886,9 +2845,6 @@ function renderTabs(activeTab) {
                                             </button>
                                             <button onclick="window.openBackendDetailsModal('ERP-2023-0654', '陈八', '易联科技有限公司', '0.00')" style="width: 32px; height: 32px; border-radius: 6px; border: none; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; cursor: pointer;">
                                                 <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
-                                            </button>
-                                            <button style="width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                                <i data-lucide="edit-3" style="width: 16px; height: 16px;"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -2958,11 +2914,11 @@ function renderTabs(activeTab) {
                         </div>
 
                         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9;">
-                            <div style="color: #64748b; margin-bottom: 4px;">用户ID: <span id="details-user-id">ERP-2023-0582</span></div>
+                            <div style="display: none; color: #64748b; margin-bottom: 4px;">用户ID: <span id="details-user-id">ERP-2023-0582</span></div>
                             <div style="color: #64748b; margin-bottom: 4px;">公司名称: <span id="details-user-company">创新科技有限公司</span></div>
-                            <div style="color: #64748b; margin-bottom: 4px;">账户状态: <span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">活跃</span></div>
+                            <div style="display: none; color: #64748b; margin-bottom: 4px;">账户状态: <span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">活跃</span></div>
                             <div style="color: #64748b; margin-bottom: 4px;">当前余额: <span id="details-user-balance" style="font-weight: 700; color: #1e293b; font-size: 1.1rem;">¥10,450</span></div>
-                            <div style="color: #64748b;">账户等级: VIP 2级</div>
+                            <div style="display: none; color: #64748b;">账户等级: VIP 2级</div>
                         </div>
 
                         <h4 style="font-size: 1.1rem; font-weight: 600; color: #1e293b; margin-bottom: 16px;">最近交易记录</h4>
